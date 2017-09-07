@@ -23,7 +23,7 @@ from setuptools import setup
 setup(
     name='python-dockering',
     description='Library used to manage Docker containers in DCAE',
-    version="1.2.0",
+    version="1.3.0",
     author="Michael Hwang",
     email="dcae@lists.openecomp.org",
     packages=['dockering'],

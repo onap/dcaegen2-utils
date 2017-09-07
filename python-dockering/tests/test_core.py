@@ -25,6 +25,7 @@ from dockering import core as doc
 from dockering.exceptions import DockerError, DockerConnectionError
 
 
+@pytest.mark.skip(reason="Need to automatically setup Docker engine and maybe Consul")
 def test_create_client():
     # Bad - Could not connect to docker engine
 
@@ -33,8 +34,8 @@ def test_create_client():
 
 
 # TODO: Does pytest provide an env file?
-CONSUL_HOST = os.environ["CONSUL_HOST"]
-EXTERNAL_IP = os.environ["EXTERNAL_IP"]
+CONSUL_HOST = os.environ.get("CONSUL_HOST")
+EXTERNAL_IP = os.environ.get("EXTERNAL_IP")
 
 @pytest.mark.skip(reason="Need to automatically setup Docker engine and maybe Consul")
 def test_create_container():
@@ -69,3 +70,19 @@ def test_create_container():
             doc.stop_then_remove_container(client, scn)
         except:
             print("Container removal failed")
+
+
+def test_build_policy_update_cmd():
+    assert ["/bin/sh", "/bin/foo", "policy", "{}"] == doc.build_policy_update_cmd("/bin/foo")
+    assert ["/bin/foo", "policy", "{}"] == doc.build_policy_update_cmd("/bin/foo", use_sh=False)
+
+    kwargs = { "bar": "baz" }
+
+    assert ["/bin/foo", "policy", "{\"bar\": \"baz\"}"] == doc.build_policy_update_cmd(
+            "/bin/foo", use_sh=False, **kwargs)
+
+    assert ["/bin/foo", "policy", "{\"application_config\": {\"key\": \"hello world\"}}"] \
+        == doc.build_policy_update_cmd("/bin/foo", use_sh=False,
+                application_config={"key": "hello world"})
+
+

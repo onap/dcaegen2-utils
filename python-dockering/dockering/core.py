@@ -25,8 +25,6 @@ from dockering import config_building as cb
 from dockering import utils
 
 
-# TODO: Replace default for logins to source it from Consul..perhaps
-
 def create_client(hostname, port, reauth=False, logins=[]):
     """Create Docker client
 
@@ -134,3 +132,34 @@ def remove_image(client, image_name):
         # Failure to remove image is not classified as terrible..for now
         return False
 
+
+def build_policy_update_cmd(script_path, use_sh=True, msg_type="policy", **kwargs):
+    """Build command to execute for policy update"""
+    data = json.dumps(kwargs or {})
+
+    if use_sh:
+        return ['/bin/sh', script_path, msg_type, data]
+    else:
+        return [script_path, msg_type, data]
+
+def notify_for_policy_update(client, container_id, cmd):
+    """Notify Docker container that policy update occurred
+
+    Notify the Docker container by doing Docker exec of passed-in command
+
+    Args:
+    -----
+    container_id: (string)
+    cmd: (list) of strings each entry being part of the command
+    """
+    try:
+        result = client.exec_create(container=container_id,
+                cmd=cmd)
+        result = client.exec_start(exec_id=result['Id'])
+
+        utils.logger.info("Pass to docker exec {0} {1} {2}".format(
+            container_id, cmd, result))
+
+        return result
+    except Exception as e:
+        raise DockerError(e)
