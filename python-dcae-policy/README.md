@@ -33,37 +33,27 @@ from dcaepolicy import Policies
 
 # examples of **@operation** with **@Policies.<>** decorator
 
-## **dcae.nodes.policy** cloudify.interfaces.lifecycle.**create**
+## Usage
 
-- retrieve the latest policy data on dcae.nodes.policy node 
+import the dcaepolicy-node-type.yaml into your blueprint to use the dcae.nodes.type node
+
 ```yaml
-    dcae.nodes.policy:
-        derived_from: cloudify.nodes.Root
-        properties:
-            policy_id:
-                description: PK to policy
-                type: string
-                default: DCAE_alex.Config_empty-policy
-            policy_apply_mode:
-                description: choice of how to apply the policy update (none|script)
-                type: string
-                default: none
-        interfaces:
-            cloudify.interfaces.lifecycle:
-                create:
-                    implementation: dcae_policy_plugin.dcaepolicy.policy_get
+imports:
+    - https://YOUR_NEXUS_RAW_SERVER/type_files/dcaepolicy/1.0.0/node-type.yaml
 ```
 
-```python
-@operation
-@Policies.populate_policy_on_node
-def policy_get(**kwargs):
-    """decorate with @Policies.populate_policy_on_node on dcae.nodes.policy node to
-    retrieve the latest policy_body for policy_id
-    property and save it in runtime_properties
-    """
-    pass
+provide the value for policy_id property
+
+```yaml
+node_templates:
+...
+  host_capacity_policy:
+    type: dcae.nodes.policy
+    properties:
+        policy_id: { get_input: host_capacity_policy_id }
 ```
+
+Then the dcaepolicyplugin will bring the latest policy to the dcae.nodes.policy node during the install workflow of cloudify.
 
 ------
 ## cloudify.interfaces.lifecycle.**configure**
@@ -72,11 +62,9 @@ def policy_get(**kwargs):
 cloudify.interfaces.lifecycle:
     configure:
         implementation: dcae_policy_plugin.dcaepolicy.node_configure
-
 ```
 
 ```python
-
 from dcaepolicy import Policies, POLICIES
 from .discovery import DiscoveryClient
 from .demo_app import DemoApp
@@ -145,41 +133,39 @@ SERVICE_COMPONENT_NAME = "service_component_name"
 
 @operation
 @Policies.update_policies_on_node(configs_only=True)
-def policy_update(updated_policies, notify_app_through_script=False, **kwargs):
+def policy_update(updated_policies, **kwargs):
     """decorate with @Policies.update_policies_on_node() to update runtime_properties[POLICIES]
 
     :updated_policies: contains the list of changed policy-configs when configs_only=True (default).
     Use configs_only=False to bring the full policy objects in :updated_policies:.
-
-    :notify_app_through_script: in kwargs is set to True/False to indicate whether to invoke
-    the script based on policy_apply_mode property in the blueprint
     """
-
-    if not updated_policies or POLICIES not in ctx.instance.runtime_properties:
-        return
-
     app_config = DiscoveryClient.get_value(ctx.instance.runtime_properties[SERVICE_COMPONENT_NAME])
+
+    # This is how to merge the policies into app_config object
     app_config = Policies.shallow_merge_policies_into(app_config)
+
+    ctx.logger.info("merged updated_policies {0} into app_config {1}"
+                    .format(json.dumps(updated_policies), json.dumps(app_config)))
+
     ctx.instance.runtime_properties[APPLICATION_CONFIG] = app_config
-    ctx.logger.info("example: updated app_config {0} with updated_policies: {1}" \
-        .format(json.dumps(app_config), json.dumps(updated_policies)))
+
     DiscoveryClient.put_kv(ctx.instance.runtime_properties[SERVICE_COMPONENT_NAME], app_config)
 
+    # example how to notify the dockerized component about the policy change
+    notify_app_through_script = True
     if notify_app_through_script:
+        ctx.logger.info("notify dockerized app about updated_policies {0} and app_config {1}"
+                        .format(json.dumps(updated_policies), json.dumps(app_config)))
         demo_app = DemoApp(ctx.node.id)
         demo_app.notify_app_through_script(
             POLICY_MESSAGE_TYPE,
             updated_policies=updated_policies,
             application_config=app_config
         )
-
-    # alternative 1 - use the list of updated_policies on your own
-    if updated_policies:
-        ctx.logger.warn("TBD: apply updated_policies: {0}".format(json.dumps(updated_policies)))
 ```
 
-example of the **changed\_policies** with **configs_only=True** 
-- list of config objects (preparsed from json string) 
+example of the **changed\_policies** with **configs_only=True**
+- list of config objects (preparsed from json string)
 - manual mess produced by mock_policy_updater
 ```json
 [{
@@ -224,7 +210,7 @@ example of **policies** in runtime_properties **before policy-update**
                 "policyName": "DCAE_alex.Config_db_client_policy_id_value.2.xml",
                 "policyConfigMessage": "Config Retrieved! ",
                 "responseAttributes": {
-                    
+
                 },
                 "policyConfigStatus": "CONFIG_RETRIEVED",
                 "matchingConditions": {
@@ -280,7 +266,7 @@ example of **policies** in runtime_properties **after policy-update**
                 "policyName": "DCAE_alex.Config_db_client_policy_id_value.3.xml",
                 "policyConfigMessage": "Config Retrieved! ",
                 "responseAttributes": {
-                    
+
                 },
                 "policyConfigStatus": "CONFIG_RETRIEVED",
                 "matchingConditions": {

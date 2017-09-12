@@ -24,17 +24,15 @@ from setuptools import setup
 setup(
     name='dcaepolicy',
     description='lib of policy decorators to be used by cloudify plugins of dcae controller',
-    version="0.0.2",
+    version="1.0.0",
     author='Alex Shatov',
     email="dcae@lists.openecomp.org",
     packages=['dcaepolicy'],
     install_requires=[
-        "cloudify-plugins-common==3.4",
-        "requests>=2.11.0,<3.0.0"
     ],
     keywords='policy dcae controller cloudify plugin',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 2.7'
     ]

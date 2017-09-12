@@ -1,2 +1,1 @@
-cloudify-plugins-common==3.4
-requests>=2.11.0,<3.0.0
+# - not here because cloudify provides it: cloudify-plugins-common==3.4

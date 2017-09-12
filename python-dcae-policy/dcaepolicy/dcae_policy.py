@@ -19,23 +19,15 @@
 #
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
-
 import json
-import uuid
 import copy
 from functools import wraps
-
-import requests
 
 from cloudify import ctx
 from cloudify.context import NODE_INSTANCE
 from cloudify.exceptions import NonRecoverableError
 
-from .dcae_consul_client import ConsulClient
-
 POLICIES = 'policies'
-SERVICE_NAME_POLICY_HANDLER = "policy_handler"
-X_ECOMP_REQUESTID = 'X-ECOMP-RequestID'
 
 POLICY_ID = 'policy_id'
 POLICY_APPLY_MODE = 'policy_apply_mode'
@@ -44,69 +36,9 @@ POLICY_VERSION = "policyVersion"
 POLICY_CONFIG = 'config'
 DCAE_POLICY_TYPE = 'dcae.nodes.policy'
 POLICY_MESSAGE_TYPE = 'policy'
-POLICY_NOTIFICATION_SCRIPT = 'script'
 
 class Policies(object):
     """static class for policy operations"""
-    _policy_handler_url = None
-
-    @staticmethod
-    def _get_latest_policy(policy_id):
-        """retrieve the latest policy for policy_id from policy-handler"""
-        if not Policies._policy_handler_url:
-            Policies._policy_handler_url = ConsulClient.get_service_url(SERVICE_NAME_POLICY_HANDLER)
-
-        ph_path = "{0}/policy_latest/{1}".format(Policies._policy_handler_url, policy_id)
-        headers = {X_ECOMP_REQUESTID: str(uuid.uuid4())}
-
-        ctx.logger.info("getting latest policy from {0} headers={1}".format( \
-            ph_path, json.dumps(headers)))
-        res = requests.get(ph_path, headers=headers)
-        res.raise_for_status()
-
-        if res.status_code == requests.codes.ok:
-            return res.json()
-        return {}
-
-    @staticmethod
-    def populate_policy_on_node(func):
-        """dcae.nodes.policy node retrieves the policy_body identified by policy_id property
-        from policy-handler that gets it from policy-engine.
-
-        Places the found policy into runtime_properties["policy_body"].
-        """
-        if not func:
-            return
-
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            """retrieve and save the latest policy body per policy_id"""
-            try:
-                if ctx.type != NODE_INSTANCE:
-                    return func(*args, **kwargs)
-
-                if POLICY_ID not in ctx.node.properties:
-                    ctx.logger.error("no {0} found in ctx.node.properties".format(POLICY_ID))
-                    return func(*args, **kwargs)
-
-                policy_id = ctx.node.properties[POLICY_ID]
-                policy = Policies._get_latest_policy(policy_id)
-                if policy:
-                    ctx.logger.info("found policy {0}".format(json.dumps(policy)))
-                    if POLICY_BODY in policy:
-                        ctx.instance.runtime_properties[POLICY_BODY] = policy[POLICY_BODY]
-                else:
-                    error = "policy not found for policy_id {0}".format(policy_id)
-                    ctx.logger.error(error)
-                    raise NonRecoverableError(error)
-
-            except Exception as ex:
-                error = "Failed to get the policy {0}".format(str(ex))
-                ctx.logger.error(error)
-                raise NonRecoverableError(error)
-
-            return func(*args, **kwargs)
-        return wrapper
 
     @staticmethod
     def gather_policies_to_node(func):
@@ -206,9 +138,6 @@ class Policies(object):
         Passes through the filtered list of updated_policies that apply to the current node instance
 
         :updated_policies: contains the list of changed policy-configs when configs_only=True.
-
-        :notify_app_through_script: in kwargs is set to True/False to indicate whether to invoke
-        the script based on policy_apply_mode property in the blueprint
         """
         def update_policies_decorator(func):
             """actual decorator"""
@@ -223,34 +152,16 @@ class Policies(object):
 
                 updated_policies = Policies._update_policies_on_ctx(updated_policies)
                 if updated_policies:
-                    notify_app_through_script = max(
-                        updated_policies,
-                        key=lambda pol: pol.get(POLICY_APPLY_MODE) == POLICY_NOTIFICATION_SCRIPT
-                    )
-
                     if configs_only:
                         updated_policies = [policy[POLICY_BODY][POLICY_CONFIG] \
                                             for policy in updated_policies \
                                                 if POLICY_BODY in policy \
                                                 and POLICY_CONFIG in policy[POLICY_BODY] \
                                            ]
-                    return func(updated_policies,
-                                notify_app_through_script=notify_app_through_script, **kwargs)
+                    return func(updated_policies, **kwargs)
             return wrapper
         return update_policies_decorator
 
-    @staticmethod
-    def get_notify_app_through_script():
-        """returns True if any of the policy has property policy_apply_mode==script"""
-        if ctx.type != NODE_INSTANCE \
-        or POLICIES not in ctx.instance.runtime_properties:
-            return
-        policies = ctx.instance.runtime_properties[POLICIES]
-        if not policies:
-            return
-        for policy_id in policies:
-            if policies[policy_id].get(POLICY_APPLY_MODE) == POLICY_NOTIFICATION_SCRIPT:
-                return True
 
     @staticmethod
     def get_policy_configs():
