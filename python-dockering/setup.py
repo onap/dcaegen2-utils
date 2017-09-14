@@ -29,6 +29,7 @@ setup(
     packages=['dockering'],
     zip_safe=False,
     install_requires=[
-        "docker-py>=1.0.0,<2.0.0"
+        "docker-py>=1.0.0,<2.0.0",
+        "six"
     ]
 )

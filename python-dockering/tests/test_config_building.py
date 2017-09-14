@@ -148,3 +148,11 @@ def test_parse_volumes_param():
     assert actual == expected
 
     assert None == doc._parse_volumes_param(None)
+
+
+def test_get_container_ports():
+    hcp = {'publish_all_ports': False, 'port_bindings': {'80': {'HostPort':
+        '80'}, '22': {'HostPort': '22'}}}
+    assert sorted(['80', '22']) == sorted(doc._get_container_ports(hcp))
+
+    assert None == doc._get_container_ports({})

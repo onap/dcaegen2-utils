@@ -20,6 +20,7 @@
 """
 Abstraction in Docker container configuration
 """
+import six
 from dockering import utils
 from dockering.exceptions import DockerConstructionError
 
@@ -234,6 +235,13 @@ def add_host_config_params_dns(docker_host, host_config_params=None):
     return host_config_params
 
 
+def _get_container_ports(host_config_params):
+    """Grab list of container ports from host config params"""
+    if "port_bindings" in host_config_params:
+        return list(six.iterkeys(host_config_params["port_bindings"]))
+    else:
+        return None
+
 def create_container_config(client, image, envs, host_config_params, tty=False):
     """Create docker container config
 
@@ -252,11 +260,7 @@ def create_container_config(client, image, envs, host_config_params, tty=False):
 
     host_config = client.create_host_config(**host_config_params)
 
-    if "port_bindings" in host_config_params:
-        # TODO: Use six for creating the list of ports - six.iterkeys
-        ports = host_config_params["port_bindings"].keys()
-    else:
-        ports = None
+    ports = _get_container_ports(host_config_params)
 
     command = "" # This is required...
     config = client.create_container_config(image, command, detach=True, tty=tty,
