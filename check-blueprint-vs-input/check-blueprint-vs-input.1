@@ -1,0 +1,50 @@
+check-blueprint-vs-input(1UTIL)      ONAP      check-blueprint-vs-input(1UTIL)
+
+
+
+NNAAMMEE
+       check-blueprint-vs-input
+
+SSYYNNOOPPSSIISS
+       check-blueprint-vs-input [-h] [-b BLUEPRINT] [-i INPUTS]
+                                       [-B BLUEPRINT_EXCLUSION_LIST]
+                                       [-I INPUTS_EXCLUSION_LIST] [-t] [-v]
+
+DDEESSCCRRIIPPTTIIOONN
+       Validate a blueprint and inputs file against each other. This looks for
+       the inputs: node of the blueprint file, the inputs used by  {get_input}
+       within  the  blueprint,  and  the  values found in the inputs file. The
+       files may be in either YAML or JSON formats. The names default to blue‐
+       print.yaml  and  inputs.yaml.  If a blueprint inputs name has a default
+       value, it is not considered an error if it is not in the  inputs  file.
+       If  using  a  template  inputs file, add the -t/--template option. This
+       will look for the inputs under an "inputs:" node instead of at the  top
+       level.  If there are blueprint nodes or inputs nodes that should not be
+       considered an error, specify them using the -B/--blueprint-  exclusion-
+       list   and  -I/inputs-exclusion-list  parameters.  "check-blueprint-vs-
+       input --help" will list all of the available options.
+
+   OOPPTTIIOONNSS
+       -h, --help show this help message and exit
+
+       -b BLUEPRINT, --blueprint BLUEPRINT Path to blueprint file, defaults to
+                           'blueprint.yaml'
+
+       -i INPUTS, --inputs INPUTS Port to listen on, defaults to 'inputs.yaml'
+
+       -B     BLUEPRINT_EXCLUSION_LIST,    --blueprint-exclusion-list    BLUE‐
+                           PRINT_EXCLUSION_LIST Comma-separated list of  names
+                           not to warn about not
+                                                   being in the blueprint file
+
+       -I INPUTS_EXCLUSION_LIST, --inputs-exclusion-list INPUTS_EXCLUSION_LIST
+                           Comma-separated list of names not to warn about not
+                                                   being in the inputs file
+
+       -t, --inputs-template Treat inputs file as coming from template area
+
+       -v, --verbose Verbose, may be specified multiple times
+
+
+
+ONAP                               {{DATE}}    check-blueprint-vs-input(1UTIL)

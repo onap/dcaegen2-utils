@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+# -*- indent-tabs-mode: nil -*- vi: set expandtab:
+
+"""
+NAME
+       yamltojson - convert a yaml file to a json file
+
+SYNOPSIS
+       yamltojson file.yaml ...
+
+DESCRIPTION
+       Read  in a yaml file (whose name must end with ".yaml") and create cor‐
+       responding json files, whose names will end with ".json".
+"""
+
+import sys, re, yaml
+try:
+    import simplejson as json
+except:
+    import json
+
+def die(msg):
+    """ generate a FATAL message to stdout and exit """
+    print("%s:FATAL:%s" % (date(), msg))
+    sys.exit(2)
+
+for fname in sys.argv[1:]:
+    if fname.endswith(".yaml"):
+        y = None
+        with open(fname, "r") as fd:
+            try:
+                contents = fd.read()
+                contents = re.sub("^\t+", "    ", contents, flags=re.M)
+                y = yaml.safe_load(contents)
+            except:
+                die("Invalid yaml in '%s'" % fname)
+        jsonfname = fname[:-5] + ".json"
+        with open(jsonfname, "w") as fd:
+            json.dump(y, fd, indent=4, sort_keys=True)

@@ -1,0 +1,123 @@
+repackage(1)                       OpenECOMP                      repackage(1)
+
+
+
+NNAAMMEE
+       repackage - package an set of files into debian, or docker packages
+
+SSYYNNOOPPSSIISS
+       repackage  [-h] [-n] [-c] [-N] [-K] [-v] -b PACKAGETYPE [-u] [-d DIREC‐
+                           TORY] [-e ENVIRONFILE] [-o OUTPUTDIRECTORY]
+
+DDEESSCCRRIIPPTTIIOONN
+       Build the specified packages. 'package-type' is one or more of  docker,
+       debian, (comma-separated), or 'all' to build all of them.
+
+OOPPTTIIOONNSS
+       -h, --help          show a help message and exit
+
+       -n, --skipexecution indicate the packages and exit
+
+       -c, --usecache      if a debian/tar/tgz artifact already exists use it
+
+       -N, --skipbuild     skip actually building the packages
+
+       -K, --keeptempfiles keep temp files at exit
+
+       -v, --verbose       turn on verbosity
+
+       -b PACKAGETYPE, --packagetype PACKAGETYPE
+                           The package-type may be specified multiple times or
+                           may use a ','-separated  or  space-separated  list.
+                           'all'  is an alias for all of them.  Potential val‐
+                           ues are debian, docker, tar or tgz
+
+       -u, --upload        Depending on package type -- docker, debian, tar or
+                           tgz -- uploads the artifact to a remote repository.
+                           For Docker,  uses  $DOCKERREGISTRY  as  the  remote
+                           repository  to  push  the  image.  For Debian, uses
+                           $REPACKAGEDEBIANUPLOAD as the command, with {0}  as
+                           the  local  path  to  the  debian image, {1} as the
+                           image name with build number, and optionally {2} as
+                           groupId  (may  be  used  as  part  of the directory
+                           path), {3} as the image name without the build num‐
+                           ber, and {4} as the image name with no build number
+                           and no .deb suffix.  For additional  uploads,  this
+                           will   also   look   for   $REPACKAGEDEBIANUPLOAD2,
+                           $REPACKAGEDEBIANUPLOAD3,  etc.,  and   repeat   the
+                           upload.  For  tar,  uses $REPACKAGETARUPLOAD as the
+                           command. Everything said  about  $REPACKAGEDEBIANU‐
+                           PLOAD applies to $REPACKAGETARUPLOAD. For tgz, uses
+                           $REPACKAGETGZUPLOAD as the command. Everything said
+                           about  $REPACKAGEDEBIANUPLOAD  applies  to $REPACK‐
+                           AGETGZUPLOAD.  In addition, if --multipleuploadver‐
+                           sions is used, the above will be executed using the
+                           list of upload  version  numbers  specified  there.
+                           This  is typically used to create multiple versions
+                           (using --multipleuploadversions) on multiple remote
+                           repositories (using $REPACKAGE*UPLOAD).
+
+       -d DIRECTORY, --directory DIRECTORY
+                           where  to  find  the  stage  directory  and repack‐
+                           age.yaml.  Defaults to '.'
+
+       -e ENVIRONFILE, --environfile ENVIRONFILE
+                           Optional environment file. Overrides  $REPACKAGEEN‐
+                           VFILE, defaults to /dev/null
+
+       -o OUTPUTDIRECTORY, --outputdirectory OUTPUTDIRECTORY
+                           Output   directory.   Defaults  to  'output'  under
+                           --directory path.
+
+       -y FILE, --repackageyaml FILE
+                           Name  of  parameter  file.  Defaults  to   'repack‐
+                           age.yaml'  or  'repackage.json'  under  --directory
+                           path.
+
+       -B buildnumber, --buildnumber BUILD-NUMBER
+                           Build  number.  Defaults  to  $BUILD_NUMBER,  which
+                           defaults to a date-based string.
+
+       -M  MULTIPLEUPLOADVERSIONS, --multipleuploadversions MULTIPLEUPLOADVER‐
+       SIONS
+                           Use multiple versions for  upload.  Comma-separated
+                           list  of  {datetime},  {buildnumber}  or  arbitrary
+                           strings.  Defaults to {buildnumber}, which  is  the
+                           value from --buildnumber.
+
+DDIIRREECCTTOORRYY SSTTRRUUCCTTUURREE
+       Repackage requires as its input four items:
+
+       stage/*             A  directory  structure  filled with files laid out
+                           exactly as they are to appear on the end system, as
+                           if  "stage"  were  the  root of the filesystem. For
+                           DCAE applications, it is recommended that  you  use
+                           the  path opt/app/PACKAGENAME for all files associ‐
+                           ated with PACKAGENAME.
+
+       repackage.yaml or repackage.json
+                           A configuration file  with  information  about  the
+                           packages,  such  as  the  package's  name,  version
+                           information, dependencies,  etc.  More  information
+                           will be provided below.
+
+       Dockerfile          This  file is only used for creating Docker images.
+                           It contains the docker creation script.
+
+       common/*            If needed,  any  package  installation  or  package
+                           removal  scripts would be placed here. They must be
+                           named preinst, postinst, prerm or postrm.
+
+       If the installation scripts need some temporary  files,  it  is  recom‐
+       mended  that  you  place  them into stage/opt/app/PACKAGENAME/pkg. Your
+       installation script can then remove that directory if  necessary  after
+       successful installation.
+
+FFIILLEESS
+       /opt/app/repackage/bin/repackage
+
+       /opt/app/repackage/man/repackage.1
+
+
+
+OpenECOMP                         2017-09-13                      repackage(1)

@@ -1,0 +1,215 @@
+#!/usr/bin/env python3
+# -*- indent-tabs-mode: nil -*-
+# Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this code except in compliance
+# with the License. You may obtain a copy of the License
+# at http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+
+from __future__ import print_function
+
+"""
+
+ NAME
+    check-blueprint-vs-input - given a blueprint and inputs file pair, validate them against each other
+
+ USAGE
+    check-blueprint-vs-input [-v] [-t] -b BLUEPRINT [-B exclusion-list] -i INPUTS [-B exclusion-list]
+
+ DESCRIPTION
+"""
+description = """
+    Validate a blueprint and inputs file against each other. This looks for the inputs: node of the blueprint
+    file, the inputs used by {get_input} within the blueprint, and the values found in the inputs file. The
+    files may be in either YAML or JSON formats. The names default to blueprint.yaml and inputs.yaml. If
+    a blueprint inputs name has a default value, it is not considered an error if it is not in the inputs file.
+
+    If using a template inputs file, add the -t/--template option. This will look for the inputs under
+    an "inputs:" node instead of at the top level.
+
+    If there are blueprint nodes or inputs nodes that should not be considered an error, specify them
+    using the -B/--blueprint-exclusion-list and -I/inputs-exclusion-list parameters.
+
+    "check-blueprint-vs-input --help" will list all of the available options.
+"""
+epilog = """
+ NOTE
+    Values specified within the inputs file with no value or a value of {} (such as 'openstack: {}')
+    do not get loaded from the yaml dictionary, and will show up as false positives. It is suggested that
+    -B/--blueprint-exclusion-list be used for these, and then do a subsequent grep for those variables
+    being in the inputs file, as in:
+
+        grep 'openstack: {}' $(BLUEPRINT)
+
+"""
+
+import yaml
+import sys
+import argparse
+
+def main():
+    DEF_BLUEPRINT_NAME = "blueprint.yaml"
+    DEF_INPUTS_NAME = "inputs.yaml"
+    parser = argparse.ArgumentParser(description=description, epilog=epilog)
+    parser.add_argument("-b", "--blueprint", type=str, help="Path to blueprint file, defaults to '%s'" % DEF_BLUEPRINT_NAME,
+                        default=DEF_BLUEPRINT_NAME)
+    parser.add_argument("-i", "--inputs", type=str, help="Port to listen on, defaults to '%s'" % DEF_INPUTS_NAME,
+                        default=DEF_INPUTS_NAME)
+    parser.add_argument("-B", "--blueprint-exclusion-list", type=str, help="Comma-separated list of names not to warn about not being in the blueprint file", default="")
+    parser.add_argument("-I", "--inputs-exclusion-list", type=str, help="Comma-separated list of names not to warn about not being in the inputs file", default="")
+    parser.add_argument("-t", "--inputs-template", help="Treat inputs file as coming from template area", action="store_true")
+    parser.add_argument("-v", "--verbose", help="Verbose, may be specified multiple times", action="count", default=0)
+    args = parser.parse_args()
+
+    blueprintExclusionList = args.blueprint_exclusion_list.split(",")
+    if args.verbose: print("blueprintExclusionList=%s" % blueprintExclusionList)
+
+    inputsExclusionList = args.inputs_exclusion_list.split(",")
+    if args.verbose: print("inputsExclusionList=%s" % inputsExclusionList)
+
+    def loadYaml(filename):
+        """
+        Load a YAML file
+        """
+        with open(filename, "r") as fd:
+            try:
+                y = yaml.safe_load(fd)
+                if args.verbose > 1:
+                    print("Contents of %s:" % filename)
+                    yaml.dump(y, sys.stdout)
+            except:
+                type, value, traceback = sys.exc_info()
+                print('value=%s' % value, file=sys.stderr)
+        return y
+
+    blueprint = loadYaml(args.blueprint)
+    inputs = loadYaml(args.inputs)
+
+    # if inputs file is empty, provide an empty dictionary
+    if inputs is None: inputs = { }
+
+    # blueprint file has inputs under the inputs: node
+    blueprintInputs = blueprint['inputs']
+
+    # inputs file normally has inputs at the top level,
+    # but templated inputs files have themunder the inputs: node
+    if args.inputs_template: inputs = inputs['inputs']
+
+
+    exitval = 0
+
+    def check_blueprint_inputs(blueprintInputs, inputs, inputsExclusionList):
+        """
+        check the blueprint inputs against the inputs file
+        """
+        foundone = False
+        for input in blueprintInputs:
+            if args.verbose: print("blueprint input=%s" % input)
+            if input in inputs:
+                if args.verbose: print("\tIS in inputs file")
+            else:
+                # print("blueprintInputs.get(input)=%s and blueprintInputs[input].get('default')=%s" % (blueprintInputs.get(input), blueprintInputs[input].get('default')))
+                if blueprintInputs.get(input) and blueprintInputs[input].get('default'):
+                    if args.verbose: print("\tHAS a default value")
+                elif input not in inputsExclusionList:
+                    print("<<<<<<<<<<<<<<<< %s not in inputs file" % input)
+                    foundone = True
+                else:
+                    if args.verbose: print("<<<<<<<<<<<<<<<< %s not in inputs file, but being ignored" % input)
+        return foundone
+
+    # check the blueprint inputs: against the inputs file
+    if args.verbose: print("================ check the blueprint inputs: against the inputs file")
+    foundone = check_blueprint_inputs(blueprintInputs, inputs, inputsExclusionList)
+    if foundone: print("")
+    if foundone: exitval = 1
+
+    def check_get_inputs(blueprint, blueprintInputs, inputs, inputsExclusionList):
+        """
+        check the blueprint get_input values against the inputs file
+        """
+        if args.verbose > 2: print("check_get_inputs(): d=%s" % d)
+
+        def findInputs(d):
+            ret = [ ]
+            if isinstance(d, dict):
+                if args.verbose: print("type(d) is dict")
+                for key in d.keys():
+                    if args.verbose: print("looking at d[key=%s]" % key)
+                    if key == "get_input":
+                        if args.verbose: print("found get_input, adding '%s'" % d[key])
+                        ret += [ d[key] ]
+                        return ret
+                    else:
+                        if args.verbose: print("going recursive on '%s'" % d[key])
+                        ret += findInputs(d[key])
+            elif isinstance(d, list):
+                if args.verbose: print("type(d) is list")
+                for val in d:
+                    if args.verbose: print("going recursive on '%s'" % val)
+                    ret += findInputs(val)
+            else:
+                if args.verbose: print("type(d) is scalar: %s" % d)
+            return ret
+
+        foundone = False
+        inputList = findInputs(blueprint)
+        if args.verbose: print("done looking for get_input, found:\n%s" % inputList)
+        alreadySeen = { }
+        for input in inputList:
+            if input not in alreadySeen:
+                alreadySeen[input] = True
+                if args.verbose: print("checking input %s" % input)
+                if input in inputs:
+                    if args.verbose: print("\tIS in input file")
+                else:
+                    if blueprintInputs.get(input) and blueprintInputs[input].get('default'):
+                        if args.verbose: print("\tHAS a default value")
+                    elif input not in inputsExclusionList:
+                        print(":::::::::::::::: get_input: %s is NOT in input file" % input)
+                        foundone = True
+                    else:
+                        if args.verbose: print(":::::::::::::::: get_input: %s is NOT in input file, but being ignored" % input)
+
+        return foundone
+
+
+
+    # check the blueprint's get_input calls against the inputs file
+    if args.verbose: print("================ check the blueprint's get_input calls against the inputs file ================")
+    foundone = check_get_inputs(blueprint, blueprintInputs, inputs, inputsExclusionList)
+    if foundone: print("")
+    if foundone: exitval = 1
+
+    def check_inputs(blueprintInputs, inputs, blueprintExclusionList):
+        """
+        check the inputs file against the blueprints inputs list
+        """
+        foundone = False
+        for key in inputs:
+            if args.verbose: print("inputs key=%s" % key)
+            if key in blueprintInputs:
+                if args.verbose: print("\tIS in blueprint")
+            else:
+                if key not in blueprintExclusionList:
+                    print(">>>>>>>>>>>>>>>> %s not in blueprint file" % key)
+                    foundone = True
+                else:
+                    if args.verbose: print(">>>>>>>>>>>>>>>> %s not in blueprint file, but being ignored" % key)
+        return foundone
+
+    # check the inputs file against the blueprints input: section
+    if args.verbose: print("================ check the inputs file against the blueprints input: section ================")
+    foundone = check_inputs(blueprintInputs, inputs, blueprintExclusionList)
+    if foundone: exitval = 1
+    sys.exit(exitval)
+
+if __name__ == "__main__":
+    main()

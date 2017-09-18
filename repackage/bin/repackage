@@ -1,0 +1,680 @@
+#!/usr/bin/env python3
+# -*- indent-tabs-mode: nil -*- vi: set expandtab:
+
+import sys, os, argparse, time, re, posix, atexit, binascii
+from pathlib import Path
+
+yamlOk = True
+try:
+    import yaml
+except:
+    yamlOk = False
+jsonOk = True
+try:
+    import simplejson as json
+except:
+    try:
+        import json
+    except:
+        jsonOk = False
+
+def date():
+    """ return a datestamp """
+    return time.strftime("%Y-%m-%d %H:%M:%S")
+
+def infoMsg(msg):
+    """ generate an informational message to stdout """
+    print("%s:INFO:%s" % (date(), msg))
+
+def traceMsg(msg):
+    """ if verbose flag is on, generate an informational message to stdout """
+    global args
+    if args.verbose:
+        infoMsg(msg)
+
+def warnMsg(msg):
+    """ generate a warning message to stdout """
+    print("%s:WARNING:%s" % (date(), msg))
+
+def die(msg):
+    """ generate a FATAL message to stdout and exit """
+    print("%s:FATAL:%s" % (date(), msg))
+    sys.exit(2)
+
+def displayCwd():
+    """ display the working directory """
+    infoMsg("working directory '" + os.getcwd() + "'")
+
+def cdCheck(dir):
+    """ cd to a new directory and die if we cannot """
+    try:
+        traceMsg("cd %s" % dir)
+        os.chdir(dir)
+    except:
+        die("Cannot chdir(" + dir + ")")
+
+def removeDirPath(path, prmsg = True, gone_ok = False):
+    """
+    remove a directory path
+        prmsg - print a message before proceeding
+        gone_ok - do not warn if a path does not exist
+    """
+    if prmsg:
+        infoMsg("Removing path '%s'" % path)
+    nmlist = None
+    try:
+        nmlist = os.listdir(path)
+    except FileNotFoundError:
+        if not gone_ok:
+            warnMsg("path no longer exists: %s" % path)
+        return
+    except:
+        e = sys.exc_info()[0]
+        warnMsg("removing path (%s) gave this error: %s" % (path, e))
+        return
+
+    for nm in nmlist:
+        if nm != "." and nm != "..":
+            pathnm = path + "/" + nm
+            if os.path.isdir(pathnm):
+                removeDirPath(pathnm, prmsg = False)
+            else:
+                # infoMsg(">>>>removing file %s" % pathnm)
+                try:
+                    os.remove(pathnm)
+                except:
+                    e = sys.exc_info()[0]
+                    warnMsg("Could not remove file (%s) because of %s" % (pathnm, e))
+
+    # infoMsg(">>>>removing directory %s" % pathnm)
+    try:
+        os.rmdir(path)
+    except FileNotFoundError:
+        if not gone_ok:
+            warnMsg("Could not remove directory (%s) because of FileNotFound" % path)
+    except:
+        e = sys.exc_info()[0]
+        warnMsg("Could not remove directory (%s) because of %s" % (path, e))
+
+def verboseOsSystem(cmd):
+    """ execute a shell command, printing a trace message first """
+    traceMsg("About to execute '%s'" % cmd)
+    os.system(cmd)
+
+def lndir(fr, to):
+    """ create a copy of a tree structure, using hard links where possible """
+    global args
+    removeDirPath(to + "/" + fr, prmsg = args.verbose, gone_ok = True)
+    verboseOsSystem("find '%s' -print0 | cpio -pdml0 '%s'" % ( fr, to ))
+
+y = None
+
+def getParam(name, dflt = None):
+    """
+        Retrieve the contents of a parameter file, rooted where specified.
+        Return None when it does not exist.
+    """
+    global y, args
+    if y is None:
+        fname = args.directory + "/" + args.repackageyaml
+        if args.repackageyaml.endswith(".yaml"):
+            if not yamlOk:
+                die("YAML not available on this machine")
+            else:
+                with open(fname, "r") as fd:
+                    try:
+                        contents = fd.read()
+                        contents = re.sub("^\t+", "    ", contents, flags=re.M)
+                        y = yaml.safe_load(contents)
+                    except:
+                        die("Invalid yaml in '%s'" % fname)
+        elif args.repackageyaml.endswith(".json"):
+            if not jsonOk:
+                die("JSON not available on this machine")
+            else:
+                with open(fname, "r") as fd:
+                    try:
+                        contents = fd.read()
+                        y = json.loads(contents)
+                    except:
+                        type, value, traceback = sys.exc_info()
+                        die("Invalid json in '%s': %s" % (fname, value))
+        else:
+            die("%s must end either in .yaml or .json" % repackageyaml)
+
+    e = "y" + name
+    inp = None
+    try:
+        inp = eval(e,{"__builtins__":None},{"y":y})
+    except KeyError:
+        if dflt is not None:
+            return dflt
+    if inp is None:
+        die("The %s must be be set in %s" % (name, args.repackageyaml))
+    return inp
+
+def cleanupTmpRoot():
+    """ clean out the tmp directory """
+    global TMPROOT
+    removeDirPath(TMPROOT, prmsg = args.verbose, gone_ok = True)
+
+def genDebianChangelog(fname):
+    """ generate a Debian change log, hard-coded to this for now """
+    with open(fname, "w") as fd:
+        fd.write("OpenECOMP 1701 Demo\n")
+
+def uploadDocker(name,tag):
+    """ tag & push Docker image to nexus docker registry """
+    ns = getParam( '["docker"]["namespace"]' )
+    registry = getParam( '["docker"]["registry"]' )
+    image = name + ":" + tag
+    repo = os.environ.get("DOCKERREGISTRY") + "/" + ns + "/" + image
+    repo = os.environ.get("DOCKERREGISTRY") + "/" + ns + "/" + image
+    verboseOsSystem("docker tag " + image + " " + repo)
+    verboseOsSystem("docker push " + repo)
+    i = 2
+    while os.environ.get("DOCKERREGISTRY" + str(i)):
+        repo = os.environ.get("DOCKERREGISTRY" + str(i)) + "/" + ns + "/" + image
+        verboseOsSystem("docker tag " + image + " " + repo)
+        verboseOsSystem("docker push " + repo)
+        i += 1
+
+# The Debian control archive contents can include the following files:
+#
+# control: A list of dependencies, and other useful information to indentify the package, such as
+#        a brief description of the package.
+# md5sums: contains MD5 checksums of all files in the package in order to detect corrupt or incomplete files.
+# preinst, postinst, prerm and postrm are optional scripts that are executed before or after installing,
+#        updating or removing the package.
+# copyright: any needed copyright notice
+# changelog:
+# conffiles: Lists the files of the package that should be treated as configuration files.
+#        Configuration files are not overwritten during an update unless specified.
+# debian-binary: contains the deb-package version, currently 2.0
+# templates: A file with error descriptions and dialogs during installation
+# config: is an optional script that supports the debconf configuration mechanism.
+# shlibs: list of shared library dependencies.
+
+def genDebianControl(fname):
+    """ generate a Debian control file """
+    with open(fname, "w") as fd:
+        global APPL, VER, BNBR, MAINTAINER
+        fd.write("Package: %s\n" % APPL)
+        fd.write("Version: %s-%s\n" % (VER, BNBR))
+        fd.write("Section: utils\n")
+        fd.write("Priority: optional\n")
+        fd.write("Architecture: all\n")
+        fd.write("Maintainer: %s\n" % MAINTAINER)
+        deps = getParam('["debian"]["externalDependencies"]')
+        depends = ""
+        sep = " "
+        if deps:
+            for dep in deps:
+                for d, v in dep.items():
+                    depends += sep + d + " (" + v + ")"
+                    sep = ", "
+        fd.write("Depends:%s\n" % depends)
+        fd.write("Conflicts:\n")
+        fd.write("Replaces:\n")
+        desc = getParam( '["description"]' )
+        desc = re.sub("^[ \t]*$", ".", desc, flags=re.M)
+        desc = re.sub("^[ \t]*", " ", desc, flags=re.M)
+        fd.write("Description:%s\n" % desc)
+
+def genDebianMd5sums(fname):
+    """ generate an MD5 listing of all of the staged files """
+    global ROOTDIR
+    verboseOsSystem("cd '%s/stage' && find * -type f -exec md5sum -b {} + > %s" % (ROOTDIR, fname))
+
+def genCopyright(fname, prefix = ""):
+    """ generate a copyright statement, with the given prefix on each line """
+    with open(fname, "w") as fd:
+        fd.write(prefix + "Copyright (C) 2016 AT&T Intellectual Property. All rights reserved.\n")
+        fd.write(prefix + "\n")
+        fd.write(prefix + "This code is licensed under the Apache License, Version 2.0;\n")
+        fd.write(prefix + "you may not use this code for any purpose except in compliance\n")
+        fd.write(prefix + "with the Apache License. You may obtain a copy of the License\n")
+        fd.write(prefix + "at http://www.att.com/openecomp.html.\n")
+
+def isExe(fname):
+    """ check if a path exists and is executable """
+    return os.path.exists(fname) and os.access(fname, os.X_OK)
+
+def isFileExe(fname):
+    """ check if a path exists as a file and is executable """
+    return os.path.isfile(fname) and os.access(fname, os.X_OK)
+
+def genFileList(path, testFn):
+    """ generate a list of files, rooted at path, that all pass the given test """
+    ret = []
+    try:
+        nmlist = os.listdir(path)
+    except FileNotFoundError:
+        return ret
+    except:
+        e = sys.exc_info()[0]
+        warnMsg("error while listing path (%s): %s" % (path, e))
+        return ret
+
+    for nm in nmlist:
+        if nm != "." and nm != "..":
+            pathnm = path + "/" + nm
+            if os.path.isdir(pathnm):
+                more = genFileList(pathnm, testFn)
+                ret.extend(more)
+            elif testFn(pathnm):
+                ret.append(pathnm)
+    return ret
+
+
+def createDockerTempFiles(L):
+    """ create the temp file structure needed to create a docker image """
+    global args, ROOTDIR
+    removeDirPath(L, prmsg = args.verbose, gone_ok = True)
+    os.makedirs(L, exist_ok = True)
+
+    cdCheck(ROOTDIR + "/stage")
+    copyList = []
+    for i in os.listdir():
+        if not i.startswith("."):
+            lndir(i, L)
+            copyList.append(i)
+
+    posix.link(ROOTDIR + "/Dockerfile", L + "/Dockerfile")
+
+def genApplVerBnbrSuffix(suffix, whichBuildNumber):
+    """ Generate a number of constants used in building a package """
+    global APPL, VER, BNBR, TIMESTAMP
+    applVer = APPL + "_" + VER
+    buildNumber = BNBR if whichBuildNumber == '{buildnumber}' else TIMESTAMP if whichBuildNumber == '{datetime}' else whichBuildNumber
+    if buildNumber.startswith("{") and buildNumber.endswith("}"):
+        die("Unrecognized buildnumber macro name: %s" % buildNumber)
+    applVerBnbr = applVer + "-" + buildNumber
+    applVerBnbrSuffix = applVerBnbr + "." + suffix
+    applVerSuffix = applVer + "." + suffix
+    outdirApplVerBnbrSuffix = args.outputdirectory + "/" + applVerBnbrSuffix
+    return applVer, applVerBnbr, applVerBnbrSuffix, applVerSuffix, outdirApplVerBnbrSuffix
+
+def uploadAll(envName, groupId, outdirApplVerBnbrSuffix, suffix, applVer, applVerSuffix):
+    """
+        Execute the various upload commands for a given package.
+        Take into account args.multipleuploadversions
+    """
+    for buildNumber in args.allUploadVersions:
+        ignored1, ignored2, applVerBnbrSuffix, ignored3, ignored4 = genApplVerBnbrSuffix(suffix, buildNumber)
+        verboseOsSystem(os.environ.get(envName).format(outdirApplVerBnbrSuffix, applVerBnbrSuffix, groupId, applVerSuffix, applVer))
+        i = 2
+        while os.environ.get(envName + str(i)):
+            verboseOsSystem(os.environ.get(envName + str(i)).format(outdirApplVerBnbrSuffix, applVerBnbrSuffix, groupId, applVerSuffix, applVer))
+            i += 1
+
+def buildDebian():
+    """ Build a local debian formatted package """
+    infoMsg( 'Building a Debian package ...' )
+    global args, TMPROOT, ROOTDIR
+    if args.skipexecution:
+        return
+
+    suffix = "deb"
+    applVer, applVerBnbr, applVerBnbrSuffix, applVerSuffix, outdirApplVerBnbrSuffix = genApplVerBnbrSuffix(suffix, '{buildnumber}')
+
+    if args.usecache and os.path.exists(outdirApplVerBnbrSuffix):
+        infoMsg( "Already built %s" % applVerBnbrSuffix)
+
+    else:
+        L = TMPROOT + "/debian"
+        LD = TMPROOT + "/debian/DEBIAN"
+        removeDirPath(L, prmsg = args.verbose, gone_ok = True)
+        os.makedirs(LD, exist_ok = True)
+
+        cdCheck(ROOTDIR + "/stage")
+        for i in os.listdir():
+            if not i.startswith("."):
+                lndir(i, L)
+
+        genCopyright(LD + "/copyright")
+        genDebianControl(LD + "/control")
+        genDebianChangelog(LD + "/changelog")
+        genDebianMd5sums(LD + "/md5sums")
+
+        cdCheck(ROOTDIR)
+        execUser = getParam('["executionUser"]')
+        fileUser = getParam('["fileUser"]')
+        fileGroup = getParam('["fileGroup"]')
+        isRoot = execUser == "root"
+        for cname in [ "preinst", "postinst", "prerm", "postrm" ]:
+            comCname = "common/" + cname
+            ldName = LD + "/" + cname
+            if isExe(comCname) or cname == "postinst":
+                traceMsg("linking %s to %s" % (comCname, ldName))
+                if isRoot and isExe(comCname):
+                    posix.link(comCname, ldName)
+                else:
+                    with open(ldName, "w") as out:
+                        if cname == "postinst" and fileUser != "root":
+                            for nm in os.listdir("stage"):
+                                t = getParam( '["directoryTreeTops"]["/' + nm + '"]', "n/a" )
+                                if t == "n/a":
+                                    t = "/" + nm
+                                print("chown -R '%s:%s' '%s'" % (fileUser, fileGroup, t), file=out)
+                                print("find '%s' -type d -exec chmod 755 {} +" % t, file=out)
+                                print("find '%s' ! -type d -exec chmod 644 {} +" % t, file=out)
+                            # list each executable file separately
+                            for fname in genFileList("stage", isFileExe):
+                                fname = fname[6:] # remove 'stage/' from beginning
+                                print("chmod 755 '/%s'" % fname, file=out)
+
+                        if isExe(comCname):
+                            with open(comCname, "r") as inp:
+                                print("gawk '{\n" +
+                                      "    f = $0\n" +
+                                      "    for (i = 1; i <= length(f); i+=2) {\n" +
+                                      "        printf(\"%c\", strtonum(\"0X\" substr(f,i,2)))\n" +
+                                      "    }\n" +
+                                                "}' > /tmp/rep.$$ <<EOF", file=out)
+                                for line in inp:
+                                    for c in line:
+                                        # print(">>%02x<<" % ord(c))
+                                        print("%02x" % ord(c), file=out, end="")
+                                    print("", file=out)
+                                print("EOF\n" +
+                                      "chmod a+x /tmp/rep.$$\n" +
+                                      "su " + execUser + " -c /tmp/rep.$$\n" +
+                                      "rm -f /tmp/rep.$$\n", file=out)
+                    verboseOsSystem("chmod a+x " + ldName)
+
+            elif os.path.exists(comCname):
+                die(comCname + " must be executable")
+
+        cdCheck(TMPROOT)
+
+        if args.skipbuild:
+            traceMsg('Skipping final build')
+            return
+
+        verboseOsSystem(". '%s'; fakeroot -- dpkg-deb --verbose --build '%s'" % (args.environfile, L))
+        os.makedirs(args.outputdirectory, exist_ok = True)
+        os.rename("debian.deb", outdirApplVerBnbrSuffix)
+
+        if not os.path.exists(outdirApplVerBnbrSuffix):
+            infoMsg( "Unsuccesful in building %s" % applVerBnbrSuffix)
+            return
+
+        infoMsg( "Successfully built %s" % applVerBnbrSuffix)
+
+    if args.upload:
+        envName = "REPACKAGEDEBIANUPLOAD"
+        groupId = getParam('["debian"]["groupId"]', getParam('["groupId"]'))
+        uploadAll(envName, groupId, outdirApplVerBnbrSuffix, suffix, applVer, applVerSuffix)
+
+def buildTar(useGzip):
+    """ Build a local tarball formatted package """
+    infoMsg( 'Building a tar package ...' )
+    global args, TMPROOT, ROOTDIR
+    if args.skipexecution:
+        return
+
+    suffix = "tgz" if useGzip else "tar"
+    applVer, applVerBnbr, applVerBnbrSuffix, applVerSuffix, outdirApplVerBnbrSuffix = genApplVerBnbrSuffix(suffix, '{buildnumber}')
+
+    if args.usecache and os.path.isfile(outdirApplVerBnbrSuffix):
+        infoMsg( "Already built %s" % applVerBnbrSuffix)
+
+    else:
+        L = TMPROOT + "/" + suffix
+        LD = L + "/" + applVerBnbr
+        removeDirPath(L, prmsg = args.verbose, gone_ok = True)
+        os.makedirs(LD, exist_ok = True)
+
+        cdCheck(ROOTDIR + "/stage")
+        for i in os.listdir():
+            if not i.startswith("."):
+                lndir(i, LD)
+
+        cdCheck(L)
+
+        if args.skipbuild:
+            traceMsg('Skipping final build')
+            return
+
+        taropts = "-zc" if useGzip else "-c"
+        if args.verbose: taropts += "v" 
+        taropts += "f"
+        verboseOsSystem(". '%s'; fakeroot -- tar %s tar.%s %s" % (args.environfile, taropts, suffix, applVerBnbr))
+        os.makedirs(args.outputdirectory, exist_ok = True)
+        if args.verbose:
+            print("renaming tar.%s to %s" % (suffix, outdirApplVerBnbrSuffix))
+        os.rename("tar.%s" % suffix, outdirApplVerBnbrSuffix)
+
+        if not os.path.exists(outdirApplVerBnbrSuffix):
+            infoMsg( "Unsuccesful in building %s" % applVerBnbrSuffix)
+            return
+
+        infoMsg( "Successfully built %s" % applVerBnbrSuffix)
+
+
+    if args.upload:
+        envName = "REPACKAGETGZUPLOAD" if useGzip else "REPACKAGETARUPLOAD"
+        groupId = getParam('["%s"]["groupId"]' % suffix, getParam('["groupId"]'))
+        uploadAll(envName, groupId, outdirApplVerBnbrSuffix, suffix, applVer, applVerSuffix)
+
+def buildDocker():
+    """ Build a DOCKER image """
+    image = getParam( '["docker"]["image"]', "n/a" )
+    if image == "n/a":
+        global APPL
+        image = APPL
+    tag = getParam( '["docker"]["tag"]' )
+
+    infoMsg( 'Building a (local) docker image ...' )
+    global args, TMPROOT
+    if args.skipexecution:
+        return
+
+    L = TMPROOT + "/docker"
+    createDockerTempFiles(L)
+
+    if args.skipbuild:
+        traceMsg('Skipping final build')
+        return
+
+    cdCheck(L)
+    verboseOsSystem(". '%s'; docker build -t '%s:%s' ." % (args.environfile, image, tag))
+
+    if args.upload:
+       uploadDocker(image,tag)
+
+
+def strToBool(string):
+    return True if (type(string) is str and string == "true") else False if (type(string) is str and string == "false") else string
+
+def main():
+    """ the main executable function """
+
+    #
+    # deal with the program arguments -
+    # we build two different types of argument lists based on
+    # context. jenkins requires positional arguments while linux cmd line
+    # permits parameterized ones. the jenkins positional argument list is
+    # smaller
+    #
+    parser = argparse.ArgumentParser(
+        description="Build the specified packages. 'package-type' is one or more of " +
+        "docker, debian, tar, tgz" +
+        " (comma-separated), or 'all' to build all of them."
+    )
+
+    REPACKAGEYAML = "repackage.yaml"
+    REPACKAGEJSON = "repackage.json"
+    if os.environ.get("JENKINS"):
+        parser.add_argument("packagetype",help= "debian" +
+                            "|docker|tar|tgz" +
+                            "|all")
+        parser.add_argument("upload",help="upload package to appropriate repository",nargs='?',default="false")
+        parser.add_argument("directory", type=str, help="where to find the stage directory and %s. Defaults to '.'" % REPACKAGEYAML, default=".",nargs='?')
+        parser.add_argument("environfile", type=str, help="Optional environment file. Overrides $REPACKAGEENVFILE, defaults to /dev/null", default="/dev/null", nargs='?')
+        parser.add_argument("outputdirectory", type=str, help="Output directory. Defaults to 'output' under --directory path.", default=None, nargs='?')
+        parser.add_argument("verbose",help="turn on verbosity",nargs='?',default="true")
+        parser.add_argument("skipexecution",help="indcate packages and exit ",nargs='?',default="false")
+        parser.add_argument("skipbuild",help="skip actually bulding the packages",nargs='?',default="false")
+        parser.add_argument("usecache",help="if debian/tar/tgz artifact already exists use it",nargs='?',default="false")
+        parser.add_argument("keeptempfiles",help="keep temp files at exit",nargs='?',default="false")
+    else:
+        parser.add_argument("-n", "--skipexecution", help="indicate the packages and exit", action="store_true")
+        parser.add_argument("-c", "--usecache", help="if a debian/tar/tgz artifact already exists use it", action="store_true")
+        parser.add_argument("-N", "--skipbuild", help="skip actually building the packages", action="store_true")
+        parser.add_argument("-K", "--keeptempfiles", help="keep temp files at exit", action="store_true")
+        parser.add_argument("-v", "--verbose", help="turn on verbosity", action="store_true")
+        parser.add_argument("-b", "--packagetype", type=str, help="""The package-type may be specified multiple times or may use a ','-separated
+        or space-separated list. 'all' is an alias for all of them. Potential values are debian, docker""" +
+                            ", tar or tgz", required=True)
+        parser.add_argument("-u", "--upload", action="store_true", help="""Depending on package type -- docker, debian, tar or tgz -- uploads the artifact to a remote repository.
+        For Docker, uses $DOCKERREGISTRY as the remote repository to push the image.
+
+        For Debian, uses $REPACKAGEDEBIANUPLOAD as the command, with {0} as the local path to the debian image, {1} as the image name with build number,
+        and optionally {2} as groupId (may be used as part of the directory path), {3} as the image name without the build number, and {4}
+        as the image name with no build number and no .deb suffix.
+        For additional uploads, this will also look for $REPACKAGEDEBIANUPLOAD2, $REPACKAGEDEBIANUPLOAD3, etc., and repeat the upload.
+
+        For tar, uses $REPACKAGETARUPLOAD as the command. Everything said about $REPACKAGEDEBIANUPLOAD applies to $REPACKAGETARUPLOAD.
+        For tgz, uses $REPACKAGETGZUPLOAD as the command. Everything said about $REPACKAGEDEBIANUPLOAD applies to $REPACKAGETGZUPLOAD.
+
+        In addition, if --multipleuploadversions is used, the above will be executed using the list of upload version numbers specified there.
+
+        This is typically used to create multiple versions (using --multipleuploadversions) on multiple remote repositories (using $REPACKAGE*UPLOAD).
+        """)
+        # For additional uploads, repackage will also look for $DOCKERREGISTRY2, $DOCKERREGISTRY3, etc.
+        parser.add_argument("-d", "--directory", type=str, help="where to find the stage directory and %s. Defaults to '.'" % REPACKAGEYAML, default=".")
+        parser.add_argument("-e", "--environfile", type=str, help="Optional environment file. Overrides $REPACKAGEENVFILE, defaults to /dev/null", default="/dev/null")
+        parser.add_argument("-o", "--outputdirectory", type=str, help="Output directory. Defaults to 'output' under --directory path.", default=None)
+        parser.add_argument("-y", "--repackageyaml", type=str, help="Name of parameter file. Defaults to '" + REPACKAGEYAML + "' or '" + REPACKAGEJSON + "' under --directory path.", default=REPACKAGEYAML)
+        parser.add_argument("-B", "--buildnumber", type=str, help="Build number. Defaults to $BUILD_NUMBER, which defaults to a date-based string.", default="")
+        parser.add_argument("-D", "--define", type=str, action='append', help="define an argument at runtime in key=value format")
+        parser.add_argument("-M", "--multipleuploadversions", type=str, help="Use multiple versions for upload. Comma-separated list of {datetime}, {buildnumber} or arbitrary strings. Defaults to {buildnumber}, which is the value from --buildnumber.", default="{buildnumber}")
+
+    global args
+    args = parser.parse_args()
+
+    # for some reason, the Jenkins branch leaves these as strings instead of the proper boolean values
+    args.upload = strToBool(args.upload)
+    args.verbose = strToBool(args.verbose)
+    args.skipexecution = strToBool(args.skipexecution)
+    args.skipbuild = strToBool(args.skipbuild)
+    args.usecache = strToBool(args.usecache)
+    args.keeptempfiles = strToBool(args.keeptempfiles)
+
+    # arguments defined at runtime as key=value pairs
+    global rtdef 
+    rtdef = {}
+
+    if args.define: 
+        for k in args.define:
+            tag, val = k.split("=")
+            rtdef[tag] = val
+
+    for k, v in rtdef.items():
+        traceMsg("runtime defined %s <- %s" % (k,v))
+    
+    # check the -e/$REPACKAGEENVFILE value
+    if args.environfile == "":
+        if os.environ.get("REPACKAGEENVFILE") is not None:
+            args.environfile = os.environ["REPACKAGEENVFILE"]
+    if not os.path.isfile(args.environfile) and args.environfile != "/dev/null":
+        die("-e / $REPACKAGEENVFILE must be a file that can be sourced by the shell")
+    if not args.environfile.startswith("/"):
+        args.environfile = os.getcwd() + "/" + args.environfile
+
+    allPackages = [ "debian", "tar", "tgz",
+                    "docker" ]
+    args.builds = { }
+    for pkg in allPackages:
+        args.builds[pkg] = False
+    if args.packagetype == "all":
+        args.packagetype = ",".join(allPackages)
+    for build in re.split("[, \t]", args.packagetype):
+        args.builds[build] = True
+
+    args.allUploadVersions = args.multipleuploadversions.split(",")
+
+    if args.upload and args.builds["debian"]:
+        if os.environ.get("REPACKAGEDEBIANUPLOAD") is None:
+            die("-u requires $REPACKAGEDEBIANUPLOAD to be set when building debian")
+        elif not re.search("[{]0[}]", os.environ.get("REPACKAGEDEBIANUPLOAD")):
+            die("$REPACKAGEDEBIANUPLOAD is missing {0}")
+        elif not re.search("[{][13][}]", os.environ.get("REPACKAGEDEBIANUPLOAD")):
+            die("$REPACKAGEDEBIANUPLOAD is missing either {1}, {3} or {4}")
+
+    if args.upload and args.builds["tar"]:
+        if os.environ.get("REPACKAGETARUPLOAD") is None:
+            die("-u requires $REPACKAGETARUPLOAD to be set when building tar")
+        elif not re.search("[{]0[}]", os.environ.get("REPACKAGETARUPLOAD")):
+            die("$REPACKAGETARUPLOAD is missing {0}")
+        elif not re.search("[{][134][}]", os.environ.get("REPACKAGETARUPLOAD")):
+            die("$REPACKAGETARUPLOAD is missing either {1}, {3} or {4}")
+
+    if args.upload and args.builds["tgz"]:
+        if os.environ.get("REPACKAGETGZUPLOAD") is None:
+            die("-u requires $REPACKAGETGZUPLOAD to be set when building tgz")
+        elif not re.search("[{]0[}]", os.environ.get("REPACKAGETGZUPLOAD")):
+            die("$REPACKAGETGZUPLOAD is missing {0}")
+        elif not re.search("[{][134][}]", os.environ.get("REPACKAGETGZUPLOAD")):
+            die("$REPACKAGETGZUPLOAD is missing either {1}, {3} or {4}")
+
+    if args.upload and args.builds["docker"] and os.environ.get("DOCKERREGISTRY") is None:
+        die("-u requires $DOCKERREGISTRY to be set when building docker")
+
+    if not os.path.isdir(args.directory):
+        die("The root directory %s does not exist" % args.directory)
+    if not args.directory.startswith("/"):
+        args.directory = os.getcwd() + "/" + args.directory
+    if args.repackageyaml != REPACKAGEYAML:
+        if not os.path.exists(args.directory + "/" + args.repackageyaml):
+            die("The file %s/%s does not exist" % (args.directory, args.repackageyaml))
+    else:
+        if os.path.exists(args.directory + "/" + REPACKAGEYAML):
+            args.repackageyaml = REPACKAGEYAML
+        elif os.path.exists(args.directory + "/" + REPACKAGEJSON):
+            args.repackageyaml = REPACKAGEJSON
+        else:
+            die("Either %s/%s or %s/%s must exist" % (args.directory, args.repackageyaml, args.directory, args.repackagejson))
+
+    if args.outputdirectory is None:
+        args.outputdirectory = args.directory + "/output"
+    else:
+        if not args.outputdirectory.startswith("/"):
+            args.outputdirectory = os.getcwd() + "/" + args.outputdirectory
+        if not os.path.isdir(args.outputdirectory):
+            die("The specified --outputdirectory %s does not exist" % args.outputdirectory)
+
+    # establish some global variables used everywhere
+    global ROOTDIR, TMPROOT
+    ROOTDIR = args.directory
+    TMPROOT = args.directory + "/tmp"
+
+    # and cd to our ROOTDIR
+    cdCheck(ROOTDIR)
+
+    # unless -K is specified, remove any temp files at the end
+    if not args.keeptempfiles:
+        atexit.register(cleanupTmpRoot)
+
+    # grab and share some variables that are used by lots of build functions
+    global APPL, MAINTAINER, VER, BNBR, TIMESTAMP
+    APPL = getParam( '["applicationName"]' )
+    MAINTAINER = getParam( '["maintainer"]' )
+    VER = getParam( '["version"]' )
+    TIMESTAMP = time.strftime("%Y%m%d%H%M%S")
+    BNBR = args.buildnumber if args.buildnumber != "" else os.environ.get("BUILD_NUMBER") if os.environ.get("BUILD_NUMBER") is not None else TIMESTAMP
+
+    # build whatever was requested
+    if args.builds["docker"]:
+        buildDocker()
+    if args.builds["debian"]:
+        buildDebian()
+    if args.builds["tar"]:
+        buildTar(False)
+    if args.builds["tgz"]:
+        buildTar(True)
+
+if __name__ == "__main__":
+    main()
