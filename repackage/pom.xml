@@ -26,8 +26,8 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   <groupId>org.onap.dcaegen2.utils</groupId>
-  <artifactId>python-discovery-client</artifactId>
-  <name>python-discovery-client</name>
+  <artifactId>repackage</artifactId>
+  <name>repackage</name>
   <version>1.0.0-SNAPSHOT</version>
   <url>http://maven.apache.org</url>
 
@@ -72,7 +72,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
           </configuration>
         </plugin>
         <!-- first disable the default Java plugins at various stages -->
-        <!-- maven-resources-plugin is called during "*resource" phases by default behavior.  it prepares 
+        <!-- maven-resources-plugin is called during "*resource" phases by default behavior.  it prepares
          the resources dir.  we do not need it -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -103,7 +103,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
             </execution>
           </executions>
         </plugin>
-        <!-- maven-install-plugin is called during "install" phase by default behavior.  it tries to copy stuff under 
+        <!-- maven-install-plugin is called during "install" phase by default behavior.  it tries to copy stuff under
          target dir to ~/.m2.  we do not need it -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -258,6 +258,10 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
               <arguments>
                 <argument>${project.artifactId}</argument>
                 <argument>deploy</argument>
+                <argument>bin/repackage</argument>
+                <argument>bin/yamltojson</argument>
+                <argument>man/repackage.1</argument>
+                <argument>man/yamltojson.1</argument>
               </arguments>
             </configuration>
           </execution>
