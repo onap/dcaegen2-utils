@@ -131,9 +131,9 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
             <executable>${session.executionRootDirectory}/mvn-phase-script.sh</executable>
             <environmentVariables>
               <!-- make mvn properties as env for our script -->
-              <MVN_PROJECT_GROUPID>${parent.groupId}</MVN_PROJECT_GROUPID>
-              <MVN_PROJECT_ARTIFACTID>${parent.artifactId}</MVN_PROJECT_ARTIFACTID>
-              <MVN_PROJECT_VERSION>${parent.version}</MVN_PROJECT_VERSION>
+              <MVN_PROJECT_GROUPID>${project.parent.groupId}</MVN_PROJECT_GROUPID>
+              <MVN_PROJECT_ARTIFACTID>${project.parent.artifactId}</MVN_PROJECT_ARTIFACTID>
+              <MVN_PROJECT_VERSION>${project.parent.version}</MVN_PROJECT_VERSION>
               <MVN_NEXUSPROXY>${onap.nexus.url}</MVN_NEXUSPROXY>
               <MVN_RAWREPO_BASEURL_UPLOAD>${onap.nexus.rawrepo.baseurl.upload}</MVN_RAWREPO_BASEURL_UPLOAD>
               <MVN_RAWREPO_BASEURL_DOWNLOAD>${onap.nexus.rawrepo.baseurl.download}</MVN_RAWREPO_BASEURL_DOWNLOAD>

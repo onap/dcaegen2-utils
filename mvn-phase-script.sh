@@ -22,7 +22,7 @@
 echo "running script: [$0] for module [$1] at stage [$2]"
 
 echo "=> Prepare environment "
-#env
+env
 
 TIMESTAMP=$(date +%C%y%m%dT%H%M%S) 
 export BUILD_NUMBER="${TIMESTAMP}"
@@ -33,7 +33,7 @@ if [ -z "${MVN_NEXUSPROXY}" ]; then
     exit
 fi
 MVN_NEXUSPROXY_HOST=$(echo "$MVN_NEXUSPROXY" |cut -f3 -d'/' | cut -f1 -d':')
-echo "=> Nexu Proxy at $MVN_NEXUSPROXY_HOST, $MVN_NEXUSPROXY"
+echo "=> Nexus Proxy at $MVN_NEXUSPROXY_HOST, $MVN_NEXUSPROXY"
 
 # use the version text detect which phase we are in in LF CICD process: verify, merge, or (daily) release
 
