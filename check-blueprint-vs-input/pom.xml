@@ -26,8 +26,8 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   <groupId>org.onap.dcaegen2.utils</groupId>
-  <artifactId>python-discovery-client</artifactId>
-  <name>python-discovery-client</name>
+  <artifactId>check-blueprint-vs-input</artifactId>
+  <name>check-blueprint-vs-input</name>
   <version>1.0.0-SNAPSHOT</version>
   <url>http://maven.apache.org</url>
 
@@ -245,6 +245,8 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
               <arguments>
                 <argument>${project.artifactId}</argument>
                 <argument>install</argument>
+                <argument>bin/check-blueprint-vs-input</argument>
+                <argument>man/check-blueprint-vs-input.1</argument>
               </arguments>
             </configuration>
           </execution>
@@ -258,6 +260,8 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
               <arguments>
                 <argument>${project.artifactId}</argument>
                 <argument>deploy</argument>
+                <argument>bin/check-blueprint-vs-input</argument>
+                <argument>man/check-blueprint-vs-input.1</argument>
               </arguments>
             </configuration>
           </execution>
