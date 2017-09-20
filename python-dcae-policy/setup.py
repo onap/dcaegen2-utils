@@ -19,15 +19,15 @@
 #
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
-    name='dcaepolicy',
+    name='onap-dcae-dcaepolicy-lib',
     description='lib of policy decorators to be used by cloudify plugins of dcae controller',
     version="1.0.0",
     author='Alex Shatov',
-    email="dcae@lists.openecomp.org",
-    packages=['dcaepolicy'],
+    email="alexs@research.att.com",
+    packages=find_packages(),
     install_requires=[
     ],
     keywords='policy dcae controller cloudify plugin',

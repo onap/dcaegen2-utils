@@ -18,15 +18,15 @@
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
-    name='python-dockering',
+    name='onap-dcae-dockering-lib',
     description='Library used to manage Docker containers in DCAE',
     version="1.3.0",
     author="Michael Hwang",
-    email="dcae@lists.openecomp.org",
-    packages=['dockering'],
+    author_email="mhwang@research.att.com",
+    packages=find_packages(),
     zip_safe=False,
     install_requires=[
         "docker-py>=1.0.0,<2.0.0",

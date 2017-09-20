@@ -26,12 +26,12 @@ install_reqs = parse_requirements("requirements.txt", session=PipSession())
 reqs = [str(ir.req) for ir in install_reqs]
 
 setup(
-    name = "cbs_docker_client",
+    name = "onap-dcae-cbs_docker_client-lib",
     description = "very lightweight client for a DCAE dockerized component to get it's config from the CBS",
     version = "0.0.1",
     packages=find_packages(),
     author = "Tommy Carpenter",
-    author_email = "tommy at eh tee tee.com",
+    author_email = "tommy@research.att.com",
     license = "",
     keywords = "",
     url = "",
