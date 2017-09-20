@@ -254,9 +254,9 @@ upload_raw_file()
     echo "Unreconfnized deployment type, quit"
     exit
   fi
-  if [ ! -z "$MVN_PROJECT_MODULEID" ]; then
-    SEND_TO="$SEND_TO/$MVN_PROJECT_MODULEID"
-  fi
+  #if [ ! -z "$MVN_PROJECT_MODULEID" ]; then
+  #  SEND_TO="$SEND_TO/$MVN_PROJECT_MODULEID"
+  #fi
 
   echo "Sending ${OUTPUT_FILE} to Nexus: ${SEND_TO}"
   curl -vkn --netrc-file "${NETRC}" --upload-file "${OUTPUT_FILE}" -X PUT -H "Content-Type: $OUTPUT_FILE_TYPE" "${SEND_TO}/${OUTPUT_FILE}-${MVN_PROJECT_VERSION}-${TIMESTAMP}"

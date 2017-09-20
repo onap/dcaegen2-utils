@@ -123,26 +123,6 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
             <skipTests>true</skipTests>
           </configuration>
         </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <version>1.2.1</version>
-          <configuration>
-            <executable>${session.executionRootDirectory}/mvn-phase-script.sh</executable>
-            <environmentVariables>
-              <!-- make mvn properties as env for our script -->
-              <MVN_PROJECT_GROUPID>${project.parent.groupId}</MVN_PROJECT_GROUPID>
-              <MVN_PROJECT_ARTIFACTID>${project.parent.artifactId}</MVN_PROJECT_ARTIFACTID>
-              <MVN_PROJECT_VERSION>${project.parent.version}</MVN_PROJECT_VERSION>
-              <MVN_NEXUSPROXY>${onap.nexus.url}</MVN_NEXUSPROXY>
-              <MVN_RAWREPO_BASEURL_UPLOAD>${onap.nexus.rawrepo.baseurl.upload}</MVN_RAWREPO_BASEURL_UPLOAD>
-              <MVN_RAWREPO_BASEURL_DOWNLOAD>${onap.nexus.rawrepo.baseurl.download}</MVN_RAWREPO_BASEURL_DOWNLOAD>
-              <MVN_RAWREPO_SERVERID>${onap.nexus.rawrepo.serverid}</MVN_RAWREPO_SERVERID>
-              <MVN_DOCKERREGISTRY_DAILY>${onap.nexus.dockerregistry.daily}</MVN_DOCKERREGISTRY_DAILY>
-              <MVN_DOCKERREGISTRY_RELEASE>${onap.nexus.dockerregistry.release}</MVN_DOCKERREGISTRY_RELEASE>
-            </environmentVariables>
-          </configuration>
-        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>

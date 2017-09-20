@@ -56,7 +56,7 @@ case $MVN_PHASE in
 clean)
   echo "==> clean phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage) 
+  check-blueprint-vs-input | repackage)
     if [ -f makefile -o -f Makefile ];then make clean; else :; fi
     ;;
   *)
@@ -69,7 +69,7 @@ clean)
 generate-sources)
   echo "==> generate-sources phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage) 
+  check-blueprint-vs-input | repackage)
     if [ -f makefile -o -f Makefile ];then make generate-sources; else :; fi
     ;;
   *)
@@ -80,7 +80,7 @@ generate-sources)
 compile)
   echo "==> compile phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage) 
+  check-blueprint-vs-input | repackage)
     if [ -f makefile -o -f Makefile ];then make compile; else :; fi
     ;;
   *)
@@ -90,7 +90,7 @@ compile)
 test)
   echo "==> test phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage) 
+  check-blueprint-vs-input | repackage)
     if [ -f makefile -o -f Makefile ];then make test; else :; fi
     ;;
   *)
@@ -103,7 +103,7 @@ test)
 package)
   echo "==> package phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage) 
+  check-blueprint-vs-input | repackage)
     if [ -f makefile -o -f Makefile ];then make package; else :; fi
     ;;
   *)
@@ -113,7 +113,7 @@ package)
 install)
   echo "==> install phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage) 
+  check-blueprint-vs-input | repackage)
     if [ -f makefile -o -f Makefile ];then make install; else :; fi
     ;;
   *)
@@ -123,7 +123,7 @@ install)
 deploy)
   echo "==> deploy phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage) 
+  check-blueprint-vs-input | repackage)
     if [ -f makefile -o -f Makefile ];then make deploy
     else 
       # Upload all files (listed as additional deployment arguments) to Nexus
@@ -136,7 +136,10 @@ deploy)
     fi
     ;;
   *)
-    generate_pypirc_then_publish
+    # uncomment after we figure out how to use pypi.  this command expects that the credentials are passed in
+    # settings.xml, and the URL and serverid are passed in from either oparent or dcaegen2's root pom
+    # before this is ready comment below out
+    #generate_pypirc_then_publish
     ;;
   esac
   ;;
