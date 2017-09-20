@@ -22,12 +22,12 @@ from pip.req import parse_requirements
 from pip.download import PipSession
 
 setup(
-        name = "python-discovery-client",
+        name = "onap-dcae-discovery-client",
         version = "2.1.0",
         packages = find_packages(),
         author = "Michael Hwang",
         email="dcae@lists.openecomp.org",
-        description = ("Python client to be used by service components for discovery"),
+        description = ("Library of discovery functionality"),
         install_requires = [
             'python-consul>=0.6.0,<1.0.0',
             'requests>=2.11.0,<3.0.0',

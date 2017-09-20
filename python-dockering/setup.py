@@ -21,7 +21,7 @@ import os
 from setuptools import setup
 
 setup(
-    name='python-dockering',
+    name='onap-dcae-dockering',
     description='Library used to manage Docker containers in DCAE',
     version="1.3.0",
     author="Michael Hwang",

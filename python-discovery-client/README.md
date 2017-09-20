@@ -1,2 +1,3 @@
-# python-discovery-client
-Python client to be used by service components for discovery
+# onap-dcae-discovery-client
+
+Library of discovery functionality
