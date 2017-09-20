@@ -34,7 +34,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
   <packaging>pom</packaging>
   <modules>
      <module>onap-dcae-cbs-docker-client</module>
-     <module>python-dcae-policy</module>
+     <module>onap-dcae-dcaepolicy-lib</module>
      <module>python-discovery-client</module>
      <module>python-dockering</module>
      <module>check-blueprint-vs-input</module>
