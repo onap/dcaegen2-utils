@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Alex Shatov <alexs@att.com>
+Code-Review+2: Lusheng Ji <lji@research.att.com>
+Submitted-by: Lusheng Ji <lji@research.att.com>
+Submitted-at: Wed, 20 Sep 2017 21:23:38 +0000
+Reviewed-on: http://gerrit.onap.org/r/13955
+Project: dcaegen2/utils
+Branch: refs/heads/master
