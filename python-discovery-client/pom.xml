@@ -21,19 +21,18 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.onap.dcaegen2</groupId>
+    <groupId>org.onap.dcaegen2.utils</groupId>
     <artifactId>utils</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   <groupId>org.onap.dcaegen2.utils</groupId>
   <artifactId>python-discovery-client</artifactId>
-  <name>python-discovery-client</name>
+  <name>dcaegen2-utils-python-discovery-client</name>
   <version>1.0.0-SNAPSHOT</version>
   <url>http://maven.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sonar.skip>true</sonar.skip>
     <sonar.sources>.</sonar.sources>
     <!-- customize the SONARQUBE URL -->
     <!-- sonar.host.url>http://localhost:9000</sonar.host.url -->
