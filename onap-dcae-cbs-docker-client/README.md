@@ -11,7 +11,7 @@ To test your raw code without Docker, you will need to set the env variables CON
 
 ## Usage in your code
 ```
->>> from cbs_docker_client import client
+>>> from onap_dcae_cbs_docker_client import client
 >>> client.get_config()
 ```
 
@@ -26,6 +26,6 @@ pip install --extra-index-url https://YOUR_NEXUS_PYPI_SERVER/simple cbs-docker-c
 Add the following to your requirements.txt file
 ```
 --extra-index-url https://YOUR_NEXUS_PYPI_SERVER/simple
-cbs-docker-client==0.0.1
+onap-dcae-cbs-docker-client==[version]
 ```
 
