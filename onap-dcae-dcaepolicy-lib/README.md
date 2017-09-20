@@ -1,4 +1,4 @@
-# dcaepolicy - policy in dcae controller
+# onap_dcae_dcaepolicy_lib - policy in dcae controller
 - python-package to be used in cloudify plugins to maintain the policies lifecycle
 
 ## [setup pypi connection](./nexus_pypi.md) to **nexus** repo server
@@ -21,14 +21,14 @@
 **requirements.txt**
 ```python
 --extra-index-url https://YOUR_NEXUS_PYPI_SERVER/simple
-dcaepolicy
+onap-dcae-dcaepolicy-lib
 ```
 
 **tasks.py**
 - import
 
 ```python
-from dcaepolicy import Policies
+from onap_dcae_dcaepolicy_lib import Policies
 ```
 
 # examples of **@operation** with **@Policies.<>** decorator
@@ -61,11 +61,11 @@ Then the dcaepolicyplugin will bring the latest policy to the dcae.nodes.policy 
 ```yaml
 cloudify.interfaces.lifecycle:
     configure:
-        implementation: dcae_policy_plugin.dcaepolicy.node_configure
+        implementation: dcae_policy_plugin.onap_dcae_dcaepolicy_lib.node_configure
 ```
 
 ```python
-from dcaepolicy import Policies, POLICIES
+from onap_dcae_dcaepolicy_lib import Policies, POLICIES
 from .discovery import DiscoveryClient
 from .demo_app import DemoApp
 
@@ -119,7 +119,7 @@ def node_configure(**kwargs):
 ```yaml
 dcae.interfaces.policy:
     policy_update:
-        implementation: dcae_policy_plugin.dcaepolicy.policy_update
+        implementation: dcae_policy_plugin.onap_dcae_dcaepolicy_lib.policy_update
 ```
 
 execute-operation **policy-update** that gets a list of changed policy-configs

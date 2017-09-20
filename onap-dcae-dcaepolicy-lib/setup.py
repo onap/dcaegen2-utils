@@ -22,12 +22,12 @@
 from setuptools import setup
 
 setup(
-    name='dcaepolicy',
+    name='onap_dcae_dcaepolicy_lib',
     description='lib of policy decorators to be used by cloudify plugins of dcae controller',
     version="1.0.0",
     author='Alex Shatov',
     email="dcae@lists.openecomp.org",
-    packages=['dcaepolicy'],
+    packages=['onap_dcae_dcaepolicy_lib'],
     install_requires=[
     ],
     keywords='policy dcae controller cloudify plugin',
