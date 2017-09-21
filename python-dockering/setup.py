@@ -24,6 +24,7 @@ setup(
     name='onap-dcae-dockering',
     description='Library used to manage Docker containers in DCAE',
     version="1.3.0",
+    license='Apache 2',
     author="Michael Hwang",
     email="dcae@lists.openecomp.org",
     packages=['dockering'],

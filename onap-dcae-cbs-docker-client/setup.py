@@ -31,8 +31,8 @@ setup(
     version = "0.0.2",
     packages=find_packages(),
     author = "Tommy Carpenter",
-    author_email = "tommy at eh tee tee.com",
-    license = "",
+    author_email = "tommy@research.att.com",
+    license='Apache 2',
     keywords = "",
     url = "",
     install_requires=reqs

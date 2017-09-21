@@ -28,6 +28,7 @@ setup(
         author = "Michael Hwang",
         email="dcae@lists.openecomp.org",
         description = ("Library of discovery functionality"),
+        license='Apache 2',
         install_requires = [
             'python-consul>=0.6.0,<1.0.0',
             'requests>=2.11.0,<3.0.0',
