@@ -27,7 +27,7 @@ setup(
     version="1.0.0",
     author='Alex Shatov',
     license='Apache 2',
-    email="dcae@lists.openecomp.org",
+    email="alexs@research.att.com",
     packages=['onap_dcae_dcaepolicy_lib'],
     install_requires=[
     ],

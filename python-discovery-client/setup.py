@@ -26,7 +26,7 @@ setup(
         version = "2.1.0",
         packages = find_packages(),
         author = "Michael Hwang",
-        email="dcae@lists.openecomp.org",
+        email="mhwang@research.att.com",
         description = ("Library of discovery functionality"),
         license='Apache 2',
         install_requires = [

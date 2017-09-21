@@ -26,7 +26,7 @@ setup(
     version="1.3.0",
     license='Apache 2',
     author="Michael Hwang",
-    email="dcae@lists.openecomp.org",
+    email="mhwang@research.att.com",
     packages=['dockering'],
     zip_safe=False,
     install_requires=[

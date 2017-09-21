@@ -114,7 +114,7 @@ expand_templates()
   export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_blueprints_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.blueprints/releases"
   export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_blueprints_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.blueprints/snapshots"
 
-  export ONAPTEMPLATE_PYPIURL_org_onap_dcaegen2="${MVN_NEXUSPROXY}/content/sites/pypi"
+  export ONAPTEMPLATE_PYPIURL_org_onap_dcaegen2="$MVN_PYPISERVER_BASEURL"
 
   export ONAPTEMPLATE_DOCKERREGURL_org_onap_dcaegen2_releases="$MVN_DOCKERREGISTRY_DAILY"
   export ONAPTEMPLATE_DOCKERREGURL_org_onap_dcaegen2_snapshots="$MVN_DOCKERREGISTRY_DAILY/snapshots"
@@ -247,16 +247,16 @@ upload_raw_file()
 
 
   if [ "$MVN_DEPLOYMENT_TYPE" == 'SNAPSHOT' ]; then
-    SEND_TO="${REPO}/${FQDN}/snapshots"
+    SEND_TO="${REPO}/${MVN_PROJECT_GROUPID}/snapshots"
   elif [ "$MVN_DEPLOYMENT_TYPE" == 'STAGING' ]; then
-    SEND_TO="${REPO}/${FQDN}/releases"
+    SEND_TO="${REPO}/{$MVN_PROJECT_GROUPID}/releases"
   else
     echo "Unreconfnized deployment type, quit"
     exit
   fi
-  #if [ ! -z "$MVN_PROJECT_MODULEID" ]; then
-  #  SEND_TO="$SEND_TO/$MVN_PROJECT_MODULEID"
-  #fi
+  if [ ! -z "$MVN_PROJECT_MODULEID" ]; then
+    SEND_TO="$SEND_TO/$MVN_PROJECT_MODULEID"
+  fi
 
   echo "Sending ${OUTPUT_FILE} to Nexus: ${SEND_TO}"
   curl -vkn --netrc-file "${NETRC}" --upload-file "${OUTPUT_FILE}" -X PUT -H "Content-Type: $OUTPUT_FILE_TYPE" "${SEND_TO}/${OUTPUT_FILE}-${MVN_PROJECT_VERSION}-${TIMESTAMP}"
