@@ -30,7 +30,6 @@ from cloudify.exceptions import NonRecoverableError
 POLICIES = 'policies'
 
 POLICY_ID = 'policy_id'
-POLICY_APPLY_MODE = 'policy_apply_mode'
 POLICY_BODY = 'policy_body'
 POLICY_VERSION = "policyVersion"
 POLICY_CONFIG = 'config'

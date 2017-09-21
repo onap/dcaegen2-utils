@@ -1,18 +1,10 @@
-# onap_dcae_dcaepolicy_lib - policy in dcae controller
+# onap-dcae-dcaepolicy-lib - policy in dcae controller
 - python-package to be used in cloudify plugins to maintain the policies lifecycle
 
-## [setup pypi connection](./nexus_pypi.md) to **nexus** repo server
-
-## build = register and upload to nexus repo server
+## upload the python package to pypi server
 
 ```bash
-./dev_run.sh build
-```
-
-## upload the python package to nexus repo server
-
-```bash
-./dev_run.sh upload
+python setup.py sdist upload
 ```
 
 ---
@@ -20,8 +12,7 @@
 
 **requirements.txt**
 ```python
---extra-index-url https://YOUR_NEXUS_PYPI_SERVER/simple
-onap-dcae-dcaepolicy-lib
+onap-dcae-dcaepolicy-lib==1.0.0
 ```
 
 **tasks.py**
