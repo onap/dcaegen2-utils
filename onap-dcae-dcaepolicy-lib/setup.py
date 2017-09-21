@@ -26,6 +26,7 @@ setup(
     description='lib of policy decorators to be used by cloudify plugins of dcae controller',
     version="1.0.0",
     author='Alex Shatov',
+    license='Apache 2',
     email="dcae@lists.openecomp.org",
     packages=['onap_dcae_dcaepolicy_lib'],
     install_requires=[

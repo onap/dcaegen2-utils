@@ -32,7 +32,7 @@ setup(
     packages=find_packages(),
     author = "Tommy Carpenter",
     author_email = "tommy at eh tee tee.com",
-    license = "",
+    license='Apache 2',
     keywords = "",
     url = "",
     install_requires=reqs
