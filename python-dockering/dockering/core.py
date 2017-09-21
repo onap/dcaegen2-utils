@@ -104,7 +104,7 @@ def start_container(client, container):
         # TODO: Have logic to inspect response and through NonRecoverableError
         # when start fails. Docker-py docs don't quickly tell me what the
         # response looks like.
-        response = client.start(container=container["Id"])
+        client.start(container=container["Id"])
         utils.logger.info("Container started: {0}".format(container["Id"]))
 
         # TODO: Maybe check stats?

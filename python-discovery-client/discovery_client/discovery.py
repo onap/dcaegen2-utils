@@ -222,9 +222,7 @@ def _resolve_name(lookup_func, service_name):
 
         # TODO: Need a better way to identify CDAP apps. Really need to make this
         # better.
-        if "platform-" in service_name:
-            return "{0}:{1}".format(ip, port)
-        elif "cdap" in service_name:
+        if "cdap" in service_name:
             redirectish_url = "http://{0}:{1}/application/{2}".format(ip, port,
                     service_name)
 

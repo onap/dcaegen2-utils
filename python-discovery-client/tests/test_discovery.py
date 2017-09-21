@@ -17,7 +17,7 @@
 #
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
-import json, logging
+import six, json, logging
 # http://stackoverflow.com/questions/9623114/check-if-two-unordered-lists-are-equal
 from collections import Counter
 from functools import partial
@@ -65,8 +65,8 @@ def test_get_connection_types():
     assert Counter(expected) == Counter(actual)
 
     # Force strings to be unicode, test for Python2 compatibility
-    config = { "x": "say something".decode("utf-8"), "y": 123,
-            "z": "{{some-analytics}}".decode("utf-8") }
+    config = { "x": six.u("say something"), "y": 123,
+            "z": six.u("{{some-analytics}}") }
     expected = [(("z", ), "some-analytics"), ]
     actual = dis._get_connection_types(config)
     assert Counter(expected) == Counter(actual)
