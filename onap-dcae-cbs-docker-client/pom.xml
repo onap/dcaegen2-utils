@@ -33,21 +33,20 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!--sonar.skip>false</sonar.skip-->
+    <!-- Sonar -->
+    <sonar.skip>false</sonar.skip>
     <sonar.sources>.</sonar.sources>
-    <!-- customize the SONARQUBE URL -->
-    <!-- sonar.host.url>http://localhost:9000</sonar.host.url -->
-    <!-- below are language dependent -->
-    <!-- for Python -->
+    <sonar.junit.reportsPath>xunit-results.xml</sonar.junit.reportsPath>
+    <!-- 
+         <sonar.python.coverage.reportPath>coverage.xml</sonar.python.coverage.reportPath>
+         see https://docs.sonarqube.org/display/PLUG/Python+Coverage+Results+Import
+         Ant pattern describing the path to coverage reports, relative to projects root. Leave unset to use the default ("coverage-reports/coverage-*.xml").
+    -->
     <sonar.language>py</sonar.language>
     <sonar.pluginName>Python</sonar.pluginName>
     <sonar.inclusions>**/*.py</sonar.inclusions>
-    <!-- for JavaScaript -->
-    <!--
-    <sonar.language>js</sonar.language>
-    <sonar.pluginName>JS</sonar.pluginName>
-    <sonar.inclusions>**/*.js</sonar.inclusions>
-    -->
+    <sonar.exclusions>tests/*</sonar.exclusions>
+    <sonar.host.url>http://135.205.228.63:9000</sonar.host.url>
   </properties>
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
