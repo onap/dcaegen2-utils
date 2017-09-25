@@ -41,7 +41,7 @@ def _get_uri_from_consul(consul_url, name):
         logger.error("Exception occured when querying Consul: either could not hit {0} or no service registered. Error code: {1}, Error Text: {2}".format(url, res.status_code, res.text))
         return None
 
-def _get_envs(): 
+def _get_envs():
     """
     Returns HOSTNAME, CONSUL_HOST, CONFIG_BINDING_SERVICE or crashes for caller to deal with
     """
@@ -53,15 +53,15 @@ def _get_envs():
 def get_config():
     """
     This call does not raise an exception if Consul or the CBS cannot complete the request.
-    It logs an error and returns {} if the config is not bindable. 
-    It could be a temporary network outage. Call me again later. 
+    It logs an error and returns {} if the config is not bindable.
+    It could be a temporary network outage. Call me again later.
 
-    It will raise an exception if the necessary env parameters were not set because that is irrecoverable. 
+    It will raise an exception if the necessary env parameters were not set because that is irrecoverable.
     This function is called in my /heatlhcheck, so this will be caught early.
     """
-    
+
     config = {}
- 
+
     HOSTNAME, CONSUL_HOST = _get_envs()
 
     #not sure how I as the component developer is supposed to know consul port
