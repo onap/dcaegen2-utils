@@ -56,9 +56,6 @@ case $MVN_PHASE in
 clean)
   echo "==> clean phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage)
-    if [ -f makefile -o -f Makefile ];then make clean; else :; fi
-    ;;
   *)
     clean_templated_files
     clean_tox_files
@@ -69,9 +66,6 @@ clean)
 generate-sources)
   echo "==> generate-sources phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage)
-    if [ -f makefile -o -f Makefile ];then make generate-sources; else :; fi
-    ;;
   *)
     expand_templates
     ;;
@@ -80,9 +74,6 @@ generate-sources)
 compile)
   echo "==> compile phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage)
-    if [ -f makefile -o -f Makefile ];then make compile; else :; fi
-    ;;
   *)
     ;;
   esac
@@ -90,9 +81,6 @@ compile)
 test)
   echo "==> test phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage)
-    if [ -f makefile -o -f Makefile ];then make test; else :; fi
-    ;;
   *)
     set +e
     run_tox_test
@@ -103,9 +91,6 @@ test)
 package)
   echo "==> package phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage)
-    if [ -f makefile -o -f Makefile ];then make package; else :; fi
-    ;;
   *)
     ;;
   esac
@@ -113,9 +98,6 @@ package)
 install)
   echo "==> install phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage)
-    if [ -f makefile -o -f Makefile ];then make install; else :; fi
-    ;;
   *)
     ;;
   esac
@@ -123,18 +105,6 @@ install)
 deploy)
   echo "==> deploy phase script"
   case $MVN_PROJECT_MODULEID in
-  check-blueprint-vs-input | repackage)
-    if [ -f makefile -o -f Makefile ];then make deploy
-    else 
-      # Upload all files (listed as additional deployment arguments) to Nexus
-      # additional
-      for artifact
-      do
-        upload_raw_file $artifact
-      done
-      set +e +x
-    fi
-    ;;
   *)
     # uncomment after we figure out how to use pypi.  this command expects that the credentials are passed in
     # settings.xml, and the URL and serverid are passed in from either oparent or dcaegen2's root pom
