@@ -33,6 +33,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
   <url>http://maven.apache.org</url>
   <packaging>pom</packaging>
   <modules>
+     <module>scripts</module>
      <module>onap-dcae-cbs-docker-client</module>
      <module>onap-dcae-dcaepolicy-lib</module>
      <module>python-discovery-client</module>

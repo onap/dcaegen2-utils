@@ -45,8 +45,6 @@ if ! wget -O ${PROJECT_ROOT}/mvn-phase-lib.sh \
 fi
 source "${PROJECT_ROOT}"/mvn-phase-lib.sh
 
-cat "${PROJECT_ROOT}"/mvn-phase-lib.sh
-
 
 # This is the base for where "deploy" will upload
 # MVN_NEXUSPROXY is set in the pom.xml
@@ -97,6 +95,9 @@ test)
 package)
   echo "==> package phase script"
   case $MVN_PROJECT_MODULEID in
+  scripts)
+    upload_files_of_extension "sh" "$MVN_PROJECT_MODULEID"
+    ;;
   *)
     ;;
   esac
