@@ -73,7 +73,8 @@ echo "MVN_RAWREPO_BASEURL_DOWNLOAD is    [$MVN_RAWREPO_BASEURL_DOWNLOAD]"
 MVN_RAWREPO_HOST=$(echo "$MVN_RAWREPO_BASEURL_UPLOAD" | cut -f3 -d'/' |cut -f1 -d':')
 echo "MVN_RAWREPO_HOST is                [$MVN_RAWREPO_HOST]"
 echo "MVN_RAWREPO_SERVERID is            [$MVN_RAWREPO_SERVERID]"
-echo "MVN_DOCKERREGISTRY_DAILY is        [$MVN_DOCKERREGISTRY_DAILY]"
+echo "MVN_DOCKERREGISTRY_SNAPSHOT is     [$MVN_DOCKERREGISTRY_SNAPSHOT]"
+echo "MVN_DOCKERREGISTRY_PUBLIC is       [$MVN_DOCKERREGISTRY_PUBLIC]"
 echo "MVN_DOCKERREGISTRY_RELEASE is      [$MVN_DOCKERREGISTRY_RELEASE]"
 
 echo "MVN_PYPISERVER_SERVERID            [$MVN_PYPISERVER_SERVERID]"
@@ -100,6 +101,7 @@ clean_tox_files()
 
 expand_templates() 
 {
+  set +x
   # set up env variables, get ready for template resolution
   # NOTE: CCSDK artifacts do not distinguish REALESE vs SNAPSHOTs
   export ONAPTEMPLATE_RAWREPOURL_org_onap_ccsdk_platform_plugins_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.ccsdk.platform.plugins"
@@ -114,64 +116,99 @@ expand_templates()
   export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_blueprints_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.blueprints/releases"
   export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_blueprints_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.blueprints/snapshots"
 
-  export ONAPTEMPLATE_PYPIURL_org_onap_dcaegen2="$MVN_PYPISERVER_BASEURL"
+  export ONAPTEMPLATE_PYPIURL_org_onap_dcaegen2="${MVN_PYPISERVER_BASEURL}"
 
-  export ONAPTEMPLATE_DOCKERREGURL_org_onap_dcaegen2_releases="$MVN_DOCKERREGISTRY_DAILY"
-  export ONAPTEMPLATE_DOCKERREGURL_org_onap_dcaegen2_snapshots="$MVN_DOCKERREGISTRY_DAILY/snapshots"
+  # docker registry templates are for poll, so use PUBLIC registry
+  export ONAPTEMPLATE_DOCKERREGURL_org_onap_dcaegen2_releases="$MVN_DOCKERREGISTRY_PUBLIC"
+  export ONAPTEMPLATE_DOCKERREGURL_org_onap_dcaegen2_snapshots="${MVN_DOCKERREGISTRY_PUBLIC}/snapshots"
 
+  # Mvn repo
+  export ONAPTEMPLATE_MVN_org_onap_dcaegen2_analytics_tca_snapshots="${MVN_NEXUSPROXY}/service/local/repositories/snapshots/content/org/onap/dcaegen2/analytics/tca"
+  export ONAPTEMPLATE_MVN_org_onap_dcaegen2_analytics_tca_staging="${MVN_NEXUSPROXY}/service/local/repositories/staging/content/org/onap/dcaegen2/analytics/tca"
+  export ONAPTEMPLATE_MVN_org_onap_dcaegen2_analytics_tca_releases="${MVN_NEXUSPROXY}/service/local/repositories/releases/content/org/onap/dcaegen2/analytics/tca"
+
+
+  export ONAPTEMPLATE_STANDARD_INPUTS_TYPES="  # standard inputs list
+  centos7image_id:
+    type: string
+  ubuntu1604image_id:
+    type: string
+  flavor_id:
+    type: string
+  security_group:
+    type: string
+  public_net:
+    type: string
+  private_net:
+    type: string
+  openstack: {}
+  keypair:
+    type: string
+  key_filename:
+    type: string
+  location_prefix:
+    type: string
+  location_domain:
+    type: string
+  codesource_url:
+    type: string
+  codesource_version:
+    type: string"
+
+
+  TEMPLATES=$(env |grep ONAPTEMPLATE | sed 's/=.*//' | sort -u)
+  if [ -z "$TEMPLATES" ]; then
+    echo "No template variables found!"
+    return 0
+  fi
 
   TEMPLATE_FILES=$(find . -name "*-template")
   for F in $TEMPLATE_FILES; do
     F2=$(echo "$F" | sed 's/-template$//')
-    cp "$F" "$F2"
-    MOD=$(stat --format '%a' "$F")
-    chmod "$MOD" "$F2"
-  done
+    cp -p "$F" "$F2"
+    chmod u+w "$F2"
    
+    echo "====> Resolving the following template from environment variables "
+    echo "$TEMPLATES"
+    for KEY in $TEMPLATES; do
+      VALUE1=$(eval 'echo "$"'"$KEY"'"' | sed 1q)
+      VALUE2=$(eval 'echo "$'"$KEY"'"' | sed -e 's/\//\\\//g' -e 's/$/\\/' -e '$s/\\$//')
 
-  TEMPLATES=$(env |grep ONAPTEMPLATE)
-  if [ -z "$TEMPLATES" ]; then
-    return 0
-  fi
+      echo "======> Resolving template $KEY to value $VALUE1 for file $F2"
+      sed -i "s/{{[[:space:]]*$KEY[[:space:]]*}}/$VALUE2/g" "$F2"
+    done
+  done
+  echo "====> Done template resolving"
+}
 
-  echo "====> Resolving the following temaplate from environment variables "
-  echo "[$TEMPLATES]"
-  SELFFILE=$(echo "$0" | rev | cut -f1 -d '/' | rev)
-  for TEMPLATE in $TEMPLATES; do
-    KEY=$(echo "$TEMPLATE" | cut -f1 -d'=')
-    VALUE=$(echo "$TEMPLATE" | cut -f2 -d'=')
-    VALUE2=$(echo "$TEMPLATE" | cut -f2 -d'=' |sed 's/\//\\\//g')
-    set +e
-    FILES=$(grep -rl "$KEY")
-    set -e
+test_templates()
+{
+    # make certain that the type references exist
+    TMP=$(mktemp)
+    trap 'rm -f $TMP' 0 1 2 3 15
 
-    if [ -z "$FILES" ]; then
-      continue
-    fi
-
-    # assuming FILES is not longer than 2M bytes, the limit for variable value max size on this VM
-    for F in $FILES; do
-      if [[ $F == *"$SELFFILE" ]]; then
-        continue
-      fi
-      if [[ "$F" == *-template ]]; then
-        continue
-      fi
-
-      echo "======> Resolving template $KEY to value $VALUE for file $F"
-      sed -i "s/{{[[:space:]]*$KEY[[:space:]]*}}/$VALUE2/g" "$F"
-      #cat "$F"
+    echo Verify that all of the import URLs are correct
+    find . -name '*-template' | sed -e 's/-template$//' |
+    while read file
+    do
+        egrep '^  - .?https?://' < $file
+    done  | awk '{print $2}' | sed -e 's/"//g' | sort -u |
+    while read url
+    do
+	curl -L -w '%{http_code}' -s -o /dev/null "$url" > $TMP
+	case $(< $TMP) in
+	    2* ) ;;
+	    * ) echo ">>>>>>>>>>>>>>>> $url not found <<<<<<<<<<<<<<<<" ;;
+	esac
     done
 
-    #if [ ! -z "$FILES" ]; then
-    #   echo "====> Resolving template $VALUE to value $VALUE"
-    #   #CMD="grep -rl \"$VALUE\" | tr '\n' '\0' | xargs -0 sed -i \"s/{{[[:space:]]*$VALUE[[:space:]]*}}/$VALUE/g\""
-    #   grep -rl "$KEY" | tr '\n' '\0' | xargs -0 sed -i 's/$KEY/$VALUE2/g'
-    #   #echo $CMD
-    #   #eval $CMD
-    #fi
-  done
-  echo "====> Done template reolving"
+    echo Verify that the inputs are correct
+    PATH=$PATH:$PWD/check-blueprint-vs-input/bin
+    find . -name '*-template' | sed -e 's/-template$//' |
+    while read blueprint
+    do
+	check-blueprint-vs-input -b $blueprint -i check-blueprint-vs-input/lib/sample-inputs.yaml || true
+    done
 }
 
 
@@ -198,26 +235,30 @@ run_tox_test()
 build_wagons() 
 {
   rm -rf ./*.wgn venv-pkg
-
   SETUPFILES=$(find . -name "setup.py")
+  
+  virtualenv ./venv-pkg
+  source ./venv-pkg/bin/activate
+  pip install --upgrade pip 
+  pip install wagon
+  
+  CURDIR=$(pwd)
   for SETUPFILE in $SETUPFILES; do
-    PLUGIN_DIR=$(echo "$SETUPFILE" |rev | cut -f 2- -d '/' |rev)
+    PLUGIN_DIR=$(dirname "$SETUPFILE")
     PLUGIN_NAME=$(grep 'name' "$SETUPFILE" | cut -f2 -d'=' | sed 's/[^0-9a-zA-Z\.]*//g')
     PLUGIN_VERSION=$(grep 'version' "$SETUPFILE" | cut -f2 -d'=' | sed 's/[^0-9\.]*//g')
 
-    echo "In $PLUGIN_DIR, $PLUGIN_NAME, $PLUGIN_VERSION"
+    echo "In $PLUGIN_DIR, build plugin $PLUGIN_NAME, version $PLUGIN_VERSION"
 
-    virtualenv ./venv-pkg
-    source ./venv-pkg/bin/activate
-    pip install --upgrade pip
-    pip install wagon
-    wagon create --format tar.gz "$PLUGIN_DIR"
-    deactivate
-    rm -rf venv-pkg
+    wagon create --format tar.gz "${PLUGIN_DIR}"
 
     PKG_FILE_NAMES=( "${PLUGIN_NAME}-${PLUGIN_VERSION}"*.wgn )
     echo Built package: "${PKG_FILE_NAMES[@]}"
+    cd $CURDIR
   done
+
+  deactivate
+  rm -rf venv-pkg
 }
 
 
@@ -245,22 +286,31 @@ upload_raw_file()
     OUTPUT_FILE_TYPE='application/octet-stream'
   fi
 
-
+  # for multi module projects, the raw repo path must match with project name, not project + module
+  # FQDN is project + module
+  # GROUPID is project name
+  if [ "$MVN_PROJECT_ARTIFACTID" == "$MVN_PROJECT_MODULEID" ]; then
+    PROJECT_NAME=${MVN_PROJECT_GROUPID}
+  else
+    PROJECT_NAME=${FQDN}
+  fi
   if [ "$MVN_DEPLOYMENT_TYPE" == 'SNAPSHOT' ]; then
-    SEND_TO="${REPO}/${MVN_PROJECT_GROUPID}/snapshots"
+    SEND_TO="${REPO}/${PROJECT_NAME}/snapshots"
   elif [ "$MVN_DEPLOYMENT_TYPE" == 'STAGING' ]; then
-    SEND_TO="${REPO}/{$MVN_PROJECT_GROUPID}/releases"
+    SEND_TO="${REPO}/${PROJECT_NAME}/releases"
   else
     echo "Unreconfnized deployment type, quit"
     exit
   fi
-  if [ ! -z "$MVN_PROJECT_MODULEID" ]; then
-    SEND_TO="$SEND_TO/$MVN_PROJECT_MODULEID"
+  #if [ ! -z "$MVN_PROJECT_MODULEID" ]; then
+  #  SEND_TO="$SEND_TO/$MVN_PROJECT_MODULEID"
+  #fi
+  if [ ! -z "$2" ]; then
+    SEND_TO="$SEND_TO/$2"
   fi
 
   echo "Sending ${OUTPUT_FILE} to Nexus: ${SEND_TO}"
-  curl -vkn --netrc-file "${NETRC}" --upload-file "${OUTPUT_FILE}" -X PUT -H "Content-Type: $OUTPUT_FILE_TYPE" "${SEND_TO}/${OUTPUT_FILE}-${MVN_PROJECT_VERSION}-${TIMESTAMP}"
-  curl -vkn --netrc-file "${NETRC}" --upload-file "${OUTPUT_FILE}" -X PUT -H "Content-Type: $OUTPUT_FILE_TYPE" "${SEND_TO}/${OUTPUT_FILE}-${MVN_PROJECT_VERSION}"
+  curl -vkn --netrc-file "${NETRC}" --upload-file "${OUTPUT_FILE}" -X PUT -H "Content-Type: $OUTPUT_FILE_TYPE" "${SEND_TO}/${OUTPUT_FILE}-${TIMESTAMP}"
   curl -vkn --netrc-file "${NETRC}" --upload-file "${OUTPUT_FILE}" -X PUT -H "Content-Type: $OUTPUT_FILE_TYPE" "${SEND_TO}/${OUTPUT_FILE}"
 }
 
@@ -268,14 +318,45 @@ upload_raw_file()
 
 upload_wagons_and_type_yamls()
 {
-  WAGONS=$(ls -1 ./*.wgn)
-  for WAGON in $WAGONS ; do
-    WAGON_NAME=$(echo "$WAGON" | cut -f1 -d '-')
-    WAGON_VERSION=$(echo "$WAGON" | cut -f2 -d '-')
-    WAGON_TYPEFILE=$(grep -rl "$WAGON_NAME" | grep yaml | head -1)
+  SETUPFILES=$(find . -name "setup.py")
+
+  CURDIR=$(pwd)
+  for SETUPFILE in $SETUPFILES; do
+    PLUGIN_DIR=$(dirname "$SETUPFILE")
+    PLUGIN_NAME=$(grep 'name' "$SETUPFILE" | cut -f2 -d'=' | sed 's/[^0-9a-zA-Z\.]*//g')
+    PLUGIN_VERSION=$(grep 'version' "$SETUPFILE" | cut -f2 -d'=' | sed 's/[^0-9\.]*//g')
+    PLUGIN_VERSION_MAJOR=$(echo "$PLUGIN_VERSION" | cut -f1 -d'.')
+    PLUGIN_VERSION_MAJOR_MINOR=$(echo "$PLUGIN_VERSION" | cut -f1-2 -d'.')
+
+    echo "Found setup file in $PLUGIN_DIR, for plugin $PLUGIN_NAME version $PLUGIN_VERSION"
+
+    TYPEFILE_NAME=$(grep -R "package_name:[[:space:]]*${PLUGIN_NAME}" | cut -f1 -d ':')
+    if [ -z "$TYPEFILE_NAME" ]; then
+      echo "!!! No typefile found with matching package name $PLUGIN_NAME"
+      exit -1
+    fi
+    NEWFILENAME="${PLUGIN_NAME}"_types.yaml
+    if [ "$TYPEFILE_NAME" != "$NEWFILENAME" ]; then
+      echo "copy typefile to standard naming"
+      cp -f "$TYPEFILE_NAME" "$NEWFILENAME"
+    fi
+
+    TYPEFILE_PACKAGE_VERSION=$(grep -R 'package_version' $TYPEFILE_NAME |cut -f2 -d ':' |sed -r 's/\s+//g')
+    WAGONFILE_NAME=$(ls -1 $PLUGIN_NAME-$TYPEFILE_PACKAGE_VERSION-*.wgn)
+    if [ -z "$WAGONFILE_NAME" ]; then
+      echo "!!! No wagonfile found with matching package name and version as required in typefile: "
+      echo "    $TYPEFILE_NAME plugin $PLUGIN_NAME package version ${TYPEFILE_PACKAGE_VERSION}"
+      exit -1
+    fi
+
+    upload_raw_file "$NEWFILENAME" type_files/${PLUGIN_NAME}/${PLUGIN_VERSION_MAJOR}
+    upload_raw_file "$NEWFILENAME" type_files/${PLUGIN_NAME}/${PLUGIN_VERSION_MAJOR_MINOR}
+    upload_raw_file "${WAGONFILE_NAME}" "plugins/${PLUGIN_NAME}"
    
-    upload_raw_file "$WAGON"
-    upload_raw_file "$WAGON_TYPEFILE"
+    rm -r $WAGONFILE_NAME
+    if [ "$TYPEFILE_NAME" != "$NEWFILENAME" ]; then
+      rm -f "$NEWFILENAME"
+    fi
   done
 }
 
@@ -283,7 +364,7 @@ upload_files_of_extension()
 {
   FILES=$(ls -1 ./*."$1")
   for F in $FILES ; do
-    upload_raw_file "$F"
+    upload_raw_file "$F" "$2"
   done
 }
 
@@ -333,14 +414,13 @@ build_and_push_docker()
 
   REPO=""
   if [ $MVN_DEPLOYMENT_TYPE == "SNAPSHOT" ]; then
-     REPO=$MVN_DOCKERREGISTRY_DAILY
+     REPO=$MVN_DOCKERREGISTRY_SNASHOT
   elif [ $MVN_DEPLOYMENT_TYPE == "STAGING" ]; then
      # there seems to be no staging docker registry?  set to use SNAPSHOT also
-     #REPO=$MVN_DOCKERREGISTRY_RELEASE
-     REPO=$MVN_DOCKERREGISTRY_DAILY
+     REPO=$MVN_DOCKERREGISTRY_RELEASE
   else
      echo "Fail to determine DEPLOYMENT_TYPE"
-     REPO=$MVN_DOCKERREGISTRY_DAILY
+     REPO=$MVN_DOCKERREGISTRY_SNAPSHOT
   fi
   echo "DEPLOYMENT_TYPE is: $MVN_DEPLOYMENT_TYPE, repo is $REPO"
 
