@@ -38,7 +38,12 @@ if [ -z "$SETTINGS_FILE" ]; then
     exit 2
 fi
 
-
+set +e
+wget -O ${PROJECT_ROOT}/mvn-phase-lib.sh "$MVN_RAWREPO_BASEURL_DOWNLOAD"/org.onap.dcaegen2.utils/releases/scripts/mvn-phase-lib.sh
+set -e
+if [ ! -e "${PROJECT_ROOT}/mvn-phase-lib.sh" ]; then
+  cp scripts/mvn-phase-lib.sh "${PROJECT_ROOT}/mvn-phase-lib.sh"
+fi
 source "${PROJECT_ROOT}"/mvn-phase-lib.sh
 
 
@@ -105,6 +110,9 @@ install)
 deploy)
   echo "==> deploy phase script"
   case $MVN_PROJECT_MODULEID in
+  scripts)
+    upload_files_of_extension "sh" "$MVN_PROJECT_MODULEID"
+    ;;
   *)
     # uncomment after we figure out how to use pypi.  this command expects that the credentials are passed in
     # settings.xml, and the URL and serverid are passed in from either oparent or dcaegen2's root pom
