@@ -60,6 +60,11 @@ def create_envs_healthcheck(docker_config, default_interval="15s",
         # WATCH: HTTPS health checks don't work. Seems like Registrator bug.
         # Submitted issue https://github.com/gliderlabs/registrator/issues/516
         envs["SERVICE_CHECK_HTTPS"] = hc["endpoint"]
+        # Went with one of the suggestiong from the posted issue above. This
+        # author is skeptical whether https healthchecks will ever work with
+        # server cert verification because the hostname is actually the ip
+        # address.
+        envs["SERVICE_CHECK_TLS_SKIP_VERIFY"] = "true"
         utils.logger.warn("Https-based health checks may not work because Registrator issue #516")
     elif hc["type"] == "script":
         envs["SERVICE_CHECK_SCRIPT"] = hc["script"]

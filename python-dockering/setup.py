@@ -23,7 +23,7 @@ from setuptools import setup
 setup(
     name='onap-dcae-dockering',
     description='Library used to manage Docker containers in DCAE',
-    version="1.3.0",
+    version="1.4.0",
     license='Apache 2',
     author="Michael Hwang",
     email="mhwang@research.att.com",

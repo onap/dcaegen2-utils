@@ -30,7 +30,8 @@ def test_create_client():
     # Bad - Could not connect to docker engine
 
     with pytest.raises(DockerConnectionError):
-        doc.create_client("fake", 2376, reauth=True)
+        doc.create_client("fake", 2376, reauth=True, logins=[{
+            "registry": "nowhere", "username": "bob", "password": "123"}])
 
 
 # TODO: Does pytest provide an env file?

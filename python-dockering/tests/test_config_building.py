@@ -93,7 +93,8 @@ def test_create_envs_healthcheck():
     expected = {
             "SERVICE_CHECK_HTTPS": endpoint,
             "SERVICE_CHECK_INTERVAL": interval,
-            "SERVICE_CHECK_TIMEOUT": timeout
+            "SERVICE_CHECK_TIMEOUT": timeout,
+            "SERVICE_CHECK_TLS_SKIP_VERIFY": "true"
             }
 
     assert expected == doc.create_envs_healthcheck(docker_config)
