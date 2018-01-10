@@ -20,6 +20,7 @@
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
 import json
+import traceback
 from functools import wraps
 
 from cloudify import ctx
@@ -102,7 +103,8 @@ class CtxLogger(object):
                 ctx.logger.info("{0} context: {1}".format(\
                     func_name, json.dumps(CtxLogger.get_ctx_info())))
         except Exception as ex:
-            ctx.logger.error("Failed to log the node context: {0}".format(str(ex)))
+            ctx.logger.error("Failed to log the node context: {0}: {1}" \
+                .format(str(ex), traceback.format_exc()))
 
     @staticmethod
     def log_ctx(pre_log=True, after_log=False, exe_task=None):
@@ -119,8 +121,8 @@ class CtxLogger(object):
                         if ctx.type == NODE_INSTANCE and exe_task:
                             ctx.instance.runtime_properties[exe_task] = func.__name__
                     except Exception as ex:
-                        ctx.logger.error("Failed to set exe_task {0}: {1}".format(\
-                            exe_task, str(ex)))
+                        ctx.logger.error("Failed to set exe_task {0}: {1}: {2}" \
+                            .format(exe_task, str(ex), traceback.format_exc()))
                     if pre_log:
                         CtxLogger.log_ctx_info('before ' + func.__name__)
 

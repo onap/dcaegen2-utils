@@ -1,4 +1,4 @@
-
+"""mock of cloudify context with relationships and type_hierrarchy"""
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================

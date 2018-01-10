@@ -1,4 +1,4 @@
-"""setup.py is used for package build and distribution"""
+"""unit test the onap-dcae-dcaepolicy-lib"""
 
 # org.onap.dcae
 # ================================================================================
@@ -18,23 +18,3 @@
 # ============LICENSE_END=========================================================
 #
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
-
-from setuptools import setup, find_packages
-
-setup(
-    name='onap-dcae-dcaepolicy-lib',
-    description='lib of policy decorators to be used by cloudify plugins of dcae controller',
-    version="2.0.0",
-    author='Alex Shatov',
-    author_email="alexs@att.com",
-    license='Apache 2',
-    packages=find_packages(),
-    install_requires=[
-    ],
-    keywords='onap policy dcae controller cloudify plugin',
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Telecommunications Industry',
-        'Programming Language :: Python :: 2.7'
-    ]
-)
