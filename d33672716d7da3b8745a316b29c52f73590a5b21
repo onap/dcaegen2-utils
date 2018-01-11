@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_3ed745c1",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2018-01-11T15:11:50Z",
+      "side": 1,
+      "message": "this should be moved below the license text",
+      "revId": "d33672716d7da3b8745a316b29c52f73590a5b21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_dee501a9",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/utils.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2018-01-11T15:11:50Z",
+      "side": 1,
+      "message": "this should be moved below the license text",
+      "revId": "d33672716d7da3b8745a316b29c52f73590a5b21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fee0fd97",
+        "filename": "onap-dcae-dcaepolicy-lib/setup.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2018-01-11T15:11:50Z",
+      "side": 1,
+      "message": "this should be moved below the license text",
+      "revId": "d33672716d7da3b8745a316b29c52f73590a5b21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9eef7987",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/__init__.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2018-01-11T15:11:50Z",
+      "side": 1,
+      "message": "this should be moved below the license text",
+      "revId": "d33672716d7da3b8745a316b29c52f73590a5b21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5ee9f17e",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/log_ctx.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2018-01-11T15:11:50Z",
+      "side": 1,
+      "message": "this should be moved below the license text",
+      "revId": "d33672716d7da3b8745a316b29c52f73590a5b21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7eeced8f",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/mock_cloudify_ctx.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2018-01-11T15:11:50Z",
+      "side": 1,
+      "message": "this should be moved below the license text",
+      "revId": "d33672716d7da3b8745a316b29c52f73590a5b21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1e036943",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2018-01-11T15:11:50Z",
+      "side": 1,
+      "message": "this should be moved below the license text",
+      "revId": "d33672716d7da3b8745a316b29c52f73590a5b21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
