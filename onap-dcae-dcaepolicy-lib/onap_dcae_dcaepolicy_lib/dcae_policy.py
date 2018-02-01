@@ -1,6 +1,6 @@
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -41,9 +41,13 @@ POLICY_ID = 'policy_id'
 POLICY_BODY = 'policy_body'
 POLICY_VERSION = "policyVersion"
 POLICY_CONFIG = 'config'
+POLICY_CONFIG_CONTENT = 'content'
 APPLICATION_CONFIG = 'application_config'
 POLICY_FILTER = 'policy_filter'
 POLICY_FILTER_ID = 'policy_filter_id'
+POLICY_TYPE = 'policyType'
+POLICY_TYPE_MICROSERVICE = 'MicroService'
+POLICY_CONFIG_MS = "Config_MS"
 
 POLICY_PERSISTENT = 'policy_persistent'
 DCAE_POLICY_TYPE = 'dcae.nodes.policy'
@@ -64,7 +68,23 @@ class Policies(object):
     @staticmethod
     def _get_config_from_policy(policy):
         """returns the config field from policy object"""
-        return (policy or {}).get(POLICY_BODY, {}).get(POLICY_CONFIG)
+        policy_body = (policy or {}).get(POLICY_BODY)
+        if not policy_body:
+            return
+
+        policy_config = policy_body.get(POLICY_CONFIG)
+        policy_type = policy_body.get(POLICY_TYPE)
+        if not policy_type:
+            policy_id = policy.get(POLICY_ID)
+            if policy_id:
+                policy_type_pos = policy_id.rfind(".") + 1
+                if policy_type_pos and policy_id.startswith(POLICY_CONFIG_MS, policy_type_pos):
+                    policy_type = POLICY_TYPE_MICROSERVICE
+
+        if policy_type == POLICY_TYPE_MICROSERVICE and isinstance(policy_config, dict):
+            return policy_config.get(POLICY_CONFIG_CONTENT)
+
+        return policy_config
 
     @staticmethod
     def _store_policy_apply_order_clause(policy_apply_order_path):
