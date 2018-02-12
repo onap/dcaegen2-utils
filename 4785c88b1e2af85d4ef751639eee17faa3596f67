@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8aa5aaa3",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/__init__.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1949
+      },
+      "writtenOn": "2018-02-12T15:56:22Z",
+      "side": 1,
+      "message": "should it be 2017-2018 rather than 2017,2018 ?",
+      "range": {
+        "startLine": 3,
+        "startChar": 16,
+        "endLine": 3,
+        "endChar": 25
+      },
+      "revId": "4785c88b1e2af85d4ef751639eee17faa3596f67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4aab2275",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1949
+      },
+      "writtenOn": "2018-02-12T15:56:22Z",
+      "side": 1,
+      "message": "should it be 2017-2018 rather than 2017,2018 ?",
+      "range": {
+        "startLine": 3,
+        "startChar": 16,
+        "endLine": 3,
+        "endChar": 25
+      },
+      "revId": "4785c88b1e2af85d4ef751639eee17faa3596f67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0ab99acb",
+        "filename": "onap-dcae-dcaepolicy-lib/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1949
+      },
+      "writtenOn": "2018-02-12T15:56:22Z",
+      "side": 1,
+      "message": "should it be 2017-2018 rather than 2017,2018 ?",
+      "range": {
+        "startLine": 4,
+        "startChar": 14,
+        "endLine": 4,
+        "endChar": 23
+      },
+      "revId": "4785c88b1e2af85d4ef751639eee17faa3596f67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2abed6b4",
+        "filename": "onap-dcae-dcaepolicy-lib/setup.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1949
+      },
+      "writtenOn": "2018-02-12T15:56:22Z",
+      "side": 1,
+      "message": "should it be 2017-2018 rather than 2017,2018 ?",
+      "range": {
+        "startLine": 3,
+        "startChar": 16,
+        "endLine": 3,
+        "endChar": 25
+      },
+      "revId": "4785c88b1e2af85d4ef751639eee17faa3596f67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_caae5281",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/log_ctx.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1949
+      },
+      "writtenOn": "2018-02-12T15:56:22Z",
+      "side": 1,
+      "message": "should it be 2017-2018 rather than 2017,2018 ?",
+      "range": {
+        "startLine": 3,
+        "startChar": 16,
+        "endLine": 3,
+        "endChar": 25
+      },
+      "revId": "4785c88b1e2af85d4ef751639eee17faa3596f67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_aac9865a",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/mock_cloudify_ctx.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1949
+      },
+      "writtenOn": "2018-02-12T15:56:22Z",
+      "side": 1,
+      "message": "should it be 2017-2018 rather than 2017,2018 ?",
+      "range": {
+        "startLine": 4,
+        "startChar": 16,
+        "endLine": 4,
+        "endChar": 25
+      },
+      "revId": "4785c88b1e2af85d4ef751639eee17faa3596f67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4ac24235",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1949
+      },
+      "writtenOn": "2018-02-12T15:56:22Z",
+      "side": 1,
+      "message": "should it be 2017-2018 rather than 2017,2018 ?",
+      "range": {
+        "startLine": 4,
+        "startChar": 16,
+        "endLine": 4,
+        "endChar": 25
+      },
+      "revId": "4785c88b1e2af85d4ef751639eee17faa3596f67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
