@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_6ad61ef3",
+        "filename": "LICENSE.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2018-02-12T15:58:17Z",
+      "side": 1,
+      "message": "The use of the copyright symbol should be fine as is.",
+      "revId": "4785c88b1e2af85d4ef751639eee17faa3596f67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_8aa5aaa3",
         "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/__init__.py",
         "patchSetId": 1
