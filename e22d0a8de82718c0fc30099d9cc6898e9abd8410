@@ -45,6 +45,23 @@
       "revId": "e22d0a8de82718c0fc30099d9cc6898e9abd8410",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fa5672cd",
+        "filename": "dcaeapplib/dcaeapplib/__init__.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 515
+      },
+      "writtenOn": "2018-02-16T20:26:26Z",
+      "side": 1,
+      "message": "I agree, these variable names violate PEP8/style guide https://google.github.io/styleguide/pyguide.html",
+      "revId": "e22d0a8de82718c0fc30099d9cc6898e9abd8410",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
