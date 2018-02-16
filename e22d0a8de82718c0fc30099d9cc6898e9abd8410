@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e7afbb28",
+        "filename": "dcaeapplib/dcaeapplib/__init__.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1949
+      },
+      "writtenOn": "2018-02-16T18:03:01Z",
+      "side": 1,
+      "message": "pylint will complain that the class should be named by CamelNotation - starting with Upper cased char \n\nplus, should it inherit object like the following ?\n\nclass Dcaeenv(object):",
+      "range": {
+        "startLine": 53,
+        "startChar": 6,
+        "endLine": 53,
+        "endChar": 13
+      },
+      "revId": "e22d0a8de82718c0fc30099d9cc6898e9abd8410",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_87a83721",
+        "filename": "dcaeapplib/dcaeapplib/__init__.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1949
+      },
+      "writtenOn": "2018-02-16T18:03:01Z",
+      "side": 1,
+      "message": "pylint will complain on naming convention for method - no camel naming here - use the underscore instead with lower case chars only has_data",
+      "range": {
+        "startLine": 89,
+        "startChar": 6,
+        "endLine": 89,
+        "endChar": 13
+      },
+      "revId": "e22d0a8de82718c0fc30099d9cc6898e9abd8410",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
