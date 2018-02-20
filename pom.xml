@@ -43,13 +43,11 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sonar.skip>true</sonar.skip>
+    <sonar.skip>false</sonar.skip>
     <sonar.sources>*/</sonar.sources>
-    <sonar.junit.reportsPath>**/xunit-results.xml</sonar.junit.reportsPath>
-    <sonar.python.coverage.reportPath>**/coverage.xml</sonar.python.coverage.reportPath>
     <!-- customize the SONARQUBE URL -->
-    <sonar.host.url>http://localhost:9000</sonar.host.url>
     <sonar.exclusions>tests/*</sonar.exclusions>
+    <sonar.exclusions>scripts/**,**/target/**,**/tests/**,**/setup.py</sonar.exclusions>
     <!-- below are language dependent -->
     <!-- for Python -->
     <sonar.language>py</sonar.language>

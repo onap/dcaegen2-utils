@@ -87,6 +87,9 @@ test)
   case $MVN_PROJECT_MODULEID in
   *)
     set +e
+    if [ "$MVN_PROJECT_MODULEID" == "onap-dcae-dcaepolicy-lib" ]; then
+      mkdir -p logs
+    fi
     run_tox_test
     set -e
     ;;
