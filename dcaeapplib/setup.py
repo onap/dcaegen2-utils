@@ -21,7 +21,7 @@ from setuptools import setup, find_packages
 
 setup(
   name='dcaeapplib',
-  version='0.0.3',
+  version='0.0.4',
   packages=find_packages(),
   author = 'Andrew Gauld',
   author_email = 'ag1282@att.com',
@@ -30,7 +30,7 @@ setup(
   keywords = '',
   url = '',
   zip_safe = True,
-  install_requires=[ 'onap-dcae-cbs-docker-client>=0.0.2' ],
+  install_requires=[ 'onap-dcae-cbs-docker-client>=0.0.5' ],
   entry_points = {
     'console_scripts': [
       'reconfigure.sh=dcaeapplib:reconfigure'
