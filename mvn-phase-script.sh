@@ -33,10 +33,7 @@ if [ -z "${MVN_NEXUSPROXY}" ]; then
     echo "MVN_NEXUSPROXY environment variable not set.  Cannot proceed"
     exit 1
 fi
-if [ -z "$SETTINGS_FILE" ]; then
-    echo "SETTINGS_FILE environment variable not set.  Cannot proceed"
-    exit 2
-fi
+export SETTINGS_FILE=${SETTINGS_FILE:-$HOME/.m2/settings.xml}
 
 set +e
 if ! wget -O ${PROJECT_ROOT}/mvn-phase-lib.sh \
@@ -86,9 +83,12 @@ test)
   echo "==> test phase script"
   case $MVN_PROJECT_MODULEID in
   *)
-    set +e
-    run_tox_test
-    set -e
+    if [ -f tox.ini ]
+    then
+      set -e
+      run_tox_test
+      set +e
+    fi
     ;;
   esac
   ;;

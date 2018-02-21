@@ -52,10 +52,7 @@ if [ -z "$WORKSPACE" ]; then
     WORKSPACE=$(pwd)
 fi
 
-if [ -z "$SETTINGS_FILE" ]; then
-    echo "SETTINGS_FILE environment variable not set.  Cannot proceed"
-    exit
-fi
+export SETTINGS_FILE=${SETTINGS_FILE:-$HOME/.m2/settings.xml}
 
 
 
@@ -214,7 +211,7 @@ test_templates()
 
 run_tox_test() 
 { 
-  set -x
+  set -e -x
   CURDIR=$(pwd)
   TOXINIS=$(find . -name "tox.ini")
   for TOXINI in "${TOXINIS[@]}"; do

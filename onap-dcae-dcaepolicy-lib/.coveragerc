@@ -23,7 +23,3 @@ exclude_lines =
     if __name__ == .__main__.:
 
 ignore_errors = True
-
-[xml]
-output = coverage-reports/coverage-onap_dcae_dcaepolicy_lib.xml
-

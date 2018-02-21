@@ -45,7 +45,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
     <sonar.language>py</sonar.language>
     <sonar.pluginName>Python</sonar.pluginName>
     <sonar.inclusions>**/*.py</sonar.inclusions>
-    <sonar.exclusions>tests/*</sonar.exclusions>
+    <sonar.exclusions>tests/*,setup.py</sonar.exclusions>
     <sonar.host.url>http://135.205.228.63:9000</sonar.host.url>
   </properties>
   <build>
