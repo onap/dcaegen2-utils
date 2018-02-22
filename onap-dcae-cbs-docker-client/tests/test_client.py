@@ -15,8 +15,7 @@
 # ============LICENSE_END=========================================================
 #
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
-from onap_dcae_cbs_docker_client.client import get_config
-import requests
+from onap_dcae_cbs_docker_client.client import get_config, get_all
 
 class FakeResponse:
     def __init__(self, status_code, thejson):
@@ -27,27 +26,28 @@ class FakeResponse:
     def json(self):
         return self.thejson
 
-def test_client(monkeypatch):
+def monkeyed_requests_get(url):
+    #mock all the get calls for existent and non-existent
+    if url == "http://consuldotcom:8500/v1/catalog/service/config_binding_service":
+        return FakeResponse(status_code=200,
+                            thejson=[{"ServiceAddress": "666.666.666.666",
+                                      "ServicePort": 8888}])
+    elif url == "http://666.666.666.666:8888/service_component_all/mybestfrienddotcom":
+        return FakeResponse(status_code=200,
+                            thejson={"config": {"key_to_your_heart": 666},
+                                     "dti": {"some amazing": "dti stuff"},
+                                     "policies": {"event": {"foo": "bar"},
+                                                  "items": [{"foo2": "bar2"}]},
+                                     "otherkey": {"foo3": "bar3"}})
 
-    def monkeyed_requests_get(url):
-        #mock all the get calls for existent and non-existent
-        if url == "http://consuldotcom:8500/v1/catalog/service/config_binding_service":
-            return FakeResponse(
-                       status_code = 200,
-                       thejson = [
-                           {"ServiceAddress" : "666.666.666.666",
-                            "ServicePort" : 8888
-                           }]
-                )
-        elif url == "http://666.666.666.666:8888/service_component/mybestfrienddotcom":
-            return FakeResponse(
-                       status_code = 200,
-                       thejson = {"key_to_your_heart" : 666})
-
-
+def test_config(monkeypatch):
     monkeypatch.setattr('requests.get', monkeyed_requests_get)
-    assert(get_config() == {"key_to_your_heart" : 666})
+    assert(get_config() == {"key_to_your_heart": 666})
 
-
-
-
+def test_all(monkeypatch):
+    monkeypatch.setattr('requests.get', monkeyed_requests_get)
+    assert(get_all() == {"config": {"key_to_your_heart": 666},
+                         "dti": {"some amazing": "dti stuff"},
+                         "policies": {"event": {"foo": "bar"},
+                                      "items": [{"foo2": "bar2"}]},
+                         "otherkey": {"foo3": "bar3"}})
