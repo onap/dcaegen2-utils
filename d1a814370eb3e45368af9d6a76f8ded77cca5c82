@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Andrew Gauld <ag1282@att.com>
+Code-Review+2: Lusheng Ji <lji@research.att.com>
+Submitted-by: Lusheng Ji <lji@research.att.com>
+Submitted-at: Thu, 22 Feb 2018 19:46:58 +0000
+Reviewed-on: https://gerrit.onap.org/r/32605
+Project: dcaegen2/utils
+Branch: refs/heads/master
