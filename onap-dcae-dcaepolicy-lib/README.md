@@ -1,4 +1,5 @@
 # onap-dcae-dcaepolicy-lib - policy in dcae controller
+
 - python-package to be used in cloudify plugins to maintain the policies lifecycle
 
 ## upload the python package to pypi server
@@ -8,23 +9,26 @@ python setup.py sdist upload
 ```
 
 ---
-# usage in plugins
 
-**requirements.txt**
+## usage in plugins
+
+### **requirements.txt**
+
 ```python
 onap-dcae-dcaepolicy-lib==1.0.0
 ```
 
-**tasks.py**
-- import
+### **tasks.py**
+
+import
 
 ```python
 from onap_dcae_dcaepolicy_lib import Policies
 ```
 
-# examples of **@operation** with **@Policies.<>** decorator
+### examples of **@operation** with **@Policies.<>** decorator
 
-## Usage
+### Usage:
 
 import the dcaepolicy-node-type.yaml into your blueprint to use the dcae.nodes.type node
 
@@ -46,9 +50,12 @@ node_templates:
 
 Then the dcaepolicyplugin will bring the latest policy to the dcae.nodes.policy node during the install workflow of cloudify.
 
-------
-## cloudify.interfaces.lifecycle.**configure**
+---
+
+### cloudify.interfaces.lifecycle.**configure**
+
 - gather policy data into runtime_properties of policy consumer node
+
 ```yaml
 cloudify.interfaces.lifecycle:
     configure:
@@ -105,8 +112,10 @@ def node_configure(**kwargs):
     demo_app.get_logs()
 ```
 
-------
-## execute-operation **policy-update**
+---
+
+### execute-operation **policy-update**
+
 ```yaml
 dcae.interfaces.policy:
     policy_update:
@@ -114,6 +123,7 @@ dcae.interfaces.policy:
 ```
 
 execute-operation **policy-update** that gets a list of changed policy-configs
+
 ```python
 
 from .discovery import DiscoveryClient
@@ -156,17 +166,21 @@ def policy_update(updated_policies, **kwargs):
 ```
 
 example of the **changed\_policies** with **configs_only=True**
+
 - list of config objects (preparsed from json string)
+
 - manual mess produced by mock_policy_updater
+
 ```json
 [{
-	"policy_updated_from_ver": "2",
-	"policy_updated_to_ver": "3",
-	"updated_policy_id": "DCAE_alex.Config_db_client_policy_id_value",
-	"policy_hello": "world!",
-	"policy_updated_ts": "2017-08-17T21:49:39.279187Z"
+    "policy_updated_from_ver": "2",
+    "policy_updated_to_ver": "3",
+    "updated_policy_id": "DCAE_alex.Config_db_client_policy_id_value",
+    "policy_hello": "world!",
+    "policy_updated_ts": "2017-08-17T21:49:39.279187Z"
 }]
 ```
+
 ---
 
 example of **policies** in runtime_properties **before policy-update**

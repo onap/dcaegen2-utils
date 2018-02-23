@@ -31,7 +31,7 @@ from cloudify import ctx
 from cloudify.exceptions import NonRecoverableError
 from cloudify.state import current_ctx
 
-from onap_dcae_dcaepolicy_lib import POLICIES, dcae_policy
+from onap_dcae_dcaepolicy_lib import dcae_policy
 from onap_dcae_dcaepolicy_lib.dcae_policy import Policies
 from onap_dcae_dcaepolicy_lib.utils import Utils
 from tests.log_ctx import CtxLogger
@@ -566,8 +566,8 @@ def test_gather_policies_to_node():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -584,8 +584,8 @@ def test_policies_wrong_order():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -602,8 +602,8 @@ def test_policies_empty_order():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -624,8 +624,8 @@ def test_policies_damaged_order():
 
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -646,8 +646,8 @@ def test_policies_bad_order():
 
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -664,8 +664,8 @@ def test_policies_to_node():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -714,8 +714,8 @@ def test_update_policies():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -737,7 +737,7 @@ def test_update_policies():
     policy_update(updated_policies=[updated_policy],
                   added_policies={
                       policy_filter_ids[0]: {
-                          POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}}
+                          dcae_policy.POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}}
                   },
                   removed_policies=[MONKEYED_POLICY_ID_M])
 
@@ -787,8 +787,8 @@ def test_update_not_only_config():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -810,7 +810,7 @@ def test_update_not_only_config():
     policy_update_not_only_config(updated_policies=[updated_policy],
                                   added_policies={
                                       policy_filter_ids[0]: {
-                                          POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}}
+                                          dcae_policy.POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}}
                                   },
                                   removed_policies=[MONKEYED_POLICY_ID_M])
 
@@ -860,9 +860,9 @@ def test_update_policies_not():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
+    assert dcae_policy.POLICIES in runtime_properties
     assert APPLICATION_CONFIG in runtime_properties
-    policies = runtime_properties[POLICIES]
+    policies = runtime_properties[dcae_policy.POLICIES]
     app_config = runtime_properties[APPLICATION_CONFIG]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
     ctx.logger.info("app_config: {0}".format(json.dumps(app_config)))
@@ -898,9 +898,9 @@ def test_update_policies_not():
     policy_update(updated_policies=[existing_policy, damaged_policy, updated_policy],
                   added_policies={
                       junk_policy_filter_id: {
-                          POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}},
+                          dcae_policy.POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}},
                       policy_filter_ids[0]: {
-                          POLICIES: {MONKEYED_POLICY_ID_2: damaged_policy}}
+                          dcae_policy.POLICIES: {MONKEYED_POLICY_ID_2: damaged_policy}}
                   },
                   removed_policies=[unexpected_removed_policy_id])
 
@@ -927,8 +927,8 @@ def test_update_many_calcs():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -950,7 +950,7 @@ def test_update_many_calcs():
     policy_update_many_calcs(updated_policies=[updated_policy],
                              added_policies={
                                  policy_filter_ids[0]: {
-                                     POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}}
+                                     dcae_policy.POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}}
                              },
                              removed_policies=[MONKEYED_POLICY_ID_M])
 
@@ -1000,8 +1000,8 @@ def test_remove_all_policies():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     remove_policy_ids = policies.keys()
@@ -1010,7 +1010,7 @@ def test_remove_all_policies():
 
     ctx.logger.info("removed: {0}".format(remove_policy_ids))
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
-    assert POLICIES in runtime_properties
+    assert dcae_policy.POLICIES in runtime_properties
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
     assert runtime_properties[dcae_policy.POLICY_APPLY_ORDER] == []
     assert dcae_policy.POLICY_DEFAULTED_FIELDS in runtime_properties
@@ -1040,8 +1040,8 @@ def test_remove_all_policies_twice():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     remove_policy_ids = policies.keys()
@@ -1051,7 +1051,7 @@ def test_remove_all_policies_twice():
 
     ctx.logger.info("removed: {0}".format(remove_policy_ids))
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
-    assert POLICIES in runtime_properties
+    assert dcae_policy.POLICIES in runtime_properties
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
     assert runtime_properties[dcae_policy.POLICY_APPLY_ORDER] == []
     assert dcae_policy.POLICY_DEFAULTED_FIELDS in runtime_properties
@@ -1081,8 +1081,8 @@ def test_remove_then_update():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -1107,7 +1107,7 @@ def test_remove_then_update():
     policy_update(updated_policies=[updated_policy],
                   added_policies={
                       policy_filter_ids[0]: {
-                          POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}}
+                          dcae_policy.POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}}
                   },
                   removed_policies=[MONKEYED_POLICY_ID_M])
 
@@ -1145,8 +1145,8 @@ def test_remove_update_many_calcs():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -1160,8 +1160,8 @@ def test_remove_update_many_calcs():
                              added_policies=None,
                              removed_policies=remove_policy_ids)
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -1193,7 +1193,7 @@ def test_remove_update_many_calcs():
     policy_update_many_calcs(updated_policies=[updated_policy],
                              added_policies={
                                  policy_filter_ids[0]: {
-                                     POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}}
+                                     dcae_policy.POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}}
                              },
                              removed_policies=[MONKEYED_POLICY_ID_M])
 
@@ -1231,8 +1231,8 @@ def test_bad_update_many_calcs():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -1258,7 +1258,7 @@ def test_bad_update_many_calcs():
     policy_update_many_calcs(updated_policies=[damaged_policy],
                              added_policies={
                                  policy_filter_ids[0]: {
-                                     POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}}
+                                     dcae_policy.POLICIES: {MONKEYED_POLICY_ID_M_2: added_policy}}
                              },
                              removed_policies=[MONKEYED_POLICY_ID_M])
 
@@ -1307,8 +1307,8 @@ def test_bad_policies():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -1410,8 +1410,8 @@ def test_defenses_on_set_policies():
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
 
-    assert POLICIES in runtime_properties
-    policies = runtime_properties[POLICIES]
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
     assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
@@ -1420,10 +1420,10 @@ def test_defenses_on_set_policies():
 
     Policies._set_policies({})
 
-    assert POLICIES not in runtime_properties
+    assert dcae_policy.POLICIES not in runtime_properties
     assert dcae_policy.POLICY_APPLY_ORDER not in runtime_properties
 
     Policies._set_policies({})
 
-    assert POLICIES not in runtime_properties
+    assert dcae_policy.POLICIES not in runtime_properties
     assert dcae_policy.POLICY_APPLY_ORDER not in runtime_properties
