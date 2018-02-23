@@ -19,4 +19,4 @@
 
 """expose the Policies class on the package level"""
 
-from .dcae_policy import Policies, POLICIES, POLICY_MESSAGE_TYPE
+from .dcae_policy import Policies
