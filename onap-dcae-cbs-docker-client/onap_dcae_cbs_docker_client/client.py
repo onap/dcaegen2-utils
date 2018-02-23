@@ -52,9 +52,7 @@ def _get_envs():
     return HOSTNAME, CONSUL_HOST
 
 
-#########
-# Public
-def get_all():
+def _get_path(path):
     """
     This call does not raise an exception if Consul or the CBS cannot complete the request.
     It logs an error and returns {} if the config is not bindable.
@@ -77,7 +75,7 @@ def get_all():
         logger.error("Cannot bind config at this time, cbs is unreachable")
     else:
         #get my config
-        my_config_endpoint = "{0}/service_component_all/{1}".format(cbs_url, HOSTNAME)
+        my_config_endpoint = "{0}/{1}/{2}".format(cbs_url, path, HOSTNAME)
         res = requests.get(my_config_endpoint)
         try:
             res.raise_for_status()
@@ -87,6 +85,11 @@ def get_all():
             logger.error("in get_config, the config binding service endpoint {0} blew up on me. Error code: {1}, Error text: {2}".format(my_config_endpoint, res.status_code, res.text))
     return config
 
+
+#########
+# Public
+def get_all():
+    return _get_path("service_component_all")
+
 def get_config():
-    allk = get_all()
-    return allk["config"]
+    return _get_path("service_component")

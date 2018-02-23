@@ -40,6 +40,11 @@ def monkeyed_requests_get(url):
                                                   "items": [{"foo2": "bar2"}]},
                                      "otherkey": {"foo3": "bar3"}})
 
+    elif url == "http://666.666.666.666:8888/service_component/mybestfrienddotcom":
+        return FakeResponse(status_code=200,
+                            thejson={"key_to_your_heart": 666})
+
+
 def test_config(monkeypatch):
     monkeypatch.setattr('requests.get', monkeyed_requests_get)
     assert(get_config() == {"key_to_your_heart": 666})

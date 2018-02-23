@@ -22,7 +22,7 @@ from setuptools import setup, find_packages
 setup(
     name = "onap_dcae_cbs_docker_client",
     description = "very lightweight client for a DCAE dockerized component to get it's config from the CBS",
-    version = "1.0.0",
+    version = "1.0.1",
     packages=find_packages(),
     author = "Tommy Carpenter",
     author_email = "tommy@research.att.com",
