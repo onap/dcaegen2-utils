@@ -1,0 +1,10 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Andrew Gauld <ag1282@att.com>
+Code-Review+1: Tommy Carpenter <tommy@research.att.com>
+Code-Review+1: Terry Schmalzried <ts862m@att.com>
+Code-Review+2: Tony Hansen <tony@att.com>
+Submitted-by: Tony Hansen <tony@att.com>
+Submitted-at: Fri, 02 Mar 2018 22:10:37 +0000
+Reviewed-on: https://gerrit.onap.org/r/33835
+Project: dcaegen2/utils
+Branch: refs/heads/master
