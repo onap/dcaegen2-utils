@@ -71,39 +71,21 @@ APPLICATION_CONFIG = "application_config"
 SERVICE_COMPONENT_NAME = "service_component_name"
 
 @operation
-@Policies.gather_policies_to_node
+@Policies.gather_policies_to_node()
 def node_configure(**kwargs):
-    """decorate with @Policies.gather_policies_to_node on policy consumer node to
+    """decorate with @Policies.gather_policies_to_node() on policy consumer node to
     prepopulate runtime_properties[POLICIES]
     """
-    app_config = None
-    if APPLICATION_CONFIG in ctx.node.properties:
-        # dockerized blueprint puts the app config into property application_config
-        app_config = ctx.node.properties.get(APPLICATION_CONFIG)
-    else:
-        # CDAP components expect that in property app_config
-        app_config = ctx.node.properties.get("app_config")
+    app_config = ctx.node.properties.get(APPLICATION_CONFIG)
 
-    app_config = Policies.shallow_merge_policies_into(app_config)
     ctx.instance.runtime_properties[APPLICATION_CONFIG] = app_config
-    ctx.logger.info("example: applied policy_configs to property app_config: {0}" \
-        .format(json.dumps(app_config)))
+    ctx.logger.info("app_config: {0}".format(json.dumps(app_config)))
 
     if SERVICE_COMPONENT_NAME in ctx.instance.runtime_properties:
         ctx.logger.info("saving app_config({0}) to consul under key={1}" \
             .format(json.dumps(app_config), \
             ctx.instance.runtime_properties[SERVICE_COMPONENT_NAME]))
         DiscoveryClient.put_kv(ctx.instance.runtime_properties[SERVICE_COMPONENT_NAME], app_config)
-
-    # alternative 1 - use the list of policy configs from policies in runtime_properties
-    policy_configs = Policies.get_policy_configs()
-    if policy_configs:
-        ctx.logger.warn("TBD: apply policy_configs: {0}".format(json.dumps(policy_configs)))
-
-    # alternative 2 - use the policies dict by policy_id from runtime_properties
-    if POLICIES in ctx.instance.runtime_properties:
-        policies = ctx.instance.runtime_properties[POLICIES]
-        ctx.logger.warn("TBD: apply policies: {0}".format(json.dumps(policies)))
 
     ctx.logger.info("deploying the demo component: {0}...".format(ctx.node.id))
     demo_app = DemoApp(ctx.node.id)
@@ -133,25 +115,13 @@ APPLICATION_CONFIG = "application_config"
 SERVICE_COMPONENT_NAME = "service_component_name"
 
 @operation
-@Policies.update_policies_on_node(configs_only=True)
-def policy_update(updated_policies, **kwargs):
+@Policies.update_policies_on_node()
+def policy_update(updated_policies, removed_policies=None, policies=None, **kwargs):
     """decorate with @Policies.update_policies_on_node() to update runtime_properties[POLICIES]
 
     :updated_policies: contains the list of changed policy-configs when configs_only=True (default).
     Use configs_only=False to bring the full policy objects in :updated_policies:.
     """
-    app_config = DiscoveryClient.get_value(ctx.instance.runtime_properties[SERVICE_COMPONENT_NAME])
-
-    # This is how to merge the policies into app_config object
-    app_config = Policies.shallow_merge_policies_into(app_config)
-
-    ctx.logger.info("merged updated_policies {0} into app_config {1}"
-                    .format(json.dumps(updated_policies), json.dumps(app_config)))
-
-    ctx.instance.runtime_properties[APPLICATION_CONFIG] = app_config
-
-    DiscoveryClient.put_kv(ctx.instance.runtime_properties[SERVICE_COMPONENT_NAME], app_config)
-
     # example how to notify the dockerized component about the policy change
     notify_app_through_script = True
     if notify_app_through_script:
@@ -159,9 +129,10 @@ def policy_update(updated_policies, **kwargs):
                         .format(json.dumps(updated_policies), json.dumps(app_config)))
         demo_app = DemoApp(ctx.node.id)
         demo_app.notify_app_through_script(
-            POLICY_MESSAGE_TYPE,
+            "policies",
             updated_policies=updated_policies,
-            application_config=app_config
+            removed_policies=removed_policies,
+            policies=policies
         )
 ```
 

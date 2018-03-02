@@ -1,6 +1,4 @@
 # ============LICENSE_START=======================================================
-# org.onap.dcae
-# ================================================================================
 # Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +31,6 @@ from cloudify.state import current_ctx
 
 from onap_dcae_dcaepolicy_lib import dcae_policy
 from onap_dcae_dcaepolicy_lib.dcae_policy import Policies
-from onap_dcae_dcaepolicy_lib.utils import Utils
 from tests.log_ctx import CtxLogger
 from tests.mock_cloudify_ctx import (TARGET_NODE_ID, TARGET_NODE_NAME,
                                      MockCloudifyContextFull)
@@ -43,9 +40,6 @@ POLICY_VERSION = "policyVersion"
 POLICY_NAME = "policyName"
 POLICY_BODY = 'policy_body'
 POLICY_CONFIG = 'config'
-DOCKER_CONFIG = "docker_config"
-POLICY = "policy"
-APPLY_ORDER = "apply_order"
 
 MONKEYED_POLICY_ID = 'monkeyed.Config_peach'
 MONKEYED_POLICY_ID_2 = 'monkeyed.Config_peach_2'
@@ -172,18 +166,20 @@ class MonkeyedNode(object):
             runtime_properties=runtime_properties
         )
 
+def get_app_config():
+    """just get the config"""
+    config = copy.deepcopy(dict(ctx.instance.runtime_properties.get(APPLICATION_CONFIG, {})))
+    if not config:
+        config = copy.deepcopy(dict(ctx.node.properties.get(APPLICATION_CONFIG, {})))
+    return config
+
 def operation_node_configure(**kwargs):
     """do the node-configure operation"""
     ctx.logger.info("operation_node_configure kwargs: {0}".format(kwargs))
 
-    app_config = Policies.calc_latest_application_config()
+    app_config = get_app_config()
     ctx.instance.runtime_properties[APPLICATION_CONFIG] = app_config
-    ctx.logger.info("applied policy_configs to property app_config: {0}" \
-        .format(json.dumps(app_config)))
-
-    policy_configs = Policies.get_policy_configs()
-    if policy_configs:
-        ctx.logger.warn("TBD: apply policy_configs: {0}".format(json.dumps(policy_configs)))
+    ctx.logger.info("property app_config: {0}".format(json.dumps(app_config)))
 
 @CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='exe_task')
 @Policies.gather_policies_to_node()
@@ -192,7 +188,7 @@ def node_configure_default_order(**kwargs):
     operation_node_configure(**kwargs)
 
 @CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='exe_task')
-@Policies.gather_policies_to_node(policy_apply_order_path="docker_config:policy:apply_order")
+@Policies.gather_policies_to_node()
 def node_configure(**kwargs):
     """decorate with @Policies.gather_policies_to_node on policy consumer node to
     bring all policies to runtime_properties["policies"]
@@ -200,112 +196,56 @@ def node_configure(**kwargs):
     operation_node_configure(**kwargs)
 
 @CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='exe_task')
-@Policies.gather_policies_to_node(policy_apply_order_path="docker_config:junk:junk")
+@Policies.gather_policies_to_node()
 def node_configure_wrong_order_path(**kwargs):
     """wrong data in param policy_apply_order_path"""
     operation_node_configure(**kwargs)
 
 @CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='exe_task')
-@Policies.gather_policies_to_node(policy_apply_order_path=" ")
+@Policies.gather_policies_to_node()
 def node_configure_empty_order_path(**kwargs):
     """wrong data in param policy_apply_order_path"""
     operation_node_configure(**kwargs)
 
 @CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='execute_operation')
-@Policies.update_policies_on_node(configs_only=True)
+@Policies.update_policies_on_node()
 def policy_update(updated_policies, removed_policies=None, **kwargs):
     """decorate with @Policies.update_policies_on_node() to update runtime_properties["policies"]
 
     :updated_policies: contains the list of changed policy-configs when configs_only=True (default).
-    Use configs_only=False to bring the full policy objects in :updated_policies:.
-
-    Use :Policies.shallow_merge_policies_into(): to merge the updated_policies into app_config
     """
     # This is how to merge the policies into default app_config object
     #               (runtime_properties[APPLICATION_CONFIG] = application_config)
-    app_config = Policies.calc_latest_application_config()
-
-    ctx.logger.info("merged updated_policies {0}, removed_policies {1} into app_config {2}"
-                    .format(json.dumps(updated_policies), json.dumps(removed_policies),
-                            json.dumps(app_config)))
+    app_config = get_app_config()
+    ctx.logger.info("app_config {0}".format(json.dumps(app_config)))
 
     ctx.instance.runtime_properties[APPLICATION_CONFIG] = app_config
 
 @CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='execute_operation')
-@Policies.update_policies_on_node(configs_only=False)
+@Policies.update_policies_on_node()
 def policy_update_not_only_config(updated_policies, removed_policies=None, **kwargs):
     """decorate with @Policies.update_policies_on_node() to update runtime_properties["policies"]
 
     :updated_policies: contains the list of changed policy-configs when configs_only=True (default).
-    Use configs_only=False to bring the full policy objects in :updated_policies:.
-
-    Use :Policies.shallow_merge_policies_into(): to merge the updated_policies into app_config
     """
     # This is how to merge the policies into default app_config object
     #               (runtime_properties[APPLICATION_CONFIG] = application_config)
-    app_config = Policies.calc_latest_application_config()
-
-    ctx.logger.info("merged updated_policies {0}, removed_policies {1} into app_config {2}"
-                    .format(json.dumps(updated_policies), json.dumps(removed_policies),
-                            json.dumps(app_config)))
+    app_config = get_app_config()
+    ctx.logger.info("app_config {0}".format(json.dumps(app_config)))
 
     ctx.instance.runtime_properties[APPLICATION_CONFIG] = app_config
 
 @CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='execute_operation')
-@Policies.update_policies_on_node(configs_only=False)
-def policy_update_many_calcs(updated_policies, removed_policies=None, **kwargs):
+@Policies.update_policies_on_node()
+def policy_update_many_calcs(updated_policies, removed_policies=None, policies=None, **kwargs):
     """decorate with @Policies.update_policies_on_node() to update runtime_properties["policies"]
 
     :updated_policies: contains the list of changed policy-configs when configs_only=True (default).
-    Use configs_only=False to bring the full policy objects in :updated_policies:.
-
-    Use :Policies.shallow_merge_policies_into(): to merge the updated_policies into app_config
     """
-    # This is how to merge the policies into default app_config object
-    #               (runtime_properties[APPLICATION_CONFIG] = application_config)
-    app_config = Policies.calc_latest_application_config()
-
-    ctx.logger.info("merged updated_policies {0}, removed_policies {1} into app_config {2}"
-                    .format(json.dumps(updated_policies), json.dumps(removed_policies),
-                            json.dumps(app_config)))
+    app_config = get_app_config()
+    ctx.logger.info("app_config {0}".format(json.dumps(app_config)))
 
     ctx.instance.runtime_properties[APPLICATION_CONFIG] = app_config
-
-    app_config = Policies.calc_latest_application_config(APPLICATION_CONFIG)
-    ctx.logger.info("merged again updated_policies {0}, removed_policies {1} into app_config {2}"
-                    .format(json.dumps(updated_policies), json.dumps(removed_policies),
-                            json.dumps(app_config)))
-
-    app_config = Policies.calc_latest_application_config(APPLICATION_CONFIG)
-    ctx.logger.info("merged again updated_policies {0}, removed_policies {1} into app_config {2}"
-                    .format(json.dumps(updated_policies), json.dumps(removed_policies),
-                            json.dumps(app_config)))
-
-    app_config = Policies.shallow_merge_policies_into(None)
-    ctx.logger.info("merged to empty updated_policies {0}, removed_policies {1} into app_config {2}"
-                    .format(json.dumps(updated_policies), json.dumps(removed_policies),
-                            json.dumps(app_config)))
-
-    app_config = ctx.instance.runtime_properties[APPLICATION_CONFIG]
-    app_config = Policies.shallow_merge_policies_into(app_config, default_config={})
-    ctx.logger.info(
-        "merged with empty defaults updated_policies {0}, removed_policies {1} into app_config {2}"
-        .format(json.dumps(updated_policies), json.dumps(removed_policies),
-                json.dumps(app_config)))
-
-    app_config = ctx.instance.runtime_properties[APPLICATION_CONFIG]
-    app_config = Policies.shallow_merge_policies_into(app_config,
-                                                      default_config={"unexpected":"foo"})
-    ctx.logger.info(
-        "merged with unexpected defaults updated_policies {0}, removed_policies {1} into config {2}"
-        .format(json.dumps(updated_policies), json.dumps(removed_policies),
-                json.dumps(app_config)))
-
-    app_config = ctx.instance.runtime_properties[APPLICATION_CONFIG]
-    app_config = Policies.shallow_merge_policies_into(app_config)
-    ctx.logger.info("merged 3rd time updated_policies {0}, removed_policies {1} into app_config {2}"
-                    .format(json.dumps(updated_policies), json.dumps(removed_policies),
-                            json.dumps(app_config)))
 
 class CurrentCtx(object):
     """cloudify context"""
@@ -492,12 +432,7 @@ class CurrentCtx(object):
 
         CurrentCtx._node_ms = MonkeyedNode(
             'test_ms_id', 'test_ms_name', "ms.nodes.type",
-            {DOCKER_CONFIG: {POLICY: {
-                APPLY_ORDER: [
-                    "matchingConditions:priority::number desc",
-                    "config:db_client nulls-last",
-                    "config:policy_updated_to_ver"]}},
-             APPLICATION_CONFIG: MonkeyedPolicyBody.create_policy_body(
+            {APPLICATION_CONFIG: MonkeyedPolicyBody.create_policy_body(
                  "no_policy", db_port="123", weather="snow")[POLICY_CONFIG]
             },
             relationships
@@ -509,31 +444,6 @@ class CurrentCtx(object):
     def reset():
         """reset context"""
         current_ctx.set(CurrentCtx._node_ms.ctx)
-
-def test_utils():
-    """test utils"""
-    field_value = Utils.get_field_value(
-        {
-            "before":"bubu",
-            "pre":{"field":"hehe"},
-            "hello":{"field":"haha"},
-            "post":{"field":"hmmm"},
-            "after":"bebe"
-            },
-        "hello:field")
-    assert field_value == "haha"
-
-    field_value = Utils.get_field_value(None, None)
-    assert field_value is None
-
-    field_value = Utils.get_field_value({"hello":{"field":"haha"}}, "wrong_root:field")
-    assert field_value is None
-
-    field_value = Utils.get_field_value({"hello":{"field":None}}, "hello:field")
-    assert field_value is None
-
-    field_value = Utils.get_field_value({"hello":{"field":None}}, "hello:field::number")
-    assert field_value is None
 
 def cfy_ctx(include_bad=True, include_good=True):
     """test and safely clean up"""
@@ -570,12 +480,6 @@ def test_gather_policies_to_node():
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID, MONKEYED_POLICY_ID_2]
-
 @cfy_ctx(include_bad=True)
 def test_policies_wrong_order():
     """test gather_policies_to_node"""
@@ -587,12 +491,6 @@ def test_policies_wrong_order():
     assert dcae_policy.POLICIES in runtime_properties
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
-
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID, MONKEYED_POLICY_ID_2]
 
 @cfy_ctx(include_bad=True)
 def test_policies_empty_order():
@@ -606,56 +504,6 @@ def test_policies_empty_order():
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID, MONKEYED_POLICY_ID_2]
-
-@cfy_ctx(include_bad=True)
-def test_policies_damaged_order():
-    """test gather_policies_to_node"""
-    ctx.node.properties[DOCKER_CONFIG][POLICY][APPLY_ORDER] = " "
-
-    runtime_properties = ctx.instance.runtime_properties
-    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
-
-    node_configure()
-
-    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
-
-    assert dcae_policy.POLICIES in runtime_properties
-    policies = runtime_properties[dcae_policy.POLICIES]
-    ctx.logger.info("policies: {0}".format(json.dumps(policies)))
-
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID, MONKEYED_POLICY_ID_2]
-
-@cfy_ctx(include_bad=True)
-def test_policies_bad_order():
-    """test gather_policies_to_node"""
-    ctx.node.properties[DOCKER_CONFIG][POLICY][APPLY_ORDER] = [" ", "", "ha he", "hu::mu dah"]
-
-    runtime_properties = ctx.instance.runtime_properties
-    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
-
-    node_configure()
-
-    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
-
-    assert dcae_policy.POLICIES in runtime_properties
-    policies = runtime_properties[dcae_policy.POLICIES]
-    ctx.logger.info("policies: {0}".format(json.dumps(policies)))
-
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID, MONKEYED_POLICY_ID_2]
-
 @cfy_ctx(include_bad=True)
 def test_policies_to_node():
     """test gather_policies_to_node"""
@@ -667,12 +515,6 @@ def test_policies_to_node():
     assert dcae_policy.POLICIES in runtime_properties
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
-
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID]
 
     assert MONKEYED_POLICY_ID in policies
     expected_1 = MonkeyedPolicyBody.create_policy(MONKEYED_POLICY_ID, priority="1")
@@ -718,12 +560,6 @@ def test_update_policies():
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID]
-
     updated_policy = MonkeyedPolicyBody.create_policy(MONKEYED_POLICY_ID_2, 2, priority="aa20")
     added_policy = MonkeyedPolicyBody.create_policy(MONKEYED_POLICY_ID_M_2, 2,
                                                     False, priority="1")
@@ -743,7 +579,6 @@ def test_update_policies():
 
     ctx.logger.info("policy[{0}]: removed".format(MONKEYED_POLICY_ID_M))
     assert MONKEYED_POLICY_ID_M not in policies
-    # assert Policies._get_config_from_policy(policies[MONKEYED_POLICY_ID_M]) is None
 
     assert MONKEYED_POLICY_ID_M_2 in policies
     policy = policies[MONKEYED_POLICY_ID_M_2]
@@ -773,12 +608,6 @@ def test_update_policies():
     assert MonkeyedPolicyBody.is_the_same_dict(policy, expected_b)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_b, policy)
 
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID, MONKEYED_POLICY_ID_M_2]
-
 @cfy_ctx(include_bad=True)
 def test_update_not_only_config():
     """test policy_update"""
@@ -790,12 +619,6 @@ def test_update_not_only_config():
     assert dcae_policy.POLICIES in runtime_properties
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
-
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID]
 
     updated_policy = MonkeyedPolicyBody.create_policy(MONKEYED_POLICY_ID_2, 2, priority="aa20")
     added_policy = MonkeyedPolicyBody.create_policy(MONKEYED_POLICY_ID_M_2, 2,
@@ -816,7 +639,6 @@ def test_update_not_only_config():
 
     ctx.logger.info("policy[{0}]: removed".format(MONKEYED_POLICY_ID_M))
     assert MONKEYED_POLICY_ID_M not in policies
-    # assert Policies._get_config_from_policy(policies[MONKEYED_POLICY_ID_M]) is None
 
     assert MONKEYED_POLICY_ID_M_2 in policies
     policy = policies[MONKEYED_POLICY_ID_M_2]
@@ -846,12 +668,6 @@ def test_update_not_only_config():
     assert MonkeyedPolicyBody.is_the_same_dict(policy, expected_b)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_b, policy)
 
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID, MONKEYED_POLICY_ID_M_2]
-
 @cfy_ctx(include_bad=True)
 def test_update_policies_not():
     """test policy_update - ignore all policies with junk params"""
@@ -867,15 +683,8 @@ def test_update_policies_not():
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
     ctx.logger.info("app_config: {0}".format(json.dumps(app_config)))
 
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID]
-
     expected_policies = copy.deepcopy(policies)
     expected_app_config = copy.deepcopy(app_config)
-    expected_policy_apply_order = copy.deepcopy(policy_apply_order)
 
     existing_policy = MonkeyedPolicyBody.create_policy_bare(MONKEYED_POLICY_ID, priority="1")
     damaged_policy = MonkeyedPolicyBody.create_policy_bare(MONKEYED_POLICY_ID_2)
@@ -914,11 +723,6 @@ def test_update_policies_not():
     assert MonkeyedPolicyBody.is_the_same_dict(app_config, expected_app_config)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_app_config, app_config)
 
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == expected_policy_apply_order
-
 @cfy_ctx(include_bad=True)
 def test_update_many_calcs():
     """test policy_update"""
@@ -930,12 +734,6 @@ def test_update_many_calcs():
     assert dcae_policy.POLICIES in runtime_properties
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
-
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID]
 
     updated_policy = MonkeyedPolicyBody.create_policy(MONKEYED_POLICY_ID_2, 2, priority="aa20")
     added_policy = MonkeyedPolicyBody.create_policy(MONKEYED_POLICY_ID_M_2, 2,
@@ -956,7 +754,6 @@ def test_update_many_calcs():
 
     ctx.logger.info("policy[{0}]: removed".format(MONKEYED_POLICY_ID_M))
     assert MONKEYED_POLICY_ID_M not in policies
-    # assert Policies._get_config_from_policy(policies[MONKEYED_POLICY_ID_M]) is None
 
     assert MONKEYED_POLICY_ID_M_2 in policies
     policy = policies[MONKEYED_POLICY_ID_M_2]
@@ -986,12 +783,6 @@ def test_update_many_calcs():
     assert MonkeyedPolicyBody.is_the_same_dict(policy, expected_b)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_b, policy)
 
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID, MONKEYED_POLICY_ID_M_2]
-
 @cfy_ctx(include_bad=True)
 def test_remove_all_policies():
     """test policy_update - remove all policies"""
@@ -1011,18 +802,7 @@ def test_remove_all_policies():
     ctx.logger.info("removed: {0}".format(remove_policy_ids))
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
     assert dcae_policy.POLICIES in runtime_properties
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    assert runtime_properties[dcae_policy.POLICY_APPLY_ORDER] == []
-    assert dcae_policy.POLICY_DEFAULTED_FIELDS in runtime_properties
-    assert Policies.get_policy_configs() == []
-
-    defaulted_fields = runtime_properties[dcae_policy.POLICY_DEFAULTED_FIELDS]
-    expected_defaulted_fields = dict(
-        (k, True)
-        for k in MonkeyedPolicyBody.create_policy_body(MONKEYED_POLICY_ID)[POLICY_CONFIG]
-    )
-    assert MonkeyedPolicyBody.is_the_same_dict(defaulted_fields, expected_defaulted_fields)
-    assert MonkeyedPolicyBody.is_the_same_dict(expected_defaulted_fields, defaulted_fields)
+    assert Policies.get_policy_bodies() == []
 
     assert APPLICATION_CONFIG in runtime_properties
     assert APPLICATION_CONFIG in ctx.node.properties
@@ -1052,18 +832,7 @@ def test_remove_all_policies_twice():
     ctx.logger.info("removed: {0}".format(remove_policy_ids))
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
     assert dcae_policy.POLICIES in runtime_properties
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    assert runtime_properties[dcae_policy.POLICY_APPLY_ORDER] == []
-    assert dcae_policy.POLICY_DEFAULTED_FIELDS in runtime_properties
-    assert Policies.get_policy_configs() == []
-
-    defaulted_fields = runtime_properties[dcae_policy.POLICY_DEFAULTED_FIELDS]
-    expected_defaulted_fields = dict(
-        (k, True)
-        for k in MonkeyedPolicyBody.create_policy_body(MONKEYED_POLICY_ID)[POLICY_CONFIG]
-    )
-    assert MonkeyedPolicyBody.is_the_same_dict(defaulted_fields, expected_defaulted_fields)
-    assert MonkeyedPolicyBody.is_the_same_dict(expected_defaulted_fields, defaulted_fields)
+    assert Policies.get_policy_bodies() == []
 
     assert APPLICATION_CONFIG in runtime_properties
     assert APPLICATION_CONFIG in ctx.node.properties
@@ -1084,12 +853,6 @@ def test_remove_then_update():
     assert dcae_policy.POLICIES in runtime_properties
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
-
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID]
 
     remove_policy_ids = policies.keys()
     policy_update(updated_policies=None, added_policies=None, removed_policies=remove_policy_ids)
@@ -1127,15 +890,7 @@ def test_remove_then_update():
     assert MonkeyedPolicyBody.is_the_same_dict(updated_policy, policy)
 
     assert MONKEYED_POLICY_ID in policies
-    assert Policies._get_config_from_policy(policies[MONKEYED_POLICY_ID]) is None
-
     assert MONKEYED_POLICY_ID_B in policies
-    assert Policies._get_config_from_policy(policies[MONKEYED_POLICY_ID_B]) is None
-
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_M_2]
 
 @cfy_ctx(include_bad=True)
 def test_remove_update_many_calcs():
@@ -1149,12 +904,6 @@ def test_remove_update_many_calcs():
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID]
-
     remove_policy_ids = policies.keys()
     policy_update_many_calcs(updated_policies=None,
                              added_policies=None,
@@ -1163,22 +912,6 @@ def test_remove_update_many_calcs():
     assert dcae_policy.POLICIES in runtime_properties
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
-
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == []
-
-    assert dcae_policy.POLICY_DEFAULTED_FIELDS in runtime_properties
-    assert Policies.get_policy_configs() == []
-
-    defaulted_fields = runtime_properties[dcae_policy.POLICY_DEFAULTED_FIELDS]
-    expected_defaulted_fields = dict(
-        (k, True)
-        for k in MonkeyedPolicyBody.create_policy_body(MONKEYED_POLICY_ID)[POLICY_CONFIG]
-    )
-    assert MonkeyedPolicyBody.is_the_same_dict(defaulted_fields, expected_defaulted_fields)
-    assert MonkeyedPolicyBody.is_the_same_dict(expected_defaulted_fields, defaulted_fields)
 
     updated_policy = MonkeyedPolicyBody.create_policy(MONKEYED_POLICY_ID_2, 2, priority="aa20")
     added_policy = MonkeyedPolicyBody.create_policy(MONKEYED_POLICY_ID_M_2, 2,
@@ -1213,15 +946,7 @@ def test_remove_update_many_calcs():
     assert MonkeyedPolicyBody.is_the_same_dict(updated_policy, policy)
 
     assert MONKEYED_POLICY_ID in policies
-    assert Policies._get_config_from_policy(policies[MONKEYED_POLICY_ID]) is None
-
     assert MONKEYED_POLICY_ID_B in policies
-    assert Policies._get_config_from_policy(policies[MONKEYED_POLICY_ID_B]) is None
-
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_M_2]
 
 @cfy_ctx(include_bad=True)
 def test_bad_update_many_calcs():
@@ -1234,12 +959,6 @@ def test_bad_update_many_calcs():
     assert dcae_policy.POLICIES in runtime_properties
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
-
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_M, MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID]
 
     damaged_policy = MonkeyedPolicyBody.create_policy(MONKEYED_POLICY_ID_2, 2, priority="aa20")
     damaged_policy[POLICY_BODY][POLICY_CONFIG] = ["damaged config"]
@@ -1293,12 +1012,6 @@ def test_bad_update_many_calcs():
     assert MonkeyedPolicyBody.is_the_same_dict(policy, expected_b)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_b, policy)
 
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == [
-        MONKEYED_POLICY_ID_2, MONKEYED_POLICY_ID_B, MONKEYED_POLICY_ID_M_2, MONKEYED_POLICY_ID]
-
 @cfy_ctx(include_bad=True, include_good=False)
 def test_bad_policies():
     """test bad policy nodes"""
@@ -1310,11 +1023,6 @@ def test_bad_policies():
     assert dcae_policy.POLICIES in runtime_properties
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
-
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
-    assert policy_apply_order == []
 
 @cfy_ctx(include_bad=True, include_good=False)
 def test_wrong_ctx_node_configure():
@@ -1333,9 +1041,9 @@ def test_wrong_ctx_node_configure():
 @cfy_ctx(include_bad=True, include_good=False)
 def test_wrong_ctx_policy_update():
     """test wrong ctx"""
+    no_policies = Policies.get_policy_bodies()
     current_ctx.set(ctx.instance.relationships[0])
     ctx_type = ctx.type
-    no_policy_configs = Policies.get_policy_configs()
 
     with pytest.raises(NonRecoverableError) as excinfo:
         policy_update(updated_policies=None, added_policies=None, removed_policies=None)
@@ -1343,7 +1051,7 @@ def test_wrong_ctx_policy_update():
     CurrentCtx.reset()
     ctx.logger.info("{0} not a node boom: {1}".format(ctx_type, str(excinfo.value)))
     assert ctx_type == 'cloudify.relationships.depends_on'
-    assert no_policy_configs == []
+    assert no_policies == []
     assert str(excinfo.value) == "can only invoke update_policies_on_node on node"
 
 def test_defenses_on_decorators():
@@ -1414,16 +1122,10 @@ def test_defenses_on_set_policies():
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
-    assert dcae_policy.POLICY_APPLY_ORDER in runtime_properties
-    policy_apply_order = runtime_properties[dcae_policy.POLICY_APPLY_ORDER]
-    ctx.logger.info("policy_apply_order: {0}".format(json.dumps(policy_apply_order)))
+    Policies._set_policies({})
+
+    assert dcae_policy.POLICIES not in runtime_properties
 
     Policies._set_policies({})
 
     assert dcae_policy.POLICIES not in runtime_properties
-    assert dcae_policy.POLICY_APPLY_ORDER not in runtime_properties
-
-    Policies._set_policies({})
-
-    assert dcae_policy.POLICIES not in runtime_properties
-    assert dcae_policy.POLICY_APPLY_ORDER not in runtime_properties
