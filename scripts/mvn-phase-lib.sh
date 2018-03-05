@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,9 @@
 #MVN_PROJECT_MODULEID="$1"
 #MVN_PHASE="$2"
 #PROJECT_ROOT=$(dirname $0)
+
+
+RELEASE_TAG="R2"
 
 FQDN="${MVN_PROJECT_GROUPID}.${MVN_PROJECT_ARTIFACTID}"
 if [ "$MVN_PROJECT_MODULEID" == "__" ]; then
@@ -247,7 +250,7 @@ build_wagons()
 
     echo "In $PLUGIN_DIR, build plugin $PLUGIN_NAME, version $PLUGIN_VERSION"
 
-    wagon create --format tar.gz "${PLUGIN_DIR}"
+    wagon create -r "${PLUGIN_DIR}/requirements.txt" --format tar.gz "${PLUGIN_DIR}"
 
     PKG_FILE_NAMES=( "${PLUGIN_NAME}-${PLUGIN_VERSION}"*.wgn )
     echo Built package: "${PKG_FILE_NAMES[@]}"
@@ -291,17 +294,9 @@ upload_raw_file()
   else
     PROJECT_NAME=${FQDN}
   fi
-  if [ "$MVN_DEPLOYMENT_TYPE" == 'SNAPSHOT' ]; then
-    SEND_TO="${REPO}/${PROJECT_NAME}/snapshots"
-  elif [ "$MVN_DEPLOYMENT_TYPE" == 'STAGING' ]; then
-    SEND_TO="${REPO}/${PROJECT_NAME}/releases"
-  else
-    echo "Unreconfnized deployment type, quit"
-    exit
-  fi
-  #if [ ! -z "$MVN_PROJECT_MODULEID" ]; then
-  #  SEND_TO="$SEND_TO/$MVN_PROJECT_MODULEID"
-  #fi
+
+  SEND_TO="${REPO}/${PROJECT_NAME}/${RELEASE_TAG}"
+ 
   if [ ! -z "$2" ]; then
     SEND_TO="$SEND_TO/$2"
   fi
@@ -346,9 +341,8 @@ upload_wagons_and_type_yamls()
       exit -1
     fi
 
-    upload_raw_file "$NEWFILENAME" type_files/${PLUGIN_NAME}/${PLUGIN_VERSION_MAJOR}
-    upload_raw_file "$NEWFILENAME" type_files/${PLUGIN_NAME}/${PLUGIN_VERSION_MAJOR_MINOR}
-    upload_raw_file "${WAGONFILE_NAME}" "plugins/${PLUGIN_NAME}"
+    upload_raw_file "${NEWFILENAME}" "${PLUGIN_NAME}/${PLUGIN_VERSION}"
+    upload_raw_file "${WAGONFILE_NAME}" "${PLUGIN_NAME}/${PLUGIN_VERSION}"
    
     rm -r $WAGONFILE_NAME
     if [ "$TYPEFILE_NAME" != "$NEWFILENAME" ]; then

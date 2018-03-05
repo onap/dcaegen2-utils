@@ -36,11 +36,7 @@ fi
 export SETTINGS_FILE=${SETTINGS_FILE:-$HOME/.m2/settings.xml}
 
 set +e
-if ! wget -O ${PROJECT_ROOT}/mvn-phase-lib.sh \
-  "$MVN_RAWREPO_BASEURL_DOWNLOAD"/org.onap.dcaegen2.utils/releases/scripts/mvn-phase-lib.sh; then
-  cp "${PROJECT_ROOT}"/scripts/mvn-phase-lib.sh "${PROJECT_ROOT}/mvn-phase-lib.sh"
-fi
-source "${PROJECT_ROOT}"/mvn-phase-lib.sh
+source "${PROJECT_ROOT}"/scripts/mvn-phase-lib.sh
 
 
 # This is the base for where "deploy" will upload
