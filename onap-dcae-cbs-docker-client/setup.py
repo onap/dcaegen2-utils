@@ -16,20 +16,19 @@
 #
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
-import os
 from setuptools import setup, find_packages
 
 setup(
-    name = "onap_dcae_cbs_docker_client",
-    description = "very lightweight client for a DCAE dockerized component to get it's config from the CBS",
-    version = "1.0.1",
+    name="onap_dcae_cbs_docker_client",
+    description="very lightweight client for a DCAE dockerized component to get it's config from the CBS",
+    version="1.0.2",
     packages=find_packages(),
-    author = "Tommy Carpenter",
-    author_email = "tommy@research.att.com",
+    author="Tommy Carpenter",
+    author_email="tommy@research.att.com",
     license='Apache 2',
-    keywords = "",
-    url = "",
-    install_requires = [
-        "requests"
+    keywords="",
+    url="",
+    install_requires=[
+        "requests>= 2.0.0, < 3.0.0"
     ]
 )

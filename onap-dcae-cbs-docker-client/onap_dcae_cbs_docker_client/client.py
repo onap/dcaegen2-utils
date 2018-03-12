@@ -17,39 +17,47 @@
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
 import json
-import requests
 import os
 import logging
+import requests
 
-root = logging.getLogger()
-logger = root.getChild(__name__)
+LOGGER = logging.getLogger().getChild(__name__)
+
+
+class ENVsMissing(Exception):
+    """
+    Exception to represent critical ENVs are missing
+    """
+    pass
+
 
 #########
 # HELPERS
 
+
 def _get_uri_from_consul(consul_url, name):
     """
     Call consul's catalog
-    TODO: currently assumes there is only one service with this HOSTNAME
+    TODO: currently assumes there is only one service with this hostname
     """
     url = "{0}/v1/catalog/service/{1}".format(consul_url, name)
-    logger.debug("Trying to lookup service: {0}".format(url))
+    LOGGER.debug("Trying to lookup service: {0}".format(url))
     res = requests.get(url)
-    try:
-        res.raise_for_status()
-        services = res.json()
-        return "http://{0}:{1}".format(services[0]["ServiceAddress"], services[0]["ServicePort"])
-    except Exception as e:
-        logger.error("Exception occured when querying Consul: either could not hit {0} or no service registered. Error code: {1}, Error Text: {2}".format(url, res.status_code, res.text))
-        return None
+    res.raise_for_status()
+    services = res.json()
+    return "http://{0}:{1}".format(services[0]["ServiceAddress"], services[0]["ServicePort"])
+
 
 def _get_envs():
     """
-    Returns HOSTNAME, CONSUL_HOST, CONFIG_BINDING_SERVICE or crashes for caller to deal with
+    Returns hostname, consul_host.
+    If the necessary ENVs are not found, this is fatal, and raises an exception.
     """
-    HOSTNAME = os.environ["HOSTNAME"]
-    CONSUL_HOST = os.environ["CONSUL_HOST"]
-    return HOSTNAME, CONSUL_HOST
+    if "HOSTNAME" not in os.environ or "CONSUL_HOST" not in os.environ:
+        raise ENVsMissing("HOSTNAME or CONSUL_HOST missing")
+    hostname = os.environ["HOSTNAME"]
+    consul_host = os.environ["CONSUL_HOST"]
+    return hostname, consul_host
 
 
 def _get_path(path):
@@ -64,32 +72,39 @@ def _get_path(path):
 
     config = {}
 
-    HOSTNAME, CONSUL_HOST = _get_envs()
+    hostname, consul_host = _get_envs()
 
-    #not sure how I as the component developer is supposed to know consul port
-    consul_url = "http://{0}:8500".format(CONSUL_HOST)
+    # not sure how I as the component developer is supposed to know consul port
+    consul_url = "http://{0}:8500".format(consul_host)
 
-    #get the CBS URL. Would not need the following hoorahrah if we had DNS.
-    cbs_url = _get_uri_from_consul(consul_url, "config_binding_service")
-    if cbs_url is None:
-        logger.error("Cannot bind config at this time, cbs is unreachable")
-    else:
-        #get my config
-        my_config_endpoint = "{0}/{1}/{2}".format(cbs_url, path, HOSTNAME)
+    try:
+        # get my config
+        cbs_url = _get_uri_from_consul(consul_url, "config_binding_service")
+        my_config_endpoint = "{0}/{1}/{2}".format(cbs_url, path, hostname)
         res = requests.get(my_config_endpoint)
-        try:
-            res.raise_for_status()
-            config = res.json()
-            logger.info("get_config returned the following configuration: {0}".format(json.dumps(config)))
-        except:
-            logger.error("in get_config, the config binding service endpoint {0} blew up on me. Error code: {1}, Error text: {2}".format(my_config_endpoint, res.status_code, res.text))
+
+        res.raise_for_status()
+        config = res.json()
+        LOGGER.info("get_config returned the following configuration: {0}".format(
+            json.dumps(config)))
+    except requests.exceptions.HTTPError as exc:
+        LOGGER.error("in get_config, the config binding service endpoint %s was not reachable. Error code: %d, Error text: %s", my_config_endpoint, res.status_code, res.text)
+    except Exception as exc:
+        LOGGER.exception(exc)
     return config
 
 
 #########
 # Public
 def get_all():
+    """
+    Hit the CBS service_component_all endpoint
+    """
     return _get_path("service_component_all")
 
+
 def get_config():
+    """
+    Hit the CBS service_component endpoint
+    """
     return _get_path("service_component")
