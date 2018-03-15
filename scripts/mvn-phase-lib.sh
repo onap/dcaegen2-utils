@@ -15,16 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ============LICENSE_END=========================================================
-#
-# ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
 
 #MVN_PROJECT_MODULEID="$1"
 #MVN_PHASE="$2"
 #PROJECT_ROOT=$(dirname $0)
-
-
-RELEASE_TAG="R2"
 
 FQDN="${MVN_PROJECT_GROUPID}.${MVN_PROJECT_ARTIFACTID}"
 if [ "$MVN_PROJECT_MODULEID" == "__" ]; then
@@ -57,11 +52,16 @@ fi
 
 export SETTINGS_FILE=${SETTINGS_FILE:-$HOME/.m2/settings.xml}
 
+RELEASE_TAG=${MVN_RELEASE_TAG:-R2}
+if [ "$RELEASE_TAG" == "R1" ]; then
+  unset RELEASE_TAG
+fi
 
 
 # mvn phase in life cycle
 MVN_PHASE="$2"
 
+echo "MVN_RELEASE_TAG is                 [$MVN_RELEASE_TAG]"
 echo "MVN_PROJECT_MODULEID is            [$MVN_PROJECT_MODULEID]"
 echo "MVN_PHASE is                       [$MVN_PHASE]"
 echo "MVN_PROJECT_GROUPID is             [$MVN_PROJECT_GROUPID]"
@@ -76,7 +76,6 @@ echo "MVN_RAWREPO_SERVERID is            [$MVN_RAWREPO_SERVERID]"
 echo "MVN_DOCKERREGISTRY_SNAPSHOT is     [$MVN_DOCKERREGISTRY_SNAPSHOT]"
 echo "MVN_DOCKERREGISTRY_PUBLIC is       [$MVN_DOCKERREGISTRY_PUBLIC]"
 echo "MVN_DOCKERREGISTRY_RELEASE is      [$MVN_DOCKERREGISTRY_RELEASE]"
-
 echo "MVN_PYPISERVER_SERVERID            [$MVN_PYPISERVER_SERVERID]"
 echo "MVN_PYPISERVER_BASEURL is          [$MVN_PYPISERVER_BASEURL]"
 
@@ -108,19 +107,30 @@ expand_templates()
   export ONAPTEMPLATE_RAWREPOURL_org_onap_ccsdk_platform_plugins_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.ccsdk.platform.plugins"
   export ONAPTEMPLATE_RAWREPOURL_org_onap_ccsdk_platform_blueprints_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.ccsdk.platform.blueprints"
   export ONAPTEMPLATE_RAWREPOURL_org_onap_ccsdk_platform_blueprints_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.ccsdk.platform.blueprints"
- 
-  export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2/releases"
-  export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2/snapshots"
-  export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_plugins_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.plugins/releases"
-  export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_plugins_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.plugins/snapshots"
-  export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_blueprints_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.blueprints/releases"
-  export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_blueprints_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.blueprints/snapshots"
+
+
+  if [ -z "$RELEASE_TAG" ]; then
+    export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2/releases"
+    export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2/snapshots"
+    export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_plugins_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.plugins/releases"
+    export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_plugins_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.plugins/snapshots"
+    export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_blueprints_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.blueprints/releases"
+    export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_blueprints_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.blueprints/snapshots"
+  else
+    export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2/$RELEASE_TAG"
+    export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2/$RELEASE_TAG"
+    export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_plugins_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.plugins/$RELEASE_TAG"
+    export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_plugins_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.plugins/$RELEASE_TAG"
+    export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_blueprints_releases="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.blueprints/$RELEASE_TAG"
+    export ONAPTEMPLATE_RAWREPOURL_org_onap_dcaegen2_platform_blueprints_snapshots="$MVN_RAWREPO_BASEURL_DOWNLOAD/org.onap.dcaegen2.platform.blueprints/$RELEASE_TAG"
+  fi
+
 
   export ONAPTEMPLATE_PYPIURL_org_onap_dcaegen2="${MVN_PYPISERVER_BASEURL}"
 
   # docker registry templates are for poll, so use PUBLIC registry
-  export ONAPTEMPLATE_DOCKERREGURL_org_onap_dcaegen2_releases="$MVN_DOCKERREGISTRY_PUBLIC"
-  export ONAPTEMPLATE_DOCKERREGURL_org_onap_dcaegen2_snapshots="${MVN_DOCKERREGISTRY_PUBLIC}/snapshots"
+  export ONAPTEMPLATE_DOCKERREGURL_org_onap_dcaegen2_releases="${MVN_DOCKERREGISTRY_PUBLIC}"
+  export ONAPTEMPLATE_DOCKERREGURL_org_onap_dcaegen2_snapshots="${MVN_DOCKERREGISTRY_PUBLIC}"
 
   # Mvn repo
   export ONAPTEMPLATE_MVN_org_onap_dcaegen2_analytics_tca_snapshots="${MVN_NEXUSPROXY}/service/local/repositories/snapshots/content/org/onap/dcaegen2/analytics/tca"
@@ -191,12 +201,12 @@ test_templates()
     find . -name '*-template' | sed -e 's/-template$//' |
     while read file
     do
-        egrep '^  - .?https?://' < $file
+        egrep '^  - .?https?://' < "$file"
     done  | awk '{print $2}' | sed -e 's/"//g' | sort -u |
     while read url
     do
-	curl -L -w '%{http_code}' -s -o /dev/null "$url" > $TMP
-	case $(< $TMP) in
+	curl -L -w '%{http_code}' -s -o /dev/null "$url" > "$TMP"
+	case $(< "$TMP") in
 	    2* ) ;;
 	    * ) echo ">>>>>>>>>>>>>>>> $url not found <<<<<<<<<<<<<<<<" ;;
 	esac
@@ -207,7 +217,7 @@ test_templates()
     find . -name '*-template' | sed -e 's/-template$//' |
     while read blueprint
     do
-	check-blueprint-vs-input -b $blueprint -i check-blueprint-vs-input/lib/sample-inputs.yaml || true
+	check-blueprint-vs-input -b "$blueprint" -i check-blueprint-vs-input/lib/sample-inputs.yaml || true
     done
 }
 
@@ -254,7 +264,7 @@ build_wagons()
 
     PKG_FILE_NAMES=( "${PLUGIN_NAME}-${PLUGIN_VERSION}"*.wgn )
     echo Built package: "${PKG_FILE_NAMES[@]}"
-    cd $CURDIR
+    cd "$CURDIR"
   done
 
   deactivate
@@ -295,7 +305,11 @@ upload_raw_file()
     PROJECT_NAME=${FQDN}
   fi
 
-  SEND_TO="${REPO}/${PROJECT_NAME}/${RELEASE_TAG}"
+  if [ -z "$RELEASE_TAG" ]; then
+    SEND_TO="${REPO}/${PROJECT_NAME}"
+  else
+    SEND_TO="${REPO}/${PROJECT_NAME}/${RELEASE_TAG}"
+  fi
  
   if [ ! -z "$2" ]; then
     SEND_TO="$SEND_TO/$2"
@@ -333,8 +347,8 @@ upload_wagons_and_type_yamls()
       cp -f "$TYPEFILE_NAME" "$NEWFILENAME"
     fi
 
-    TYPEFILE_PACKAGE_VERSION=$(grep -R 'package_version' $TYPEFILE_NAME |cut -f2 -d ':' |sed -r 's/\s+//g')
-    WAGONFILE_NAME=$(ls -1 $PLUGIN_NAME-$TYPEFILE_PACKAGE_VERSION-*.wgn)
+    TYPEFILE_PACKAGE_VERSION=$(grep -R 'package_version' "$TYPEFILE_NAME" |cut -f2 -d ':' |sed -r 's/\s+//g')
+    WAGONFILE_NAME=$(ls -1 "${PLUGIN_NAME}"-"${TYPEFILE_PACKAGE_VERSION}"-*.wgn)
     if [ -z "$WAGONFILE_NAME" ]; then
       echo "!!! No wagonfile found with matching package name and version as required in typefile: "
       echo "    $TYPEFILE_NAME plugin $PLUGIN_NAME package version ${TYPEFILE_PACKAGE_VERSION}"
@@ -344,7 +358,7 @@ upload_wagons_and_type_yamls()
     upload_raw_file "${NEWFILENAME}" "${PLUGIN_NAME}/${PLUGIN_VERSION}"
     upload_raw_file "${WAGONFILE_NAME}" "${PLUGIN_NAME}/${PLUGIN_VERSION}"
    
-    rm -r $WAGONFILE_NAME
+    rm -r "$WAGONFILE_NAME"
     if [ "$TYPEFILE_NAME" != "$NEWFILENAME" ]; then
       rm -f "$NEWFILENAME"
     fi
@@ -389,6 +403,8 @@ EOL
 
 
 
+# following the https://wiki.onap.org/display/DW/Independent+Versioning+and+Release+Process
+#IndependentVersioningandReleaseProcess-StandardizedDockerTagging
 build_and_push_docker()
 {
   IMAGENAME="onap/${FQDN}.${MVN_PROJECT_MODULEID}"
@@ -403,12 +419,12 @@ build_and_push_docker()
   # build a docker image
   docker build --rm -f ./Dockerfile -t "${LFQI}" ./
 
+  # all local builds push to SNAPSHOT repo
   REPO=""
   if [ $MVN_DEPLOYMENT_TYPE == "SNAPSHOT" ]; then
      REPO=$MVN_DOCKERREGISTRY_SNASHOT
   elif [ $MVN_DEPLOYMENT_TYPE == "STAGING" ]; then
-     # there seems to be no staging docker registry?  set to use SNAPSHOT also
-     REPO=$MVN_DOCKERREGISTRY_RELEASE
+     REPO=$MVN_DOCKERREGISTRY_SNAPSHOT
   else
      echo "Fail to determine DEPLOYMENT_TYPE"
      REPO=$MVN_DOCKERREGISTRY_SNAPSHOT
@@ -428,19 +444,14 @@ build_and_push_docker()
     echo docker login "$REPO" -u "$USER" -p "$PASS_PROVIDED"
     docker login "$REPO" -u "$USER" -p "$PASS"
 
-    if [ $MVN_DEPLOYMENT_TYPE == "SNAPSHOT" ]; then
-      REPO="$REPO/snapshots"
-    elif [ $MVN_DEPLOYMENT_TYPE == "STAGING" ]; then
-      # there seems to be no staging docker registry?  set to use SNAPSHOT also
-      #REPO=$MVN_DOCKERREGISTRY_RELEASE
-      REPO="$REPO"
-    else
-      echo "Fail to determine DEPLOYMENT_TYPE"
-      REPO="$REPO/unknown"
-    fi
-
+    # local tag is imagename:version-timestamp
     OLDTAG="${LFQI}"
-    PUSHTAGS="${REPO}/${IMAGENAME}:${VERSION2}-${TIMESTAMP} ${REPO}/${IMAGENAME}:${VERSION2} ${REPO}/${IMAGENAME}:${VERSION2}-latest"
+    #PUSHTAGS="${REPO}/${IMAGENAME}:${VERSION2}-${TIMESTAMP} ${REPO}/${IMAGENAME}:${VERSION2} ${REPO}/${IMAGENAME}:${VERSION2}-latest"
+    # four tags are pushed:  
+    #   imagename:symver-timestamp, 
+    #   imagename:semver, imagename:symver-snapshot : latest of current version
+    #   imagename:latest: latest of all, used mainly by csit
+    PUSHTAGS="${REPO}/${LFQI} ${REPO}/${IMAGENAME}:${VERSION} ${REPO}/${IMAGENAME}:${VERSION}-snapshot ${REPO}/${IMAGENAME}:latest"
     for NEWTAG in ${PUSHTAGS}
     do
       echo "tagging ${OLDTAG} to ${NEWTAG}"
@@ -450,8 +461,5 @@ build_and_push_docker()
       OLDTAG="${NEWTAG}"
     done
   fi
-
 }
-
-
 
