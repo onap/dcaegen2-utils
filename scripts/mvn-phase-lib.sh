@@ -273,11 +273,7 @@ build_wagons()
 
 build_archives_for_wagons() 
 {
-  rm -rf ./*.wgn venv-pkg
-  virtualenv ./venv-pkg
-  source ./venv-pkg/bin/activate
-  pip install --upgrade pip 
-  pip install wagon
+  rm -rf ./*.tgz ./*.zip venv-pkg
   
   SETUPFILES=$(find . -name "setup.py")
   CURDIR=$(pwd)
@@ -295,9 +291,6 @@ build_archives_for_wagons()
     echo "Built archives for package ${PLUGIN_NAME}-${PLUGIN_VERSION}"
     cd "$CURDIR"
   done
-
-  deactivate
-  rm -rf venv-pkg
 }
 
 
@@ -319,6 +312,10 @@ upload_raw_file()
     OUTPUT_FILE_TYPE='text/x-shellscript'
   elif [ "$EXT" == 'gz' ]; then
     OUTPUT_FILE_TYPE='application/gzip'
+  elif [ "$EXT" == 'tgz' ]; then
+    OUTPUT_FILE_TYPE='application/gzip'
+  elif [ "$EXT" == 'zip' ]; then
+    OUTPUT_FILE_TYPE='application/zip'
   elif [ "$EXT" == 'wgn' ]; then
     OUTPUT_FILE_TYPE='application/gzip'
   else
