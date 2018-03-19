@@ -271,6 +271,35 @@ build_wagons()
   rm -rf venv-pkg
 }
 
+build_archivess_for_wagons() 
+{
+  rm -rf ./*.wgn venv-pkg
+  virtualenv ./venv-pkg
+  source ./venv-pkg/bin/activate
+  pip install --upgrade pip 
+  pip install wagon
+  
+  SETUPFILES=$(find . -name "setup.py")
+  CURDIR=$(pwd)
+  for SETUPFILE in $SETUPFILES; do
+    PLUGIN_DIR=$(dirname "$SETUPFILE")
+    PLUGIN_NAME=$(grep 'name' "$SETUPFILE" | cut -f2 -d'=' | sed 's/[^0-9a-zA-Z\.]*//g')
+    PLUGIN_VERSION=$(grep 'version' "$SETUPFILE" | cut -f2 -d'=' | sed 's/[^0-9\.]*//g')
+
+    cd ${PLUGIN_DIR}/..
+    echo "In $(pwd), build plugin zip $PLUGIN_NAME, version $PLUGIN_VERSION"
+
+    zip -r "${PLUGIN_NAME}-${PLUGIN_VERSION}.zip" "./${PLUGIN_DIR}"
+    tar -czvf "${PLUGIN_NAME}-${PLUGIN_VERSION}.tgz" "./${PLUGIN_DIR}"
+
+    echo "Built archives for package ${PLUGIN_NAME}-${PLUGIN_VERSION}"
+    cd "$CURDIR"
+  done
+
+  deactivate
+  rm -rf venv-pkg
+}
+
 
 upload_raw_file() 
 {
@@ -320,7 +349,35 @@ upload_raw_file()
   curl -vkn --netrc-file "${NETRC}" --upload-file "${OUTPUT_FILE}" -X PUT -H "Content-Type: $OUTPUT_FILE_TYPE" "${SEND_TO}/${OUTPUT_FILE}"
 }
 
+upload_wagon_archives()
+{
+  SETUPFILES=$(find . -name "setup.py")
+  CURDIR=$(pwd)
+  for SETUPFILE in $SETUPFILES; do
+    PLUGIN_DIR=$(dirname "$SETUPFILE")
+    PLUGIN_NAME=$(grep 'name' "$SETUPFILE" | cut -f2 -d'=' | sed 's/[^0-9a-zA-Z\.]*//g')
+    PLUGIN_VERSION=$(grep 'version' "$SETUPFILE" | cut -f2 -d'=' | sed 's/[^0-9\.]*//g')
 
+    cd ${PLUGIN_DIR}/..
+    echo "In $(pwd), upload zip archive for $PLUGIN_NAME, version $PLUGIN_VERSION"
+    ARCHIVE_FILE_NAME="${PLUGIN_NAME}-${PLUGIN_VERSION}.zip" 
+    if [ -z "$ARCHIVE_FILE_NAME" ]; then
+      echo "!!! No zip archive file found ${ARCHIVE_FILE_NAME}"
+      exit -1
+    fi
+    upload_raw_file "${ARCHIVE_FILE_NAME}" "${PLUGIN_NAME}/${PLUGIN_VERSION}"
+
+    echo "In $(pwd), upload tgz archive for $PLUGIN_NAME, version $PLUGIN_VERSION"
+    ARCHIVE_FILE_NAME="${PLUGIN_NAME}-${PLUGIN_VERSION}.tgz"
+    if [ -z "$ARCHIVE_FILE_NAME" ]; then
+      echo "!!! No tgz archive file found ${ARCHIVE_FILE_NAME}"
+      exit -1
+    fi
+    upload_raw_file "${ARCHIVE_FILE_NAME}" "${PLUGIN_NAME}/${PLUGIN_VERSION}"
+
+    cd ${CURDIR}
+  done
+}
 
 upload_wagons_and_type_yamls()
 {
@@ -462,4 +519,3 @@ build_and_push_docker()
     done
   fi
 }
-
