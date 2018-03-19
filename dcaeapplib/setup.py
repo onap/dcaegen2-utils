@@ -21,7 +21,7 @@ from setuptools import setup, find_packages
 
 setup(
   name='dcaeapplib',
-  version='0.0.4',
+  version='0.0.5',
   packages=find_packages(),
   author = 'Andrew Gauld',
   author_email = 'ag1282@att.com',
