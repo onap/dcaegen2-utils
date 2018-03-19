@@ -37,8 +37,8 @@ class Stubs:
         },
         "streams_publishes": {
           "myoutputstream": {
-            "aaf_username": "user2",
-            "aaf_password": "pass2",
+            "aaf_username": None,
+            "aaf_password": None,
             "dmaap_info": {
               "topic_url": "http://messagerouter.example.com:3904/events/topic2"
             }
@@ -84,18 +84,23 @@ def test_todo(monkeypatch):
   env.start() # exercise start when already running
   env.stop()
   def stub_get(*args, **kwargs):
+    stuff.auth = 'auth' in kwargs
     return stuff
   def stub_post(url, data, *args, **kwargs):
     assert data == '4.11.asdfhello world'
+    stuff.auth = 'auth' in kwargs
     stuff.posted = True
     return stuff
   monkeypatch.setattr(requests, 'post', stub_post)
   stuff.posted = False
+  stuff.auth = True
   env.senddata('myoutputstream', 'asdf', 'hello world')
   assert stuff.posted == True
+  assert stuff.auth == False
   monkeypatch.setattr(requests, 'get', stub_get)
   assert env.hasdata('myinputstream') is False
   assert env.getdata('myinputstream') == 's1'
+  assert stuff.auth == True
   stuff.toreturn = [ 'a1' ]
   assert env.getdata('myinputstream') == 's2'
   assert env.hasdata('myinputstream') is True
