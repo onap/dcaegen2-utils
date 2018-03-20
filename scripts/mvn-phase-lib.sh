@@ -275,20 +275,21 @@ build_archives_for_wagons()
 {
   rm -rf ./*.tgz ./*.zip venv-pkg
   
-  SETUPFILES=$(find . -name "setup.py")
+  SETUPFILES=$(find $(pwd) -name "setup.py")
   CURDIR=$(pwd)
   for SETUPFILE in $SETUPFILES; do
-    PLUGIN_DIR=$(dirname "$SETUPFILE")
+    PLUGIN_FULL_DIR=$(dirname "$SETUPFILE")
+    PLUGIN_BASE_DIR=$(basename "$PLUGIN_DIR")
     PLUGIN_NAME=$(grep 'name' "$SETUPFILE" | cut -f2 -d'=' | sed 's/[^0-9a-zA-Z\.]*//g')
     PLUGIN_VERSION=$(grep 'version' "$SETUPFILE" | cut -f2 -d'=' | sed 's/[^0-9\.]*//g')
 
-    cd ${PLUGIN_DIR}/..
+    cd ${PLUGIN_FULL_DIR}/..
     echo "In $(pwd), build plugin zip $PLUGIN_NAME, version $PLUGIN_VERSION"
 
-    zip -r "${PLUGIN_NAME}-${PLUGIN_VERSION}.zip" "./${PLUGIN_DIR}"
-    tar -czvf "${PLUGIN_NAME}-${PLUGIN_VERSION}.tgz" "./${PLUGIN_DIR}"
+    zip -r "${PLUGIN_NAME}-${PLUGIN_VERSION}.zip" -x *.git* "./${PLUGIN_BASE_DIR}"
+    tar -czvf "${PLUGIN_NAME}-${PLUGIN_VERSION}.tgz" "./${PLUGIN_BASE_DIR}"
 
-    echo "Built archives for package ${PLUGIN_NAME}-${PLUGIN_VERSION}"
+    echo "Built archives for package ${PLUGIN_NAME}-${PLUGIN_VERSION} at $(pwd)"
     cd "$CURDIR"
   done
 }
@@ -348,14 +349,15 @@ upload_raw_file()
 
 upload_wagon_archives()
 {
-  SETUPFILES=$(find . -name "setup.py")
+  SETUPFILES=$(find $(pwd) -name "setup.py")
   CURDIR=$(pwd)
   for SETUPFILE in $SETUPFILES; do
-    PLUGIN_DIR=$(dirname "$SETUPFILE")
+    PLUGIN_FULL_DIR=$(dirname "$SETUPFILE")
+    PLUGIN_BASE_DIR=$(basename "$PLUGIN_DIR")
     PLUGIN_NAME=$(grep 'name' "$SETUPFILE" | cut -f2 -d'=' | sed 's/[^0-9a-zA-Z\.]*//g')
     PLUGIN_VERSION=$(grep 'version' "$SETUPFILE" | cut -f2 -d'=' | sed 's/[^0-9\.]*//g')
 
-    cd ${PLUGIN_DIR}/..
+    cd ${PLUGIN_FULL_DIR}/..
     echo "In $(pwd), upload zip archive for $PLUGIN_NAME, version $PLUGIN_VERSION"
     ARCHIVE_FILE_NAME="${PLUGIN_NAME}-${PLUGIN_VERSION}.zip" 
     if [ -z "$ARCHIVE_FILE_NAME" ]; then
