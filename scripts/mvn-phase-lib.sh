@@ -286,7 +286,7 @@ build_archives_for_wagons()
     cd ${PLUGIN_FULL_DIR}/..
     echo "In $(pwd), build plugin zip $PLUGIN_NAME, version $PLUGIN_VERSION"
 
-    zip -r "${PLUGIN_NAME}-${PLUGIN_VERSION}.zip" -x *.git* "./${PLUGIN_BASE_DIR}"
+    zip -r "${PLUGIN_NAME}-${PLUGIN_VERSION}.zip" "./${PLUGIN_BASE_DIR}"
     tar -czvf "${PLUGIN_NAME}-${PLUGIN_VERSION}.tgz" "./${PLUGIN_BASE_DIR}"
 
     echo "Built archives for package ${PLUGIN_NAME}-${PLUGIN_VERSION} at $(pwd)"
