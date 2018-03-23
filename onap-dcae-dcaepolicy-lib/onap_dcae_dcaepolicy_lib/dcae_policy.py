@@ -48,6 +48,8 @@ DCAE_POLICIES_TYPE = 'dcae.nodes.policies'
 ACTION_GATHERED = "gathered"
 ACTION_UPDATED = "updated"
 
+CONFIG_ATTRIBUTES = "configAttributes"
+
 class Policies(object):
     """static class for policy operations"""
     _updated_policies = {}
@@ -99,6 +101,23 @@ class Policies(object):
         return True
 
     @staticmethod
+    def _fix_policy_filter(policy_filter):
+        if CONFIG_ATTRIBUTES in policy_filter:
+            config_attributes = policy_filter.get(CONFIG_ATTRIBUTES)
+            if isinstance(config_attributes, dict):
+                return
+            try:
+                config_attributes = json.loads(config_attributes)
+                if config_attributes and isinstance(config_attributes, dict):
+                    policy_filter[CONFIG_ATTRIBUTES] = config_attributes
+                    return
+            except (ValueError, TypeError):
+                pass
+            if config_attributes:
+                ctx.logger.warn("unexpected %s: %s", CONFIG_ATTRIBUTES, config_attributes)
+            del policy_filter[CONFIG_ATTRIBUTES]
+
+    @staticmethod
     def _gather_policies(target, policies, policy_filters):
         """adds the policies and policy-filter from dcae.nodes.policies node to policies"""
         if DCAE_POLICIES_TYPE not in target.node.type_hierarchy:
@@ -106,14 +125,16 @@ class Policies(object):
 
         property_policy_filter = target.node.properties.get(POLICY_FILTER)
         if property_policy_filter:
-            policy_filter = dict(
+            policy_filter = deepcopy(dict(
                 (k, v) for (k, v) in dict(property_policy_filter).iteritems()
                 if v or isinstance(v, (int, float))
-            )
+            ))
+            Policies._fix_policy_filter(policy_filter)
+
             if policy_filter:
                 policy_filters[target.instance.id] = {
                     POLICY_FILTER_ID : target.instance.id,
-                    POLICY_FILTER : deepcopy(policy_filter)
+                    POLICY_FILTER : policy_filter
                 }
 
         filtered_policies = target.instance.runtime_properties.get(POLICIES_FILTERED)
