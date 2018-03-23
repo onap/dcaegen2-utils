@@ -40,6 +40,7 @@ POLICY_VERSION = "policyVersion"
 POLICY_NAME = "policyName"
 POLICY_BODY = 'policy_body'
 POLICY_CONFIG = 'config'
+CONFIG_NAME = "ConfigName"
 
 MONKEYED_POLICY_ID = 'monkeyed.Config_peach'
 MONKEYED_POLICY_ID_2 = 'monkeyed.Config_peach_2'
@@ -90,7 +91,7 @@ class MonkeyedPolicyBody(object):
 
         matching_conditions = {
             "ONAPName": "DCAE",
-            "ConfigName": "alex_config_name"
+            CONFIG_NAME: "alex_config_name"
         }
         if priority is not None:
             matching_conditions["priority"] = priority
@@ -180,12 +181,6 @@ def operation_node_configure(**kwargs):
     app_config = get_app_config()
     ctx.instance.runtime_properties[APPLICATION_CONFIG] = app_config
     ctx.logger.info("property app_config: {0}".format(json.dumps(app_config)))
-
-@CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='exe_task')
-@Policies.gather_policies_to_node()
-def node_configure_default_order(**kwargs):
-    """default policy sorting because no param of policy_apply_order_path"""
-    operation_node_configure(**kwargs)
 
 @CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='exe_task')
 @Policies.gather_policies_to_node()
@@ -333,7 +328,12 @@ class CurrentCtx(object):
                 'dcae_policies_node_id',
                 'dcae_policies_node_name',
                 dcae_policy.DCAE_POLICIES_TYPE,
-                {dcae_policy.POLICY_FILTER: {POLICY_NAME: MONKEYED_POLICY_ID_M + ".*"}},
+                {dcae_policy.POLICY_FILTER: {
+                    POLICY_NAME: MONKEYED_POLICY_ID_M + ".*",
+                    dcae_policy.CONFIG_ATTRIBUTES: json.dumps({
+                        CONFIG_NAME: "alex_config_name"
+                    })
+                }},
                 None,
                 {dcae_policy.POLICIES_FILTERED: {
                     MONKEYED_POLICY_ID_M:
@@ -471,31 +471,7 @@ def cfy_ctx(include_bad=True, include_good=True):
 @cfy_ctx(include_bad=True)
 def test_gather_policies_to_node():
     """test gather_policies_to_node"""
-    node_configure_default_order()
-
-    runtime_properties = ctx.instance.runtime_properties
-    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
-
-    assert dcae_policy.POLICIES in runtime_properties
-    policies = runtime_properties[dcae_policy.POLICIES]
-    ctx.logger.info("policies: {0}".format(json.dumps(policies)))
-
-@cfy_ctx(include_bad=True)
-def test_policies_wrong_order():
-    """test gather_policies_to_node"""
-    node_configure_wrong_order_path()
-
-    runtime_properties = ctx.instance.runtime_properties
-    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
-
-    assert dcae_policy.POLICIES in runtime_properties
-    policies = runtime_properties[dcae_policy.POLICIES]
-    ctx.logger.info("policies: {0}".format(json.dumps(policies)))
-
-@cfy_ctx(include_bad=True)
-def test_policies_empty_order():
-    """test gather_policies_to_node"""
-    node_configure_empty_order_path()
+    node_configure()
 
     runtime_properties = ctx.instance.runtime_properties
     ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
