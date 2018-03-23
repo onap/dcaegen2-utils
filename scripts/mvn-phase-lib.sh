@@ -428,6 +428,13 @@ upload_files_of_extension()
     upload_raw_file "$F" "$2"
   done
 }
+upload_files_of_extension_recursively()
+{
+  FILES=$(find . -name "*.$1")
+  for F in $FILES ; do
+    upload_raw_file "$F"
+  done
+}
 
 
 generate_pypirc_then_publish() 
