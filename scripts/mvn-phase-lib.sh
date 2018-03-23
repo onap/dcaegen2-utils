@@ -470,7 +470,18 @@ EOL
 #IndependentVersioningandReleaseProcess-StandardizedDockerTagging
 build_and_push_docker()
 {
-  IMAGENAME="onap/${FQDN}.${MVN_PROJECT_MODULEID}"
+  # Old tagging 
+  #IMAGENAME="onap/${FQDN}.${MVN_PROJECT_MODULEID}"
+  # new tagging
+  ENDIND=$(echo $abc | rev | cut -f1 -d '.' |rev)
+  if [ "$ENDID" == "${MVN_PROJECT_MODULEID}" ]; then
+    #IMAGENAME="onap/${FQDN/org.onap./}"
+    IMAGENAME="onap/${FQDN}"
+  else
+    #IMAGENAME="onap/${FQDN/org.onap./}.${MVN_PROJECT_MODULEID}"
+    IMAGENAME="onap/${FQDN}.${MVN_PROJECT_MODULEID}"
+  fi 
+
   IMAGENAME=$(echo "$IMAGENAME" | sed -e 's/_*$//g' -e 's/\.*$//g')
   IMAGENAME=$(echo "$IMAGENAME" | tr '[:upper:]' '[:lower:]')
 
