@@ -470,7 +470,18 @@ EOL
 #IndependentVersioningandReleaseProcess-StandardizedDockerTagging
 build_and_push_docker()
 {
-  IMAGENAME="onap/${FQDN}.${MVN_PROJECT_MODULEID}"
+  # Old tagging 
+  #IMAGENAME="onap/${FQDN}.${MVN_PROJECT_MODULEID}"
+  # new tagging
+  ENDIND=$(echo $abc | rev | cut -f1 -d '.' |rev)
+  if [ "$ENDID" == "${MVN_PROJECT_MODULEID}" ]; then
+    #IMAGENAME="onap/${FQDN/org.onap./}"
+    IMAGENAME="onap/${FQDN}"
+  else
+    #IMAGENAME="onap/${FQDN/org.onap./}.${MVN_PROJECT_MODULEID}"
+    IMAGENAME="onap/${FQDN}.${MVN_PROJECT_MODULEID}"
+  fi 
+
   IMAGENAME=$(echo "$IMAGENAME" | sed -e 's/_*$//g' -e 's/\.*$//g')
   IMAGENAME=$(echo "$IMAGENAME" | tr '[:upper:]' '[:lower:]')
 
@@ -478,7 +489,7 @@ build_and_push_docker()
   VERSION="${MVN_PROJECT_VERSION//[^0-9.]/}"
   VERSION2=$(echo "$VERSION" | cut -f1-2 -d'.')
 
-  LFQI="${IMAGENAME}:${VERSION}-${TIMESTAMP}"
+  LFQI="${IMAGENAME}:${VERSION}-${TIMESTAMP}"Z
   # build a docker image
   docker build --rm -f ./Dockerfile -t "${LFQI}" ./
 
@@ -508,13 +519,13 @@ build_and_push_docker()
     docker login "$REPO" -u "$USER" -p "$PASS"
 
     # local tag is imagename:version-timestamp
-    OLDTAG="${LFQI}"
-    #PUSHTAGS="${REPO}/${IMAGENAME}:${VERSION2}-${TIMESTAMP} ${REPO}/${IMAGENAME}:${VERSION2} ${REPO}/${IMAGENAME}:${VERSION2}-latest"
-    # four tags are pushed:  
-    #   imagename:symver-timestamp, 
-    #   imagename:semver, imagename:symver-snapshot : latest of current version
-    #   imagename:latest: latest of all, used mainly by csit
-    PUSHTAGS="${REPO}/${LFQI} ${REPO}/${IMAGENAME}:${VERSION} ${REPO}/${IMAGENAME}:${VERSION}-snapshot ${REPO}/${IMAGENAME}:latest"
+    OLDTAG="${LFQI}" 
+    # three tags are pushed:  
+    #   {imagename}:{semver}-SNAPSHOT-{timestamp}Z       this is what CIMAN-132 asks
+    #   {imagename}:{semver}                             latest of current version, for testing
+    #   {imagename}:latest                               latest of all, used mainly by csit
+    # LFQI="${IMAGENAME}:${VERSION}-${TIMESTAMP}"Z
+    PUSHTAGS="${REPO}/${IMAGENAME}:${VERSION}-SNAPSHOT-${TIMESTAMP}Z ${REPO}/${IMAGENAME}:${VERSION} ${REPO}/${IMAGENAME}:latest"
     for NEWTAG in ${PUSHTAGS}
     do
       echo "tagging ${OLDTAG} to ${NEWTAG}"
