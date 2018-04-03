@@ -473,7 +473,7 @@ build_and_push_docker()
   # Old tagging 
   #IMAGENAME="onap/${FQDN}.${MVN_PROJECT_MODULEID}"
   # new tagging
-  ENDIND=$(echo $abc | rev | cut -f1 -d '.' |rev)
+  ENDID=$(echo $FQDN | rev | cut -f1 -d '.' |rev)
   if [ "$ENDID" == "${MVN_PROJECT_MODULEID}" ]; then
     #IMAGENAME="onap/${FQDN/org.onap./}"
     IMAGENAME="onap/${FQDN}"
