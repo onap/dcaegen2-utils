@@ -233,8 +233,9 @@ run_tox_test()
     rm -rf ./venv-tox ./.tox
     virtualenv ./venv-tox
     source ./venv-tox/bin/activate
-    pip install --upgrade pip
-    pip install --upgrade tox argparse
+    pip install pip==9.0.3
+    pip install --upgrade argparse
+    pip install tox==2.9.1
     pip freeze
     tox
     deactivate
@@ -432,7 +433,7 @@ upload_files_of_extension_recursively()
 {
   FILES=$(find . -name "*.$1")
   for F in $FILES ; do
-    upload_raw_file "$F"
+    upload_raw_file "$F" "$2"
   done
 }
 
@@ -473,7 +474,7 @@ build_and_push_docker()
   # Old tagging 
   #IMAGENAME="onap/${FQDN}.${MVN_PROJECT_MODULEID}"
   # new tagging
-  ENDIND=$(echo $abc | rev | cut -f1 -d '.' |rev)
+  ENDID=$(echo $FQDN | rev | cut -f1 -d '.' |rev)
   if [ "$ENDID" == "${MVN_PROJECT_MODULEID}" ]; then
     #IMAGENAME="onap/${FQDN/org.onap./}"
     IMAGENAME="onap/${FQDN}"
