@@ -25,12 +25,14 @@ from datetime import datetime, timedelta
 from functools import wraps
 
 import pytest
+import requests
 from cloudify import ctx
 from cloudify.exceptions import NonRecoverableError
 from cloudify.state import current_ctx
 
 from onap_dcae_dcaepolicy_lib import dcae_policy
 from onap_dcae_dcaepolicy_lib.dcae_policy import Policies
+from onap_dcae_dcaepolicy_lib.policies_output import PoliciesOutput
 from tests.log_ctx import CtxLogger
 from tests.mock_cloudify_ctx import (TARGET_NODE_ID, TARGET_NODE_NAME,
                                      MockCloudifyContextFull)
@@ -167,6 +169,23 @@ class MonkeyedNode(object):
             runtime_properties=runtime_properties
         )
 
+class MonkeyedResponse(object):
+    """Monkey response"""
+    def __init__(self, full_path, headers=None, resp_json=None):
+        self.full_path = full_path
+        self.status_code = 200
+        self.headers = headers or {}
+        self.resp_json = resp_json
+        self.text = json.dumps(resp_json or {})
+
+    def json(self):
+        """returns json of response"""
+        return self.resp_json
+
+    def raise_for_status(self):
+        """always happy"""
+        pass
+
 def get_app_config():
     """just get the config"""
     config = copy.deepcopy(dict(ctx.instance.runtime_properties.get(APPLICATION_CONFIG, {})))
@@ -180,6 +199,7 @@ def operation_node_configure(**kwargs):
 
     app_config = get_app_config()
     ctx.instance.runtime_properties[APPLICATION_CONFIG] = app_config
+    ctx.instance.runtime_properties[PoliciesOutput.SERVICE_COMPONENT_NAME] = "unit_test_scn"
     ctx.logger.info("property app_config: {0}".format(json.dumps(app_config)))
 
 @CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='exe_task')
@@ -188,18 +208,6 @@ def node_configure(**kwargs):
     """decorate with @Policies.gather_policies_to_node on policy consumer node to
     bring all policies to runtime_properties["policies"]
     """
-    operation_node_configure(**kwargs)
-
-@CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='exe_task')
-@Policies.gather_policies_to_node()
-def node_configure_wrong_order_path(**kwargs):
-    """wrong data in param policy_apply_order_path"""
-    operation_node_configure(**kwargs)
-
-@CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='exe_task')
-@Policies.gather_policies_to_node()
-def node_configure_empty_order_path(**kwargs):
-    """wrong data in param policy_apply_order_path"""
     operation_node_configure(**kwargs)
 
 @CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='execute_operation')
@@ -241,6 +249,14 @@ def policy_update_many_calcs(updated_policies, removed_policies=None, policies=N
     ctx.logger.info("app_config {0}".format(json.dumps(app_config)))
 
     ctx.instance.runtime_properties[APPLICATION_CONFIG] = app_config
+
+
+@CtxLogger.log_ctx(pre_log=True, after_log=True, exe_task='exe_task')
+@Policies.cleanup_policies_on_node
+def node_delete(**kwargs):
+    """delete <service_component_name> records in consul-kv"""
+    operation_node_configure(**kwargs)
+
 
 class CurrentCtx(object):
     """cloudify context"""
@@ -445,6 +461,35 @@ class CurrentCtx(object):
         """reset context"""
         current_ctx.set(CurrentCtx._node_ms.ctx)
 
+
+def monkeyed_consul_boom(full_path, json):
+    """boom on monkeypatch for the put to consul"""
+    raise requests.ConnectionError("monkey-boom")
+
+
+@pytest.fixture()
+def fix_consul_boom(monkeypatch):
+    """monkeyed discovery request.put"""
+    PoliciesOutput._lazy_inited = False
+    monkeypatch.setattr('requests.put', monkeyed_consul_boom)
+    yield fix_consul_boom
+    PoliciesOutput._lazy_inited = False
+
+
+def monkeyed_consul_put(full_path, json):
+    """monkeypatch for the put to consul"""
+    return MonkeyedResponse(full_path)
+
+
+@pytest.fixture()
+def fix_consul(monkeypatch):
+    """monkeyed discovery request.put"""
+    PoliciesOutput._lazy_inited = False
+    monkeypatch.setattr('requests.put', monkeyed_consul_put)
+    yield fix_consul
+    PoliciesOutput._lazy_inited = False
+
+
 def cfy_ctx(include_bad=True, include_good=True):
     """test and safely clean up"""
     def cfy_ctx_decorator(func):
@@ -468,9 +513,11 @@ def cfy_ctx(include_bad=True, include_good=True):
         return ctx_wrapper
     return cfy_ctx_decorator
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True)
 def test_gather_policies_to_node():
     """test gather_policies_to_node"""
+    PoliciesOutput.CONFIG_PATH = "tests/mock_config.ini"
     node_configure()
 
     runtime_properties = ctx.instance.runtime_properties
@@ -480,6 +527,7 @@ def test_gather_policies_to_node():
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True)
 def test_policies_to_node():
     """test gather_policies_to_node"""
@@ -524,6 +572,7 @@ def test_policies_to_node():
     assert MonkeyedPolicyBody.is_the_same_dict(policy, expected_m)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_m, policy)
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True)
 def test_update_policies():
     """test policy_update"""
@@ -584,6 +633,7 @@ def test_update_policies():
     assert MonkeyedPolicyBody.is_the_same_dict(policy, expected_b)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_b, policy)
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True)
 def test_update_not_only_config():
     """test policy_update"""
@@ -644,6 +694,7 @@ def test_update_not_only_config():
     assert MonkeyedPolicyBody.is_the_same_dict(policy, expected_b)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_b, policy)
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True)
 def test_update_policies_not():
     """test policy_update - ignore all policies with junk params"""
@@ -699,6 +750,7 @@ def test_update_policies_not():
     assert MonkeyedPolicyBody.is_the_same_dict(app_config, expected_app_config)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_app_config, app_config)
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True)
 def test_update_many_calcs():
     """test policy_update"""
@@ -759,6 +811,7 @@ def test_update_many_calcs():
     assert MonkeyedPolicyBody.is_the_same_dict(policy, expected_b)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_b, policy)
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True)
 def test_remove_all_policies():
     """test policy_update - remove all policies"""
@@ -788,6 +841,7 @@ def test_remove_all_policies():
     assert MonkeyedPolicyBody.is_the_same_dict(app_config, expected_config)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_config, app_config)
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True)
 def test_remove_all_policies_twice():
     """test policy_update - remove all policies twice"""
@@ -818,6 +872,7 @@ def test_remove_all_policies_twice():
     assert MonkeyedPolicyBody.is_the_same_dict(app_config, expected_config)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_config, app_config)
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True)
 def test_remove_then_update():
     """test policy_update"""
@@ -868,6 +923,7 @@ def test_remove_then_update():
     assert MONKEYED_POLICY_ID in policies
     assert MONKEYED_POLICY_ID_B in policies
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True)
 def test_remove_update_many_calcs():
     """test policy_update"""
@@ -924,6 +980,7 @@ def test_remove_update_many_calcs():
     assert MONKEYED_POLICY_ID in policies
     assert MONKEYED_POLICY_ID_B in policies
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True)
 def test_bad_update_many_calcs():
     """test policy_update"""
@@ -988,6 +1045,7 @@ def test_bad_update_many_calcs():
     assert MonkeyedPolicyBody.is_the_same_dict(policy, expected_b)
     assert MonkeyedPolicyBody.is_the_same_dict(expected_b, policy)
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True, include_good=False)
 def test_bad_policies():
     """test bad policy nodes"""
@@ -1000,6 +1058,7 @@ def test_bad_policies():
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True, include_good=False)
 def test_wrong_ctx_node_configure():
     """test wrong ctx"""
@@ -1014,6 +1073,7 @@ def test_wrong_ctx_node_configure():
     assert ctx_type == 'cloudify.relationships.depends_on'
     assert str(excinfo.value) == "can only invoke gather_policies_to_node on node"
 
+@pytest.mark.usefixtures("fix_consul")
 @cfy_ctx(include_bad=True, include_good=False)
 def test_wrong_ctx_policy_update():
     """test wrong ctx"""
@@ -1105,3 +1165,129 @@ def test_defenses_on_set_policies():
     Policies._set_policies({})
 
     assert dcae_policy.POLICIES not in runtime_properties
+
+@pytest.mark.usefixtures("fix_consul")
+@cfy_ctx(include_bad=True)
+def test_delete_node():
+    """test delete"""
+    PoliciesOutput.CONFIG_PATH = "tests/mock_config.ini"
+    node_configure()
+
+    runtime_properties = ctx.instance.runtime_properties
+    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
+
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
+    ctx.logger.info("policies: {0}".format(json.dumps(policies)))
+
+    node_delete()
+
+
+@pytest.mark.usefixtures("fix_consul_boom")
+@cfy_ctx(include_bad=True)
+def test_delete_node_no_consul():
+    """test delete without consul"""
+    PoliciesOutput.CONFIG_PATH = "tests/mock_config.ini"
+    node_configure()
+
+    runtime_properties = ctx.instance.runtime_properties
+    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
+
+    assert dcae_policy.POLICIES in runtime_properties
+    policies = runtime_properties[dcae_policy.POLICIES]
+    ctx.logger.info("policies: {0}".format(json.dumps(policies)))
+
+    node_delete()
+
+
+@pytest.mark.usefixtures("fix_consul_boom")
+@cfy_ctx(include_bad=True)
+def test_delete_node_no_policies():
+    """test delete without consul and setup"""
+    PoliciesOutput.CONFIG_PATH = "tests/mock_config.ini"
+
+    ctx.instance.runtime_properties[PoliciesOutput.POLICIES_EVENT] = {}
+    ctx.instance.runtime_properties[PoliciesOutput.SERVICE_COMPONENT_NAME] = "delete_node_empty"
+
+    runtime_properties = ctx.instance.runtime_properties
+    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
+
+    assert dcae_policy.POLICIES not in runtime_properties
+
+    node_delete()
+
+
+@pytest.mark.usefixtures("fix_consul_boom")
+@cfy_ctx(include_bad=True)
+def test_delete_node_empty():
+    """test delete without consul and setup"""
+    runtime_properties = ctx.instance.runtime_properties
+    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
+
+    assert dcae_policy.POLICIES not in runtime_properties
+
+    node_delete()
+
+@pytest.mark.usefixtures("fix_consul_boom")
+@cfy_ctx(include_bad=True)
+def test_delete_node_lost_scn():
+    """test delete without consul and setup"""
+    ctx.instance.runtime_properties[PoliciesOutput.POLICIES_EVENT] = {}
+
+    runtime_properties = ctx.instance.runtime_properties
+    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
+
+    assert dcae_policy.POLICIES not in runtime_properties
+
+    node_delete()
+
+
+@pytest.mark.usefixtures("fix_consul_boom")
+@cfy_ctx(include_bad=True)
+def test_delete_node_empty_config():
+    """test delete without consul and setup"""
+    PoliciesOutput.CONFIG_PATH = "tests/mock_config_empty.ini"
+
+    ctx.instance.runtime_properties[PoliciesOutput.POLICIES_EVENT] = {}
+    ctx.instance.runtime_properties[PoliciesOutput.SERVICE_COMPONENT_NAME] = "delete_node_empty"
+
+    runtime_properties = ctx.instance.runtime_properties
+    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
+
+    assert dcae_policy.POLICIES not in runtime_properties
+
+    node_delete()
+
+@pytest.mark.usefixtures("fix_consul_boom")
+@cfy_ctx(include_bad=True)
+def test_delete_ms_no_consul_addr():
+    """test delete without consul and setup"""
+    PoliciesOutput.CONFIG_PATH = "tests/mock_config_no_address.ini"
+
+    ctx.instance.runtime_properties[PoliciesOutput.POLICIES_EVENT] = {}
+    ctx.instance.runtime_properties[PoliciesOutput.SERVICE_COMPONENT_NAME] = "delete_node_empty"
+
+    runtime_properties = ctx.instance.runtime_properties
+    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
+
+    assert dcae_policy.POLICIES not in runtime_properties
+
+    node_delete()
+
+
+@pytest.mark.usefixtures("fix_consul_boom")
+@cfy_ctx(include_bad=True)
+def test_delete_bad_config():
+    """test delete without consul and setup"""
+    PoliciesOutput.CONFIG_PATH = "tests/mock_config_bad.ini"
+
+    ctx.instance.runtime_properties[PoliciesOutput.POLICIES_EVENT] = {}
+    ctx.instance.runtime_properties[PoliciesOutput.SERVICE_COMPONENT_NAME] = "delete_node_empty"
+
+    runtime_properties = ctx.instance.runtime_properties
+    ctx.logger.info("runtime_properties: {0}".format(json.dumps(runtime_properties)))
+
+    assert dcae_policy.POLICIES not in runtime_properties
+
+    node_delete()
+
