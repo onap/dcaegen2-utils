@@ -18,8 +18,6 @@
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
 from setuptools import setup, find_packages
-from pip.req import parse_requirements
-from pip.download import PipSession
 
 setup(
         name = "onap-dcae-discovery-client",
