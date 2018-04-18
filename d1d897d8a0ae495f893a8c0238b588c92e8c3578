@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_29c9f225",
+        "filename": "python-discovery-client/setup.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1071
+      },
+      "writtenOn": "2018-04-18T14:21:42Z",
+      "side": 1,
+      "message": "Thanks for this change @Lusheng but turns out those imports are not being used in the file anymore.  Can you instead just remove everything dealing with parse_requirements and PipSession?  Thanks again.",
+      "revId": "d1d897d8a0ae495f893a8c0238b588c92e8c3578",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
