@@ -181,7 +181,7 @@ expand_templates()
     echo "====> Resolving the following template from environment variables "
     echo "$TEMPLATES"
     for KEY in $TEMPLATES; do
-      VALUE1=$(eval 'echo "$"'"$KEY"'"' | sed 1q)
+      VALUE1=$(eval 'echo "$'"$KEY"'"' | sed 1q)
       VALUE2=$(eval 'echo "$'"$KEY"'"' | sed -e 's/\//\\\//g' -e 's/$/\\/' -e '$s/\\$//')
 
       echo "======> Resolving template $KEY to value $VALUE1 for file $F2"
