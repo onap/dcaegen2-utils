@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Alex Shatov <alexs@att.com>
+Code-Review+2: Vijay Venkatesh Kumar <vv770d@att.com>
+Submitted-by: Vijay Venkatesh Kumar <vv770d@att.com>
+Submitted-at: Thu, 12 Jul 2018 18:18:10 +0000
+Reviewed-on: https://gerrit.onap.org/r/56115
+Project: dcaegen2/utils
+Branch: refs/heads/master
