@@ -52,7 +52,7 @@ fi
 
 export SETTINGS_FILE=${SETTINGS_FILE:-$HOME/.m2/settings.xml}
 
-RELEASE_TAG=${MVN_RELEASE_TAG:-R2}
+RELEASE_TAG=${MVN_RELEASE_TAG:-R3}
 if [ "$RELEASE_TAG" == "R1" ]; then
   unset RELEASE_TAG
 fi
