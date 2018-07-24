@@ -39,6 +39,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
      <module>python-discovery-client</module>
      <module>python-dockering</module>
      <module>dcaeapplib</module>
+     <module>eelf-logger</module>
   </modules>
 
   <properties>
