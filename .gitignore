@@ -68,3 +68,16 @@ docs/_build/
 target/
 
 logs/
+
+
+# Intellij Files & Dir #
+*.iml
+*.ipr
+*.iws
+*.uml
+
+atlassian-ide-plugin.xml
+out/
+.DS_Store
+./lib/
+.idea
