@@ -1,0 +1,51 @@
+<!--
+  ~ ================================================================================
+  ~ Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+  ~ ================================================================================
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~ ============LICENSE_END=========================================================
+  ~
+  -->
+
+<included>
+
+    <!-- LOG DIRECTORIES -->
+    <property scope="context" name="logDir" value="logs"/>
+    <property scope="context" name="debugDir" value="debug-logs"/>
+
+    <!-- SETUP LOG DIRECTORIES -->
+    <property scope="context" name="logDirectory" value="${logDir}/${componentName}"/>
+    <property scope="context" name="debugLogDirectory" value="${debugDir}/${componentName}"/>
+
+    <!--
+    MODIFY LOG DIR ON WINDOWS OS SO THAT TEST LOGS ARE UNDER TARGET DIR CAN BE CLEANED AFTER TESTS AUTOMATICALLY
+     -->
+    <property scope="context" name="modifyLogPathInWindows" value="true" />
+    <property scope="context" name="appendDirectory" value="target" />
+
+    <!-- LOG FILE NAMES -->
+    <property scope="context" name="metricLogName" value="metrics"/>
+    <property scope="context" name="auditLogName" value="audit"/>
+    <property scope="context" name="errorLogName" value="error"/>
+    <property scope="context" name="debugLogName" value="debug"/>
+
+    <!-- ROLLING FILE APPENDER DEFAULT SETTINGS -->
+    <property scope="context" name="minFileIndex" value="1"/>
+    <property scope="context" name="maxFileIndex" value="10"/>
+    <property scope="context" name="maxFileSize" value="2500KB"/>
+
+    <!-- ASYNC APPENDER DEFAULT SETTINGS -->
+    <property scope="context" name="queueSize" value="1024"/>
+    <property scope="context" name="maxFlushTime" value="5000"/>
+
+</included>
