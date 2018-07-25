@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_edacff8e",
+        "filename": "eelf-logger/cpd-exclude.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2018-07-25T13:13:26Z",
+      "side": 1,
+      "message": "2018",
+      "range": {
+        "startLine": 3,
+        "startChar": 16,
+        "endLine": 3,
+        "endChar": 20
+      },
+      "revId": "1ac7e4c4e31e16d68cf38a46df894ea003e99fa3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_0daa9370",
+        "filename": "eelf-logger/cpd-exclude.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2018-07-25T13:13:26Z",
+      "side": 1,
+      "message": "Remove this line",
+      "range": {
+        "startLine": 18,
+        "startChar": 2,
+        "endLine": 18,
+        "endChar": 70
+      },
+      "revId": "1ac7e4c4e31e16d68cf38a46df894ea003e99fa3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
