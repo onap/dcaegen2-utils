@@ -31,7 +31,7 @@
     <parent>
         <artifactId>utils</artifactId>
         <groupId>org.onap.dcaegen2.utils</groupId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.2.1-SNAPSHOT</version>
     </parent>
 
 
