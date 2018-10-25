@@ -87,7 +87,7 @@ def _get_path(path):
         config = res.json()
         LOGGER.info("get_config returned the following configuration: {0}".format(
             json.dumps(config)))
-    except requests.exceptions.HTTPError as exc:
+    except requests.exceptions.HTTPError:
         LOGGER.error("in get_config, the config binding service endpoint %s was not reachable. Error code: %d, Error text: %s", my_config_endpoint, res.status_code, res.text)
     except Exception as exc:
         LOGGER.exception(exc)
