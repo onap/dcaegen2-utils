@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.4.0]
 
-* Turn off cert verification for https healthchecks.  See comments in the the code.
+* Turn off cert verification for https healthchecks.  See comments in the code.
 
 ## [1.3.0]
 
