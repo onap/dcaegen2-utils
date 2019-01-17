@@ -15,7 +15,7 @@ python setup.py sdist upload
 ### **requirements.txt**
 
 ```python
-onap-dcae-dcaepolicy-lib==1.0.0
+onap-dcae-dcaepolicy-lib==2.4.1
 ```
 
 ### **tasks.py**

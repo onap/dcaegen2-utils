@@ -175,7 +175,6 @@ class Policies(object):
                 if ctx.type != NODE_INSTANCE:
                     raise NonRecoverableError("can only invoke gather_policies_to_node on node")
 
-                policies_outputted = False
                 policy_bodies = []
                 try:
                     policies = {}
@@ -189,8 +188,6 @@ class Policies(object):
                         ctx.instance.runtime_properties[POLICY_FILTERS] = policy_filters
 
                     policy_bodies = Policies._get_policy_bodies_dict(policies)
-                    if policy_bodies:
-                        policies_outputted = PoliciesOutput.store_policies(ACTION_GATHERED, policy_bodies)
                 except Exception as ex:
                     error = "Failed to set the policies {0}".format(str(ex))
                     ctx.logger.error("{0}: {1}".format(error, traceback.format_exc()))
@@ -198,7 +195,7 @@ class Policies(object):
 
                 func_result = func(*args, **kwargs)
 
-                if not policies_outputted and policy_bodies:
+                if policy_bodies:
                     PoliciesOutput.store_policies(ACTION_GATHERED, policy_bodies)
 
                 return func_result

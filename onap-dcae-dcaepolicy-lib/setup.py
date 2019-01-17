@@ -23,7 +23,7 @@ from setuptools import setup, find_packages
 setup(
     name='onap-dcae-dcaepolicy-lib',
     description='lib of policy decorators to be used by cloudify plugins of dcae controller',
-    version="2.4.0",
+    version="2.4.1",
     author='Alex Shatov',
     author_email="alexs@att.com",
     license='Apache 2',
