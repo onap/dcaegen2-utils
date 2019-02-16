@@ -526,7 +526,12 @@ build_and_push_docker()
     #   {imagename}:{semver}                             latest of current version, for testing
     #   {imagename}:latest                               latest of all, used mainly by csit
     # LFQI="${IMAGENAME}:${VERSION}-${TIMESTAMP}"Z
-    PUSHTAGS="${REPO}/${IMAGENAME}:${VERSION}-SNAPSHOT-${TIMESTAMP}Z ${REPO}/${IMAGENAME}:${VERSION} ${REPO}/${IMAGENAME}:latest"
+
+
+
+    # Updating tags for ${REPO}/${IMAGENAME}:${VERSION} to include STAGING-latest; and adding new tag for major:minor-STAGING-latest
+    PUSHTAGS="${REPO}/${IMAGENAME}:${VERSION}-SNAPSHOT-${TIMESTAMP}Z ${REPO}/${IMAGENAME}:${VERSION2}-STAGING-latest ${REPO}/${IMAGENAME}:${VERSION}-STAGING-latest ${REPO}/${IMAGENAME}:latest"
+
     for NEWTAG in ${PUSHTAGS}
     do
       echo "tagging ${OLDTAG} to ${NEWTAG}"
