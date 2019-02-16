@@ -526,7 +526,12 @@ build_and_push_docker()
     #   {imagename}:{semver}                             latest of current version, for testing
     #   {imagename}:latest                               latest of all, used mainly by csit
     # LFQI="${IMAGENAME}:${VERSION}-${TIMESTAMP}"Z
-    PUSHTAGS="${REPO}/${IMAGENAME}:${VERSION}-SNAPSHOT-${TIMESTAMP}Z ${REPO}/${IMAGENAME}:${VERSION} ${REPO}/${IMAGENAME}:latest"
+
+
+
+    # Removing ${REPO}/${IMAGENAME}:${VERSION} tag from being pushed into snapshot; instead replacing with major:minor-latest
+    PUSHTAGS="${REPO}/${IMAGENAME}:${VERSION}-SNAPSHOT-${TIMESTAMP}Z ${REPO}/${IMAGENAME}:${VERSION2}-latest ${REPO}/${IMAGENAME}:latest"
+
     for NEWTAG in ${PUSHTAGS}
     do
       echo "tagging ${OLDTAG} to ${NEWTAG}"
