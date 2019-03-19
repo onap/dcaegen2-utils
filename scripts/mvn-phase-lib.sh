@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ================================================================================
-# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -517,7 +517,10 @@ build_and_push_docker()
     fi
     [ -z "$PASS" ] && PASS_PROVIDED="<empty>" || PASS_PROVIDED="<password>"
     echo docker login "$REPO" -u "$USER" -p "$PASS_PROVIDED"
+
+    set +x
     docker login "$REPO" -u "$USER" -p "$PASS"
+    set -x
 
     # local tag is imagename:version-timestamp
     OLDTAG="${LFQI}" 
