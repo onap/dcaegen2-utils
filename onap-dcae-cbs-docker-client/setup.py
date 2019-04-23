@@ -1,5 +1,5 @@
 # ================================================================================
-# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,15 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ============LICENSE_END=========================================================
-#
-# ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
 from setuptools import setup, find_packages
 
 setup(
     name="onap_dcae_cbs_docker_client",
     description="very lightweight client for a DCAE dockerized component to get it's config from the CBS",
-    version="1.0.3",
+    version="1.0.4",
     packages=find_packages(),
     author="Tommy Carpenter",
     author_email="tommy@research.att.com",
