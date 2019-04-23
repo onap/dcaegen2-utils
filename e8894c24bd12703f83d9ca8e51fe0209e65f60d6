@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a5836d9_485e04c5",
+        "filename": "onap-dcae-cbs-docker-client/onap_dcae_cbs_docker_client/client.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 511
+      },
+      "writtenOn": "2019-04-23T14:40:39Z",
+      "side": 1,
+      "message": "or CONFIG_BINDING_SERVICE",
+      "revId": "e8894c24bd12703f83d9ca8e51fe0209e65f60d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
