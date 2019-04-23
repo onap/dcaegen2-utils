@@ -53,11 +53,13 @@ def _get_envs():
     Returns hostname, consul_host.
     If the necessary ENVs are not found, this is fatal, and raises an exception.
     """
-    if "HOSTNAME" not in os.environ or "CONSUL_HOST" not in os.environ:
+    try:
+        hostname = os.environ["HOSTNAME"]  # this is the name of the component itself
+        consul_host = os.environ["CONSUL_HOST"]  # this is the host of consul itself
+        cbs_name = os.environ["CONFIG_BINDING_SERVICE"]  # this is the name under which the CBS is registered in Consul.
+    except KeyError:
         raise ENVsMissing("HOSTNAME or CONSUL_HOST missing")
-    hostname = os.environ["HOSTNAME"]
-    consul_host = os.environ["CONSUL_HOST"]
-    return hostname, consul_host
+    return hostname, consul_host, cbs_name
 
 
 def _get_path(path):
@@ -72,14 +74,14 @@ def _get_path(path):
 
     config = {}
 
-    hostname, consul_host = _get_envs()
+    hostname, consul_host, cbs_name = _get_envs()
 
     # not sure how I as the component developer is supposed to know consul port
     consul_url = "http://{0}:8500".format(consul_host)
 
     try:
         # get my config
-        cbs_url = _get_uri_from_consul(consul_url, "config_binding_service")
+        cbs_url = _get_uri_from_consul(consul_url, cbs_name)
         my_config_endpoint = "{0}/{1}/{2}".format(cbs_url, path, hostname)
         res = requests.get(my_config_endpoint)
 
