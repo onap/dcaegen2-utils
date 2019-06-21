@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7a591f0_df32f378",
+        "filename": "onap-dcae-cbs-docker-client/Changelog.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 511
+      },
+      "writtenOn": "2019-06-21T18:04:20Z",
+      "side": 1,
+      "message": "\u0027variable\u0027 not \u0027varialbe\u0027",
+      "revId": "34f5a8e471d9282d4f225625b6ba40950802dcde",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b716e02d_24bba3cb",
+        "filename": "onap-dcae-cbs-docker-client/README.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 511
+      },
+      "writtenOn": "2019-06-21T18:04:20Z",
+      "side": 1,
+      "message": "\u0027environment\u0027 not \u0027envrionment\u0027\n\u0027natively\u0027 not \u0027natievely\u0027",
+      "revId": "34f5a8e471d9282d4f225625b6ba40950802dcde",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "968c50ed_aae1a227",
+        "filename": "onap-dcae-cbs-docker-client/onap_dcae_cbs_docker_client/client.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 511
+      },
+      "writtenOn": "2019-06-21T18:04:20Z",
+      "side": 1,
+      "message": "\u0027resolvable\u0027 not \u0027resolavable\u0027",
+      "revId": "34f5a8e471d9282d4f225625b6ba40950802dcde",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
