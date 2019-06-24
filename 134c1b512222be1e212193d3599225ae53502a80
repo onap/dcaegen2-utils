@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a5c2e369_c9dab819",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 515
+      },
+      "writtenOn": "2019-06-24T17:23:53Z",
+      "side": 1,
+      "message": "fixed",
+      "parentUuid": "cdc1cb71_db8ccb86",
+      "revId": "134c1b512222be1e212193d3599225ae53502a80",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f3bfcd5b_8fe9fe90",
         "filename": "onap-dcae-cbs-docker-client/tox.ini",
         "patchSetId": 1
