@@ -4,16 +4,14 @@ Used for DCAE Dockerized microservices written in Python. Pulls your configurati
 
 # Client Usage
 
-The environment that this client runs in, whether it be in Docker or "natievely", needs to have the following env variables:
+The environment that this client runs in, whether it be in Docker or "natively", needs to have the following env variables:
 1. `HOSTNAME` is the name of your component in Consul
 2. `CONFIG_BINDING_SERVICE` a resolvable hostname to the CBS
+3. If the CBS is running as HTTPS: `DCAE_CA_CERTPATH`: a path to a cacert file to verify the running CBS
 
 ## Usage in your code
 
-    >>> from onap_dcae_cbs_docker_client import client
-    >>> client.get_config()
-    >>> client.get_all()
-
+See the `example` folder for a simple test client.
 
 If the CBS is reachable, but your configuration key is not there, you will get a CantGetConfig exception:
 
@@ -24,7 +22,6 @@ You can access the original HTTP status code and text via the `code` and `text` 
 If the CBS is unreachable, you will get an exception:
 
     onap_dcae_cbs_docker_client.exceptions.CBSUnreachable
-
 
 # Installation
 

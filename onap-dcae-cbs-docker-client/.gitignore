@@ -1,3 +1,4 @@
+tox-local.ini
 .pytest_cache/
 xunit-results.xml
 .DS_Store
