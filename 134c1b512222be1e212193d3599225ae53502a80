@@ -33,6 +33,24 @@
       "revId": "134c1b512222be1e212193d3599225ae53502a80",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59b37de8_106f06ab",
+        "filename": "onap-dcae-cbs-docker-client/tox.ini",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 515
+      },
+      "writtenOn": "2019-06-24T17:23:39Z",
+      "side": 1,
+      "message": "fixed",
+      "parentUuid": "f3bfcd5b_8fe9fe90",
+      "revId": "134c1b512222be1e212193d3599225ae53502a80",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
