@@ -33,6 +33,18 @@ class FakeResponse:
         return self.thejson
 
 
+good_resp_all = FakeResponse(
+    status_code=200,
+    thejson={
+        "config": {"key_to_your_heart": 666},
+        "dti": {"some amazing": "dti stuff"},
+        "policies": {"event": {"foo": "bar"}, "items": [{"foo2": "bar2"}]},
+        "otherkey": {"foo3": "bar3"},
+    },
+)
+good_resp_conf = FakeResponse(status_code=200, thejson={"key_to_your_heart": 666})
+
+
 @pytest.fixture
 def monkeyed_requests_get():
     """
@@ -40,23 +52,31 @@ def monkeyed_requests_get():
     """
 
     def _monkeyed_requests_get(url):
-        if url == "http://config_binding_service:10000/service_component_all/mybestfrienddotcom":
-            return FakeResponse(
-                status_code=200,
-                thejson={
-                    "config": {"key_to_your_heart": 666},
-                    "dti": {"some amazing": "dti stuff"},
-                    "policies": {"event": {"foo": "bar"}, "items": [{"foo2": "bar2"}]},
-                    "otherkey": {"foo3": "bar3"},
-                },
-            )
-
-        elif url == "http://config_binding_service:10000/service_component/mybestfrienddotcom":
-            return FakeResponse(status_code=200, thejson={"key_to_your_heart": 666})
+        if url == "http://config_binding_service:10000/service_component_all/test_component_name":
+            return good_resp_all
+        elif url == "http://config_binding_service:10000/service_component/test_component_name":
+            return good_resp_conf
         else:
             raise Exception("Unexpected URL {0}!".format(url))
 
     return _monkeyed_requests_get
+
+
+@pytest.fixture
+def monkeyed_requests_get_https():
+    """
+    mock for the CBS get
+    """
+
+    def _monkeyed_requests_get_https(url, verify=""):
+        if url == "https://config_binding_service:10443/service_component_all/test_component_name":
+            return good_resp_all
+        elif url == "https://config_binding_service:10443/service_component/test_component_name":
+            return good_resp_conf
+        else:
+            raise Exception("Unexpected URL {0}!".format(url))
+
+    return _monkeyed_requests_get_https
 
 
 @pytest.fixture
@@ -66,8 +86,8 @@ def monkeyed_requests_get_404():
         get that pretends that key doesnt exist
         """
         if url in [
-            "http://config_binding_service:10000/service_component_all/mybestfrienddotcom",
-            "http://config_binding_service:10000/service_component/mybestfrienddotcom",
+            "http://config_binding_service:10000/service_component_all/test_component_name",
+            "http://config_binding_service:10000/service_component/test_component_name",
         ]:
             return FakeResponse(status_code=404, thejson={})
         raise Exception("Unexpected URL {0}!".format(url))

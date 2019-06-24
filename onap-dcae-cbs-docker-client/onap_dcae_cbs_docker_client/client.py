@@ -36,17 +36,20 @@ def _get_path(path):
         hostname = os.environ["HOSTNAME"]  # this is the name of the component itself
         # in most cases, this is the K8s service name which is a resolvable DNS name
         # if running outside k8s, this name needs to be resolvable by DNS via other means.
-        cbs_resolvable_hostname = os.environ["CONFIG_BINDING_SERVICE"]
+        cbs_name = os.environ["CONFIG_BINDING_SERVICE"]
     except KeyError as e:
         raise ENVsMissing("Required ENV Variable {0} missing".format(e))
 
-    # TODO: https
-    cbs_url = "http://{0}:10000".format(cbs_resolvable_hostname)
+    # See if we are using https
+    https_cacert = os.environ.get("DCAE_CA_CERTPATH", None)
+
+    # Get the CBS URL.
+    cbs_url = "https://{0}:10443".format(cbs_name) if https_cacert else "http://{0}:10000".format(cbs_name)
 
     # get my config
     try:
         my_config_endpoint = "{0}/{1}/{2}".format(cbs_url, path, hostname)
-        res = requests.get(my_config_endpoint)
+        res = requests.get(my_config_endpoint, verify=https_cacert) if https_cacert else requests.get(my_config_endpoint)
         res.raise_for_status()
         config = res.json()
         logger.debug(
