@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cdc1cb71_db8ccb86",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 511
+      },
+      "writtenOn": "2019-06-24T16:09:42Z",
+      "side": 1,
+      "message": "You mean \"https\" or \"TLS\", right?",
+      "revId": "134c1b512222be1e212193d3599225ae53502a80",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
