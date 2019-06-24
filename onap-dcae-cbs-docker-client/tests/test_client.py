@@ -18,13 +18,29 @@ from onap_dcae_cbs_docker_client.client import get_config, get_all
 from onap_dcae_cbs_docker_client.exceptions import CantGetConfig, CBSUnreachable, ENVsMissing
 
 
-def test_config(monkeypatch, monkeyed_requests_get):
+def test_http(monkeypatch, monkeyed_requests_get):
     monkeypatch.setattr("requests.get", monkeyed_requests_get)
+
     assert get_config() == {"key_to_your_heart": 666}
 
+    assert get_all() == {
+        "config": {"key_to_your_heart": 666},
+        "dti": {"some amazing": "dti stuff"},
+        "policies": {"event": {"foo": "bar"}, "items": [{"foo2": "bar2"}]},
+        "otherkey": {"foo3": "bar3"},
+    }
 
-def test_all(monkeypatch, monkeyed_requests_get):
-    monkeypatch.setattr("requests.get", monkeyed_requests_get)
+
+def test_https_url(monkeypatch, monkeyed_requests_get_https):
+    """
+    this doesn't really test https; because of all the cert stuff,
+    however it tests that the url gets formed correctly in the presence of this env variable
+    """
+    monkeypatch.setattr("requests.get", monkeyed_requests_get_https)
+    monkeypatch.setenv("DCAE_CA_CERTPATH", "1")
+
+    assert get_config() == {"key_to_your_heart": 666}
+
     assert get_all() == {
         "config": {"key_to_your_heart": 666},
         "dti": {"some amazing": "dti stuff"},
