@@ -16,6 +16,23 @@
       "revId": "134c1b512222be1e212193d3599225ae53502a80",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3bfcd5b_8fe9fe90",
+        "filename": "onap-dcae-cbs-docker-client/tox.ini",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 511
+      },
+      "writtenOn": "2019-06-24T16:47:09Z",
+      "side": 1,
+      "message": "Strictly speaking, \u0027test_component_name\u0027 isn\u0027t a legal DNS hostname (underscores aren\u0027t allowed), but this doesn\u0027t affect the testing that you\u0027re doing.\n\nSame thing applies to \u0027config_binding_service\u0027 below.   Again, doesn\u0027t affect your testing.",
+      "revId": "134c1b512222be1e212193d3599225ae53502a80",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
