@@ -1,6 +1,6 @@
 # org.onap.dcae
 # ============LICENSE_START====================================================
-# Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2018-2019 AT&T Intellectual Property. All rights reserved.
 # =============================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,20 +20,15 @@
 from setuptools import setup, find_packages
 
 setup(
-  name='dcaeapplib',
-  version='0.0.5',
-  packages=find_packages(),
-  author = 'Andrew Gauld',
-  author_email = 'ag1282@att.com',
-  description = ('Library for building DCAE analytics applications'),
-  license = 'Apache 2.0',
-  keywords = '',
-  url = '',
-  zip_safe = True,
-  install_requires=[ 'onap-dcae-cbs-docker-client>=0.0.5' ],
-  entry_points = {
-    'console_scripts': [
-      'reconfigure.sh=dcaeapplib:reconfigure'
-    ]
-  }
+    name="dcaeapplib",
+    version="1.0.0",
+    packages=find_packages(),
+    author="Andrew Gauld",
+    author_email="ag1282@att.com",
+    description=("Library for building DCAE analytics applications"),
+    license="Apache 2.0",
+    url="https://gerrit.onap.org/r/#/admin/projects/dcaegen2/utils",
+    zip_safe=True,
+    install_requires=["onap-dcae-cbs-docker-client>=2.1.0"],
+    entry_points={"console_scripts": ["reconfigure.sh=dcaeapplib:reconfigure"]},
 )
