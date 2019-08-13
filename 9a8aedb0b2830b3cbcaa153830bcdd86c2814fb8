@@ -16,6 +16,24 @@
       "revId": "9a8aedb0b2830b3cbcaa153830bcdd86c2814fb8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c15b5a89_4299c65c",
+        "filename": "python-dockering/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1907
+      },
+      "writtenOn": "2019-08-13T15:09:24Z",
+      "side": 1,
+      "message": "It has to do with storing in the Maven repository (i.e. Java code), and we aren\u0027t putting anything there.  As far as I can tell, it isn\u0027t used, doesn\u0027t matter, and never matched, but I can change it.",
+      "parentUuid": "63ccc32d_d5bf0e03",
+      "revId": "9a8aedb0b2830b3cbcaa153830bcdd86c2814fb8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
