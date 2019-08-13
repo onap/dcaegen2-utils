@@ -20,7 +20,6 @@
 import os
 from functools import partial
 import pytest
-import docker
 from dockering import core as doc
 from dockering.exceptions import DockerError, DockerConnectionError
 
