@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.1]
+
+* Upgrade to use docker 4.x.x from docker-py 1.x.x
+
 ## [1.4.0]
 
 * Turn off cert verification for https healthchecks.  See comments in the code.

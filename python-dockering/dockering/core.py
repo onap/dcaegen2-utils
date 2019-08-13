@@ -34,7 +34,7 @@ def create_client(hostname, port, reauth=False, logins=[]):
     """
     base_url = "tcp://{0}:{1}".format(hostname, port)
     try:
-        client = docker.Client(base_url=base_url)
+        client = docker.APIClient(base_url=base_url)
 
         for dcl in logins:
             dcl["reauth"] = reauth

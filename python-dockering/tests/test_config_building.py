@@ -26,20 +26,20 @@ from dockering.exceptions import DockerConstructionError
 
 # The docker-py library sneakily expects version to "know" that there is an
 # actual Docker API that you can connect with.
-DOCKER_API_VERSION = "1.24"
-create_host_config = partial(docker.utils.utils.create_host_config,
+DOCKER_API_VERSION = "auto"
+HostConfig = partial(docker.types.HostConfig,
         version=DOCKER_API_VERSION)
 
 def test_add_host_config_params_volumes():
     hcp = doc.add_host_config_params_volumes()
-    hc = create_host_config(**hcp)
+    hc = HostConfig(**hcp)
     expected = { 'NetworkMode': 'default' }
     assert expected == hc
 
     volumes = [{"host": {"path": "some-path-host"},
         "container": {"bind": "some-path-container", "mode": "ro"}}]
     hcp = doc.add_host_config_params_volumes(volumes=volumes)
-    hc = create_host_config(**hcp)
+    hc = HostConfig(**hcp)
     expected = {'Binds': ['some-path-host:some-path-container:ro'], 'NetworkMode': 'default'}
     assert expected == hc
 
@@ -47,13 +47,13 @@ def test_add_host_config_params_volumes():
 def test_add_host_config_params_ports():
     ports = [ "22:22", "80:80" ]
     hcp = doc.add_host_config_params_ports(ports=ports)
-    hc = create_host_config(**hcp)
+    hc = HostConfig(**hcp)
     expected = {'PortBindings': {'22/tcp': [{'HostPort': '22', 'HostIp': ''}],
         '80/tcp': [{'HostPort': '80', 'HostIp': ''}]}, 'NetworkMode': 'default'}
     assert expected == hc
 
     hcp = doc.add_host_config_params_ports()
-    hc = create_host_config(**hcp)
+    hc = HostConfig(**hcp)
     expected = {'NetworkMode': 'default', 'PublishAllPorts': True}
     assert expected == hc
 
@@ -61,7 +61,7 @@ def test_add_host_config_params_ports():
 def test_add_host_config_params_dns():
     docker_host = "192.168.1.1"
     hcp = doc.add_host_config_params_dns(docker_host)
-    hc = create_host_config(**hcp)
+    hc = HostConfig(**hcp)
     expected = {'NetworkMode': 'default', 'DnsSearch': ['service.consul'],
             'Dns': ['192.168.1.1'], 'ExtraHosts': ['consul:192.168.1.1']}
     assert expected == hc
