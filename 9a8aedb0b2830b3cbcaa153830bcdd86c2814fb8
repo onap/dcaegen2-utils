@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "63ccc32d_d5bf0e03",
+        "filename": "python-dockering/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1071
+      },
+      "writtenOn": "2019-08-13T15:00:23Z",
+      "side": 1,
+      "message": "I really don\u0027t know what this version is used for but can you make the version match that in the setup.py?  1.4.1-SNAPSHOT",
+      "revId": "9a8aedb0b2830b3cbcaa153830bcdd86c2814fb8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
