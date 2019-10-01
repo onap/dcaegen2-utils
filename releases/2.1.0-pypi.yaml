@@ -1,0 +1,5 @@
+# Release of onap-dcae-cbs-docker-client distributions
+---
+distribution_type: pypi
+project: dcaegen2/utils
+version: 2.1.0
