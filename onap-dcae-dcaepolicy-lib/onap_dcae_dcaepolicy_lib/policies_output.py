@@ -1,5 +1,5 @@
 # ================================================================================
-# Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2019 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,10 @@
 
 import base64
 import json
-import urllib
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib import quote
 import uuid
 from datetime import datetime
 
@@ -51,7 +54,7 @@ class PoliciesOutput(object):
     def _gen_txn_operation(verb, service_component_name, key=None, value=None):
         """returns the properly formatted operation to be used inside transaction"""
         key = PoliciesOutput.POLICIES_FOLDER_MASK.format(
-            service_component_name, urllib.quote(key or "")
+            service_component_name, quote(key or "")
         )
         if value:
             return {"KV": {"Verb": verb, "Key": key, "Value": base64.b64encode(value)}}
@@ -108,7 +111,7 @@ class PoliciesOutput(object):
         store_policies = [
             PoliciesOutput._gen_txn_operation(PoliciesOutput.OPERATION_SET, service_component_name,
                                               "items/" + policy_id, json.dumps(policy_body))
-            for policy_id, policy_body in policy_bodies.iteritems()
+            for policy_id, policy_body in policy_bodies.items()
         ]
         txn = [
             PoliciesOutput._gen_txn_operation(
@@ -117,7 +120,7 @@ class PoliciesOutput(object):
                 PoliciesOutput.OPERATION_SET, service_component_name, "event", json.dumps(event))
         ]
         idx_step = PoliciesOutput.MAX_OPS_PER_TXN - len(txn)
-        for idx in xrange(0, len(store_policies), idx_step):
+        for idx in range(0, len(store_policies), idx_step):
             txn += store_policies[idx : idx + idx_step]
             if not PoliciesOutput._run_transaction("store_policies", txn):
                 return False
