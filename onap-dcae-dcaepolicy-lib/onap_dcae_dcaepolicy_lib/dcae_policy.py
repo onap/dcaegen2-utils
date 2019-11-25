@@ -1,5 +1,5 @@
 # ================================================================================
-# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
 """dcae_policy contains decorators for the policy lifecycle in cloudify"""
 
 import json
+import sys
+USING_PYTHON2 = sys.version_info[0] < 3
 import traceback
 from copy import deepcopy
 from functools import wraps
@@ -125,10 +127,16 @@ class Policies(object):
 
         property_policy_filter = target.node.properties.get(POLICY_FILTER)
         if property_policy_filter:
-            policy_filter = deepcopy(dict(
-                (k, v) for (k, v) in dict(property_policy_filter).iteritems()
-                if v or isinstance(v, (int, float))
-            ))
+            if USING_PYTHON2:
+                policy_filter = deepcopy(dict(
+                    (k, v) for (k, v) in dict(property_policy_filter).iteritems()
+                    if v or isinstance(v, (int, float))
+                ))
+            else:
+                policy_filter = deepcopy(dict(
+                    (k, v) for (k, v) in dict(property_policy_filter).items()
+                    if v or isinstance(v, (int, float))
+                ))
             Policies._fix_policy_filter(policy_filter)
 
             if policy_filter:
@@ -140,8 +148,12 @@ class Policies(object):
         filtered_policies = target.instance.runtime_properties.get(POLICIES_FILTERED)
         if not filtered_policies or not isinstance(filtered_policies, dict):
             return True
-        for (policy_id, policy) in filtered_policies.iteritems():
-            Policies._add_policy(policy_id, policy, False, policies)
+        if USING_PYTHON2:
+            for (policy_id, policy) in filtered_policies.iteritems():
+                Policies._add_policy(policy_id, policy, False, policies)
+        else:
+            for (policy_id, policy) in filtered_policies.items():
+                Policies._add_policy(policy_id, policy, False, policies)
         return True
 
     @staticmethod
@@ -150,9 +162,14 @@ class Policies(object):
         if not policies:
             return {}
 
-        return dict((policy_id, policy.get(POLICY_BODY))
-            for policy_id, policy in policies.iteritems() if policy.get(POLICY_BODY)
-        )
+        if USING_PYTHON2:
+            return dict((policy_id, policy.get(POLICY_BODY))
+                for policy_id, policy in policies.iteritems() if policy.get(POLICY_BODY)
+            )
+        else:
+            return dict((policy_id, policy.get(POLICY_BODY))
+                for policy_id, policy in policies.items() if policy.get(POLICY_BODY)
+            )
 
     @staticmethod
     def gather_policies_to_node():
@@ -235,20 +252,35 @@ class Policies(object):
                 else:
                     del policies[policy_id]
 
-        new_policies = dict((policy_id, policy)
-                            for policy_filter_id in policy_filters
-                            for (policy_id, policy) in added_policies.get(policy_filter_id, {})
-                                                                     .get(POLICIES, {}).iteritems())
+        if USING_PYTHON2:
+            new_policies = dict((policy_id, policy)
+                                for policy_filter_id in policy_filters
+                                for (policy_id, policy) in added_policies.get(policy_filter_id, {})
+                                                                         .get(POLICIES, {}).iteritems())
+        else:
+            new_policies = dict((policy_id, policy)
+                                for policy_filter_id in policy_filters
+                                for (policy_id, policy) in added_policies.get(policy_filter_id, {})
+                                                                         .get(POLICIES, {}).items())
 
         ctx.logger.info("new_policies: {0}".format(json.dumps(new_policies)))
 
-        for (policy_id, policy) in new_policies.iteritems():
-            deployed_policy = policies.get(policy_id)
-            if not deployed_policy:
-                policies[policy_id] = policy
-                Policies._updated_policies[policy_id] = policy
-                continue
-            updated_policies.append(policy)
+        if USING_PYTHON2:
+            for (policy_id, policy) in new_policies.iteritems():
+                deployed_policy = policies.get(policy_id)
+                if not deployed_policy:
+                    policies[policy_id] = policy
+                    Policies._updated_policies[policy_id] = policy
+                    continue
+                updated_policies.append(policy)
+        else:
+            for (policy_id, policy) in new_policies.items():
+                deployed_policy = policies.get(policy_id)
+                if not deployed_policy:
+                    policies[policy_id] = policy
+                    Policies._updated_policies[policy_id] = policy
+                    continue
+                updated_policies.append(policy)
 
         skipped = {"ignored": [], "unexpected": [], "same": [], "duplicate": []}
         for policy in updated_policies:
@@ -362,9 +394,17 @@ class Policies(object):
     def get_policy_bodies(selected_policies=None):
         """returns the list of policy_body objects if policy_body exists"""
         if isinstance(selected_policies, dict):
-            return deepcopy([policy.get(POLICY_BODY)
-                             for policy in selected_policies.values() if policy.get(POLICY_BODY)])
+            if USING_PYTHON2:
+                return deepcopy([policy.get(POLICY_BODY)
+                                 for policy in selected_policies.values() if policy.get(POLICY_BODY)])
+            else:
+                return deepcopy([policy.get(POLICY_BODY)
+                                 for policy in list(selected_policies.values()) if policy.get(POLICY_BODY)])
 
         policies = ctx.instance.runtime_properties.get(POLICIES, {})
-        return deepcopy([policy.get(POLICY_BODY)
-                         for policy in policies.values() if policy.get(POLICY_BODY)])
+        if USING_PYTHON2:
+            return deepcopy([policy.get(POLICY_BODY)
+                             for policy in policies.values() if policy.get(POLICY_BODY)])
+        else:
+            return deepcopy([policy.get(POLICY_BODY)
+                             for policy in list(policies.values()) if policy.get(POLICY_BODY)])

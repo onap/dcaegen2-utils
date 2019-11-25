@@ -1,5 +1,5 @@
 # ============LICENSE_START=======================================================
-# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
 
 """tests of decorators around the cloudify operations to handle policy actions"""
 
+import sys
+USING_PYTHON2 = sys.version_info[0] < 3
 import copy
 import json
 import logging
@@ -132,19 +134,34 @@ class MonkeyedPolicyBody(object):
         """check whether both policy_body objects are the same"""
         if not isinstance(policy_body_1, dict) or not isinstance(policy_body_2, dict):
             return False
-        for key in policy_body_1.keys():
-            if key not in policy_body_2:
-                return False
+        if USING_PYTHON2:
+            for key in policy_body_1.keys():
+                if key not in policy_body_2:
+                    return False
 
-            val_1 = policy_body_1[key]
-            val_2 = policy_body_2[key]
-            if isinstance(val_1, dict) \
-            and not MonkeyedPolicyBody.is_the_same_dict(val_1, val_2):
-                return False
-            if (val_1 is None and val_2 is not None) \
-            or (val_1 is not None and val_2 is None) \
-            or (val_1 != val_2):
-                return False
+                val_1 = policy_body_1[key]
+                val_2 = policy_body_2[key]
+                if isinstance(val_1, dict) \
+                and not MonkeyedPolicyBody.is_the_same_dict(val_1, val_2):
+                    return False
+                if (val_1 is None and val_2 is not None) \
+                or (val_1 is not None and val_2 is None) \
+                or (val_1 != val_2):
+                    return False
+        else:
+            for key in list(policy_body_1.keys()):
+                if key not in policy_body_2:
+                    return False
+
+                val_1 = policy_body_1[key]
+                val_2 = policy_body_2[key]
+                if isinstance(val_1, dict) \
+                and not MonkeyedPolicyBody.is_the_same_dict(val_1, val_2):
+                    return False
+                if (val_1 is None and val_2 is not None) \
+                or (val_1 is not None and val_2 is None) \
+                or (val_1 != val_2):
+                    return False
         return True
 
 class MonkeyedNode(object):
@@ -592,7 +609,10 @@ def test_update_policies():
     ctx.logger.info("policy[{0}]: not yet in policies".format(MONKEYED_POLICY_ID_M_2))
     assert MONKEYED_POLICY_ID_M_2 not in policies
 
-    policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    if USING_PYTHON2:
+        policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    else:
+        policy_filter_ids = list(runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys()) or ["--"]
 
     policy_update(updated_policies=[updated_policy],
                   added_policies={
@@ -653,7 +673,10 @@ def test_update_not_only_config():
     ctx.logger.info("policy[{0}]: not yet in policies".format(MONKEYED_POLICY_ID_M_2))
     assert MONKEYED_POLICY_ID_M_2 not in policies
 
-    policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    if USING_PYTHON2:
+        policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    else:
+        policy_filter_ids = list(runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys()) or ["--"]
 
     policy_update_not_only_config(updated_policies=[updated_policy],
                                   added_policies={
@@ -728,7 +751,10 @@ def test_update_policies_not():
     assert unexpected_removed_policy_id not in policies
     assert junk_policy_filter_id not in runtime_properties.get(dcae_policy.POLICY_FILTERS, {})
 
-    policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    if USING_PYTHON2:
+        policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    else:
+        policy_filter_ids = list(runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys()) or ["--"]
 
     policy_update(updated_policies=[existing_policy, damaged_policy, updated_policy],
                   added_policies={
@@ -770,7 +796,10 @@ def test_update_many_calcs():
     ctx.logger.info("policy[{0}]: not yet in policies".format(MONKEYED_POLICY_ID_M_2))
     assert MONKEYED_POLICY_ID_M_2 not in policies
 
-    policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    if USING_PYTHON2:
+        policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    else:
+        policy_filter_ids = list(runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys()) or ["--"]
 
     policy_update_many_calcs(updated_policies=[updated_policy],
                              added_policies={
@@ -823,7 +852,10 @@ def test_remove_all_policies():
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
-    remove_policy_ids = policies.keys()
+    if USING_PYTHON2:
+        remove_policy_ids = policies.keys()
+    else:
+        remove_policy_ids = list(policies.keys())
 
     policy_update(updated_policies=None, added_policies=None, removed_policies=remove_policy_ids)
 
@@ -853,7 +885,10 @@ def test_remove_all_policies_twice():
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
-    remove_policy_ids = policies.keys()
+    if USING_PYTHON2:
+        remove_policy_ids = policies.keys()
+    else:
+        remove_policy_ids = list(policies.keys())
 
     policy_update(updated_policies=None, added_policies=None, removed_policies=remove_policy_ids)
     policy_update(updated_policies=None, added_policies=None, removed_policies=remove_policy_ids)
@@ -884,7 +919,10 @@ def test_remove_then_update():
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
-    remove_policy_ids = policies.keys()
+    if USING_PYTHON2:
+        remove_policy_ids = policies.keys()
+    else:
+        remove_policy_ids = list(policies.keys())
     policy_update(updated_policies=None, added_policies=None, removed_policies=remove_policy_ids)
 
     updated_policy = MonkeyedPolicyBody.create_policy(MONKEYED_POLICY_ID_2, 2, priority="aa20")
@@ -895,7 +933,10 @@ def test_remove_then_update():
     ctx.logger.info("policy[{0}]: not yet in policies".format(MONKEYED_POLICY_ID_M_2))
     assert MONKEYED_POLICY_ID_M_2 not in policies
 
-    policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    if USING_PYTHON2:
+        policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    else:
+        policy_filter_ids = list(runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys()) or ["--"]
 
     policy_update(updated_policies=[updated_policy],
                   added_policies={
@@ -935,7 +976,10 @@ def test_remove_update_many_calcs():
     policies = runtime_properties[dcae_policy.POLICIES]
     ctx.logger.info("policies: {0}".format(json.dumps(policies)))
 
-    remove_policy_ids = policies.keys()
+    if USING_PYTHON2:
+        remove_policy_ids = policies.keys()
+    else:
+        remove_policy_ids = list(policies.keys())
     policy_update_many_calcs(updated_policies=None,
                              added_policies=None,
                              removed_policies=remove_policy_ids)
@@ -952,7 +996,10 @@ def test_remove_update_many_calcs():
     ctx.logger.info("policy[{0}]: not yet in policies".format(MONKEYED_POLICY_ID_M_2))
     assert MONKEYED_POLICY_ID_M_2 not in policies
 
-    policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    if USING_PYTHON2:
+        policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    else:
+        policy_filter_ids = list(runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys()) or ["--"]
 
     policy_update_many_calcs(updated_policies=[updated_policy],
                              added_policies={
@@ -1004,7 +1051,10 @@ def test_bad_update_many_calcs():
     ctx.logger.info("policy[{0}]: not yet in policies".format(MONKEYED_POLICY_ID_M_2))
     assert MONKEYED_POLICY_ID_M_2 not in policies
 
-    policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    if USING_PYTHON2:
+        policy_filter_ids = runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys() or ["--"]
+    else:
+        policy_filter_ids = list(runtime_properties.get(dcae_policy.POLICY_FILTERS, {}).keys()) or ["--"]
 
     policy_update_many_calcs(updated_policies=[damaged_policy],
                              added_policies={
