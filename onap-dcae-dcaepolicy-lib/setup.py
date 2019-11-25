@@ -1,5 +1,5 @@
 # ================================================================================
-# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ from setuptools import setup, find_packages
 setup(
     name='onap-dcae-dcaepolicy-lib',
     description='lib of policy decorators to be used by cloudify plugins of dcae controller',
-    version="2.4.1",
+    version="2.5.0",
     author='Alex Shatov',
     author_email="alexs@att.com",
     license='Apache 2',
@@ -33,6 +33,7 @@ setup(
     keywords='onap policy dcae controller cloudify plugin',
     classifiers=[
         'Intended Audience :: Telecommunications Industry',
-        'Programming Language :: Python :: 2.7'
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6'
     ]
 )
