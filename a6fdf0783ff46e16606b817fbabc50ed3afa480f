@@ -1,0 +1,259 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e1122bf_ffcf8502",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "There need to be any differences between python versions in this code.",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c541db9c_41cc3b89",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "You do not need to create separate code for 2 and 3 - the overhead of using items() in python2 to create a list is small, especially since this code creates 2 intermediate dicts, before finally creating a third one with deepcopy. Just use the python3 version.",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a40aaba_53d509bb",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "Python3 version works fine in python2 as well.",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4caee855_611e6137",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "Dict comprehension works well in python2 and 3, and is clearer.\n\nreturn {policy_id: policy.get(POLICY_BODY) for policy_id, policy in policies.items() if policy.get(POLICY_BODY)}",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "98544587_d3237c42",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "Python3 version works fine in python2.",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ecab23a_59a0dd0f",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "Python3 version works fine in python2.\nAlso, instead of items, one could just iterate policy_id over the dict, and then retrieve the item in the loop. It is usually faster than creating the items.",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bd4e8f5_1ed9d60c",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "No need to create the list if it\u0027s just being iterated. The original python2 code should\u0027ve used itervalues anyway. The python2 version is the better option here.",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c42eaf4_3715753a",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 407,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "Python2 version is better used in python3 as well.",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a2329c9_712bca1b",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/policies_output.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "THe python3 version of code depending on this variable is fine in python2 as well.",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2804230_972a54df",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/policies_output.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "Given that only the quote function is used, it can be imported directly, and then used unqualified:\n\ntry:\n   from urllib.parse import quote\nexcept ImportError:\n   from urllib import quote",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "889e47c4_bb7d890c",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "Same python3 code works in python2.7 (and very likely before).",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0fad6f47_08c61768",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "You do not need to create a list from the keys (unless you modify the dict being iterated). the keys() function isn\u0027t needed either - dicts iterate over their keys normally.\nthus, both python2 and 3 work better with: for key in policy_body_1:",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ff70ad5_c61283dd",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "Let\u0027s assume val_1\u0027s __eq__ method doesn\u0027t always work with None, and you can\u0027t just write val_1 !\u003d val_2.\nThen, the proper formatting for this is :\nif (val_1 is None and val_2 is not None\n    or val_1 is not None and val_2 is None\n    or val_1 !\u003d val_2):\n\n    return False\n\nor, just after retrieving val_2 on line 157:\nif (val_1 is None) !\u003d (val_2 is None):\n    return False\n...\n\u003cthe recursive call\u003e\n...\nif val_1 !\u003d val_2:\n   return False",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "75b18d18_89cc85e4",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "list(somedict) will return the list of its keys. Since it\u0027s using or, one could drop the {} and writte:\npolicy_filter_ids \u003d list(runtime_properties.get(dcae_policy.POLICY_FILTERS) or [\"--\"])\n\nGiven that the same code is repeated many times below, perhaps one could have a function for this, and replace all occurences with a call to it.",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d951be0b_623aa46f",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 858,
+      "author": {
+        "id": 6172
+      },
+      "writtenOn": "2019-11-26T12:46:01Z",
+      "side": 1,
+      "message": "list(policies) works in 2 and 3.",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
