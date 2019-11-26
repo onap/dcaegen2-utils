@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a3cb3f40_36805d88",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e1122bf_ffcf8502",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c541db9c_41cc3b89",
         "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
         "patchSetId": 4
@@ -33,6 +51,24 @@
       "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6338ce77_b199c615",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c541db9c_41cc3b89",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "1fe765de_30da1daa",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a40aaba_53d509bb",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4caee855_611e6137",
         "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
         "patchSetId": 4
@@ -67,6 +121,24 @@
       "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2601102d_9eba6c30",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4caee855_611e6137",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "cadeb7c0_a0170b1a",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "98544587_d3237c42",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0ecab23a_59a0dd0f",
         "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
         "patchSetId": 4
@@ -101,6 +191,24 @@
       "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "47740b35_1a04d5e1",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0ecab23a_59a0dd0f",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "df92563b_030d47a3",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9bd4e8f5_1ed9d60c",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2c42eaf4_3715753a",
         "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
         "patchSetId": 4
@@ -135,6 +261,24 @@
       "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc323138_2d901726",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 407,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c42eaf4_3715753a",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "c7b32e4d_4ecf15a3",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/policies_output.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2a2329c9_712bca1b",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c2804230_972a54df",
         "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/policies_output.py",
         "patchSetId": 4
@@ -169,6 +331,24 @@
       "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d37f1fe5_fe21eb4a",
+        "filename": "onap-dcae-dcaepolicy-lib/onap_dcae_dcaepolicy_lib/policies_output.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c2804230_972a54df",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "27e5ecd1_99b17c18",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "889e47c4_bb7d890c",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0fad6f47_08c61768",
         "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
         "patchSetId": 4
@@ -203,6 +401,24 @@
       "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c23202a4_72b94e52",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0fad6f47_08c61768",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "9f99f145_75e95596",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0ff70ad5_c61283dd",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "75b18d18_89cc85e4",
         "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
         "patchSetId": 4
@@ -240,6 +474,24 @@
     },
     {
       "key": {
+        "uuid": "d02062af_469bd00a",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "75b18d18_89cc85e4",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d951be0b_623aa46f",
         "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
         "patchSetId": 4
@@ -254,6 +506,24 @@
       "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12841958_f02e26ca",
+        "filename": "onap-dcae-dcaepolicy-lib/tests/test_dcae_policy.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 858,
+      "author": {
+        "id": 2835
+      },
+      "writtenOn": "2019-11-26T15:38:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d951be0b_623aa46f",
+      "revId": "a6fdf0783ff46e16606b817fbabc50ed3afa480f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
