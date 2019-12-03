@@ -86,5 +86,14 @@ committers:
       company: 'ATT'
       id: 'jflucas'
       timezone: 'America/New_York'
+    - name: 'Joseph O Leary'
+      email: 'joseph.o.leary@est.tech'
+      company: 'EST'
+      id: 'JoeOLeary'
+      timezone: 'Ireland/UTC'
 tsc:
     approval: 'https://lists.onap.org/pipermail/onap-tsc'
+    changes:
+        - type: 'Addition'
+          name: 'Joseph O Leary'
+          link: 'https://lists.onap.org/g/onap-tsc/message/5715'
