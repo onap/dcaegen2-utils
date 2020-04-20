@@ -35,11 +35,7 @@ limitations under the License.
   <modules>
      <module>onap-dcae-cbs-docker-client</module>
      <module>onap-dcae-dcaepolicy-lib</module>
-     <module>python-discovery-client</module>
-     <module>python-dockering</module>
-     <module>dcaeapplib</module>
      <module>scripts</module>
-     <module>eelf-logger</module>
   </modules>
 
   <properties>
