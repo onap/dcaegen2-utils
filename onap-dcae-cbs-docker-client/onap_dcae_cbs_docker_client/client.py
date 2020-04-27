@@ -66,8 +66,8 @@ def _get_path(path):
             res.text,
         )
         raise CantGetConfig(res.status_code, res.text)
-    except requests.exceptions.ConnectionError:  # this is thrown if requests.get cant even connect to the endpoint
-        raise CBSUnreachable()
+    except requests.exceptions.ConnectionError as e:  # this is thrown if requests.get cant even connect to the endpoint
+        raise CBSUnreachable(e)
 
 
 #########
