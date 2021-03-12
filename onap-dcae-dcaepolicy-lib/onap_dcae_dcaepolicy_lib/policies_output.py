@@ -1,5 +1,5 @@
 # ================================================================================
-# Copyright (c) 2019 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2019-2021 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ class PoliciesOutput(object):
             service_component_name, quote(key or "")
         )
         if value:
-            return {"KV": {"Verb": verb, "Key": key, "Value": base64.b64encode(value)}}
+            return {"KV": {"Verb": verb, "Key": key, "Value": base64.b64encode(value.encode("utf8")).decode("utf8")}}
         return {"KV": {"Verb": verb, "Key": key}}
 
 
