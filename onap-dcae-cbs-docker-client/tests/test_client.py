@@ -77,3 +77,38 @@ def test_badenv(monkeypatch):
         get_config()
     with pytest.raises(ENVsMissing):
         get_all()
+
+
+def test_http_with_env(monkeypatch, monkeyed_requests_get_with_env):
+    monkeypatch.setattr("requests.get", monkeyed_requests_get_with_env)
+
+    assert get_config() == {"key_to_your_heart": "test_env"}
+
+    assert get_all() == {
+        "config": {"key_to_your_heart": "test_env"},
+        "dti": {"some amazing": "dti stuff"},
+        "policies": {"event": {"foo": "bar"}, "items": [{"foo2": "bar2"}]},
+        "otherkey": {"foo3": "bar3"},
+    }
+
+
+def test_https_with_env(monkeypatch, monkeyed_requests_get_https_env):
+    monkeypatch.setattr("requests.get", monkeyed_requests_get_https_env)
+    monkeypatch.setenv("DCAE_CA_CERTPATH", "1")
+
+    assert get_config() == {"key_to_your_heart": "test_env"}
+
+    assert get_all() == {
+        "config": {"key_to_your_heart": "test_env"},
+        "dti": {"some amazing": "dti stuff"},
+        "policies": {"event": {"foo": "bar"}, "items": [{"foo2": "bar2"}]},
+        "otherkey": {"foo3": "bar3"},
+    }
+
+
+def test_http_with_wrong_env(monkeypatch, monkeyed_requests_get_http_with_wrong_env):
+    monkeypatch.setattr("requests.get", monkeyed_requests_get_http_with_wrong_env)
+    with pytest.raises(ENVsMissing):
+        get_config()
+    with pytest.raises(ENVsMissing):
+        get_all()
