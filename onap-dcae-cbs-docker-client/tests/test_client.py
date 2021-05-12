@@ -24,7 +24,7 @@ def test_http(monkeypatch, monkeyed_requests_get):
     assert get_config() == {"key_to_your_heart": 666}
 
     assert get_all() == {
-        "config": {"key_to_your_heart": 666},
+        "config": {"key_to_your_heart": "/home/edyta/Repository/Onap/utils/onap-dcae-cbs-docker-client/.tox/py36", "new_key_to_your_heart": {"under_key": "/home/edyta/Repository/Onap/utils/onap-dcae-cbs-docker-client/.tox/py36"}},
         "dti": {"some amazing": "dti stuff"},
         "policies": {"event": {"foo": "bar"}, "items": [{"foo2": "bar2"}]},
         "otherkey": {"foo3": "bar3"},
@@ -42,7 +42,7 @@ def test_https_url(monkeypatch, monkeyed_requests_get_https):
     assert get_config() == {"key_to_your_heart": 666}
 
     assert get_all() == {
-        "config": {"key_to_your_heart": 666},
+        "config": {"key_to_your_heart": "/home/edyta/Repository/Onap/utils/onap-dcae-cbs-docker-client/.tox/py36", "new_key_to_your_heart": {"under_key": "/home/edyta/Repository/Onap/utils/onap-dcae-cbs-docker-client/.tox/py36"}},
         "dti": {"some amazing": "dti stuff"},
         "policies": {"event": {"foo": "bar"}, "items": [{"foo2": "bar2"}]},
         "otherkey": {"foo3": "bar3"},

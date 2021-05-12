@@ -36,7 +36,7 @@ class FakeResponse:
 good_resp_all = FakeResponse(
     status_code=200,
     thejson={
-        "config": {"key_to_your_heart": 666},
+        "config": {"key_to_your_heart": "${VIRTUAL_ENV}", "new_key_to_your_heart": {"under_key": "${VIRTUAL_ENV}"}},
         "dti": {"some amazing": "dti stuff"},
         "policies": {"event": {"foo": "bar"}, "items": [{"foo2": "bar2"}]},
         "otherkey": {"foo3": "bar3"},
