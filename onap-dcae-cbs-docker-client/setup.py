@@ -1,5 +1,6 @@
 # ================================================================================
 # Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+# Copyright (C) 2021 Nokia. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +20,7 @@ from setuptools import setup, find_packages
 setup(
     name="onap_dcae_cbs_docker_client",
     description="very lightweight client for a DCAE dockerized component to get it's config from the CBS",
-    version="2.1.1",
+    version="2.1.2",
     packages=find_packages(),
     author="Tommy Carpenter",
     author_email="tommy@research.att.com",

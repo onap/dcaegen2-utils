@@ -1,5 +1,6 @@
 # ================================================================================
 # Copyright (c) 2019 AT&T Intellectual Property. All rights reserved.
+# Copyright (C) 2021 Nokia. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -44,6 +45,30 @@ good_resp_all = FakeResponse(
 )
 good_resp_conf = FakeResponse(status_code=200, thejson={"key_to_your_heart": 666})
 
+good_resp_conf_env = FakeResponse(status_code=200, thejson={"key_to_your_heart": "${TEST_ENV}"})
+
+good_resp_all_env = FakeResponse(
+    status_code=200,
+    thejson={
+        "config": {"key_to_your_heart": "${TEST_ENV}"},
+        "dti": {"some amazing": "dti stuff"},
+        "policies": {"event": {"foo": "bar"}, "items": [{"foo2": "bar2"}]},
+        "otherkey": {"foo3": "bar3"},
+    },
+)
+
+good_resp_conf_wrong_env = FakeResponse(status_code=200, thejson={"key_to_your_heart": "${WRONG_TEST_ENV}"})
+
+good_resp_all_wrong_env = FakeResponse(
+    status_code=200,
+    thejson={
+        "config": {"key_to_your_heart": "${WRONG_TEST_ENV}"},
+        "dti": {"some amazing": "dti stuff"},
+        "policies": {"event": {"foo": "bar"}, "items": [{"foo2": "bar2"}]},
+        "otherkey": {"foo3": "bar3"},
+    },
+)
+
 
 @pytest.fixture
 def monkeyed_requests_get():
@@ -77,6 +102,57 @@ def monkeyed_requests_get_https():
             raise Exception("Unexpected URL {0}!".format(url))
 
     return _monkeyed_requests_get_https
+
+
+@pytest.fixture
+def monkeyed_requests_get_with_env():
+    """
+    mock for the CBS get
+    """
+
+    def _monkeyed_requests_get(url):
+        if url == "http://config-binding-service:10000/service_component_all/testhostname":
+            return good_resp_all_env
+        elif url == "http://config-binding-service:10000/service_component/testhostname":
+            return good_resp_conf_env
+        else:
+            raise Exception("Unexpected URL {0}!".format(url))
+
+    return _monkeyed_requests_get
+
+
+@pytest.fixture
+def monkeyed_requests_get_https_env():
+    """
+    mock for the CBS get
+    """
+
+    def _monkeyed_requests_get_https(url, verify=""):
+        if url == "https://config-binding-service:10443/service_component_all/testhostname":
+            return good_resp_all_env
+        elif url == "https://config-binding-service:10443/service_component/testhostname":
+            return good_resp_conf_env
+        else:
+            raise Exception("Unexpected URL {0}!".format(url))
+
+    return _monkeyed_requests_get_https
+
+
+@pytest.fixture
+def monkeyed_requests_get_http_with_wrong_env():
+    """
+    mock for the CBS get
+    """
+
+    def _monkeyed_requests_get(url):
+        if url == "http://config-binding-service:10000/service_component_all/testhostname":
+            return good_resp_all_wrong_env
+        elif url == "http://config-binding-service:10000/service_component/testhostname":
+            return good_resp_conf_wrong_env
+        else:
+            raise Exception("Unexpected URL {0}!".format(url))
+
+    return _monkeyed_requests_get
 
 
 @pytest.fixture

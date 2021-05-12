@@ -1,5 +1,6 @@
 # ================================================================================
 # Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+# Copyright (C) 2021 Nokia. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -73,6 +74,41 @@ def test_unreachable(monkeypatch, monkeyed_requests_get_unreachable):
 
 def test_badenv(monkeypatch):
     monkeypatch.delenv("CONFIG_BINDING_SERVICE")
+    with pytest.raises(ENVsMissing):
+        get_config()
+    with pytest.raises(ENVsMissing):
+        get_all()
+
+
+def test_http_with_env(monkeypatch, monkeyed_requests_get_with_env):
+    monkeypatch.setattr("requests.get", monkeyed_requests_get_with_env)
+
+    assert get_config() == {"key_to_your_heart": "test_env"}
+
+    assert get_all() == {
+        "config": {"key_to_your_heart": "test_env"},
+        "dti": {"some amazing": "dti stuff"},
+        "policies": {"event": {"foo": "bar"}, "items": [{"foo2": "bar2"}]},
+        "otherkey": {"foo3": "bar3"},
+    }
+
+
+def test_https_with_env(monkeypatch, monkeyed_requests_get_https_env):
+    monkeypatch.setattr("requests.get", monkeyed_requests_get_https_env)
+    monkeypatch.setenv("DCAE_CA_CERTPATH", "1")
+
+    assert get_config() == {"key_to_your_heart": "test_env"}
+
+    assert get_all() == {
+        "config": {"key_to_your_heart": "test_env"},
+        "dti": {"some amazing": "dti stuff"},
+        "policies": {"event": {"foo": "bar"}, "items": [{"foo2": "bar2"}]},
+        "otherkey": {"foo3": "bar3"},
+    }
+
+
+def test_http_with_wrong_env(monkeypatch, monkeyed_requests_get_http_with_wrong_env):
+    monkeypatch.setattr("requests.get", monkeyed_requests_get_http_with_wrong_env)
     with pytest.raises(ENVsMissing):
         get_config()
     with pytest.raises(ENVsMissing):

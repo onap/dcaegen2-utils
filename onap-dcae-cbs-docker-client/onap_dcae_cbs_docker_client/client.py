@@ -1,5 +1,6 @@
 # ================================================================================
 # Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+# Copyright (C) 2021 Nokia. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,12 +23,33 @@ import requests
 from onap_dcae_cbs_docker_client import get_module_logger
 from onap_dcae_cbs_docker_client.exceptions import ENVsMissing, CantGetConfig, CBSUnreachable
 
-
 logger = get_module_logger(__name__)
 
 
 #########
 # HELPERS
+
+
+def _recurse(config):
+    """
+    Recurse through a configuration, or recursively a sub element of it.
+    If it's a dict: recurse over all the values
+    If it's a list: recurse over all the values
+    If it's a string: return the replacement
+    If none of the above, just return the item.
+    """
+    if isinstance(config, list):
+        return [_recurse(item) for item in config]
+    if isinstance(config, dict):
+        for key in config:
+            config[key] = _recurse(config[key])
+        return config
+    if isinstance(config, str):
+        return change_envs(config)
+    # not a dict, not a list, not a string, nothing to do.
+    return config
+
+
 def _get_path(path):
     """
     Try to get the config, and return appropriate exceptions otherwise
@@ -70,13 +92,26 @@ def _get_path(path):
         raise CBSUnreachable(e)
 
 
+def change_envs(value):
+    """
+    Replace env reference by actual value and return it
+    """
+    if value.startswith('$'):
+        try:
+            value = os.environ[value.replace('${', '').replace('}', '')]
+        except KeyError as e:
+            raise ENVsMissing("Required ENV Variable {0} missing".format(e))
+    return value
+
+
 #########
 # Public
 def get_all():
     """
     Hit the CBS service_component_all endpoint
     """
-    return _get_path("service_component_all")
+    config = _get_path("service_component_all")
+    return _recurse(config)
 
 
 def get_config():
@@ -86,4 +121,5 @@ def get_config():
     TODO: should we take in a "retry" boolean, and retry on behalf of the caller?
     Currently, we return an exception and let the application decide how it wants to proceed (Crash, try again, etc).
     """
-    return _get_path("service_component")
+    config = _get_path("service_component")
+    return _recurse(config)
