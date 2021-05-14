@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8a79a51f_9eb89e03",
+        "filename": "onap-dcae-cbs-docker-client/onap_dcae_cbs_docker_client/client.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 6482
+      },
+      "writtenOn": "2021-05-14T08:31:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c95e7908_c2ac801f",
+      "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "954579c3_08abb17a",
         "filename": "onap-dcae-cbs-docker-client/onap_dcae_cbs_docker_client/client.py",
         "patchSetId": 2
@@ -33,6 +51,24 @@
       "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be3c28f0_87145a84",
+        "filename": "onap-dcae-cbs-docker-client/onap_dcae_cbs_docker_client/client.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 6482
+      },
+      "writtenOn": "2021-05-14T08:31:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "954579c3_08abb17a",
+      "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "ee09efda_545baff9",
+        "filename": "onap-dcae-cbs-docker-client/onap_dcae_cbs_docker_client/client.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 6482
+      },
+      "writtenOn": "2021-05-14T08:31:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2e77e207_c68e0124",
+      "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ab84d2b2_205ae6c1",
         "filename": "onap-dcae-cbs-docker-client/onap_dcae_cbs_docker_client/client.py",
         "patchSetId": 2
@@ -67,6 +121,24 @@
       "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82363056_9cc579ec",
+        "filename": "onap-dcae-cbs-docker-client/onap_dcae_cbs_docker_client/client.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 6482
+      },
+      "writtenOn": "2021-05-14T08:31:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ab84d2b2_205ae6c1",
+      "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "e527b8db_0050d04a",
+        "filename": "onap-dcae-cbs-docker-client/setup.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 6482
+      },
+      "writtenOn": "2021-05-14T08:31:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f671e403_59476c15",
+      "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "34271651_a9725db8",
         "filename": "onap-dcae-cbs-docker-client/tests/conftest.py",
         "patchSetId": 2
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "f914d4a0_1b847d75",
+        "filename": "onap-dcae-cbs-docker-client/tests/conftest.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 6482
+      },
+      "writtenOn": "2021-05-14T08:31:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34271651_a9725db8",
+      "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e503a698_3b1c485a",
         "filename": "onap-dcae-cbs-docker-client/tests/test_client.py",
         "patchSetId": 2
@@ -118,6 +226,24 @@
       "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08908982_bec84866",
+        "filename": "onap-dcae-cbs-docker-client/tests/test_client.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 6482
+      },
+      "writtenOn": "2021-05-14T08:31:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e503a698_3b1c485a",
+      "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
