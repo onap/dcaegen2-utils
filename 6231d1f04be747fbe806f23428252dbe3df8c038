@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "c95e7908_c2ac801f",
+        "filename": "onap-dcae-cbs-docker-client/onap_dcae_cbs_docker_client/client.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-05-14T07:30:11Z",
+      "side": 1,
+      "message": "Please add copyright",
+      "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "954579c3_08abb17a",
         "filename": "onap-dcae-cbs-docker-client/onap_dcae_cbs_docker_client/client.py",
         "patchSetId": 2
@@ -47,6 +64,57 @@
       "writtenOn": "2021-05-13T15:19:57Z",
       "side": 1,
       "message": "please add doc string",
+      "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f671e403_59476c15",
+        "filename": "onap-dcae-cbs-docker-client/setup.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-05-14T07:30:11Z",
+      "side": 1,
+      "message": "Copyright",
+      "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34271651_a9725db8",
+        "filename": "onap-dcae-cbs-docker-client/tests/conftest.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-05-14T07:30:11Z",
+      "side": 1,
+      "message": "Copyright",
+      "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e503a698_3b1c485a",
+        "filename": "onap-dcae-cbs-docker-client/tests/test_client.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-05-14T07:30:11Z",
+      "side": 1,
+      "message": "Copyright",
       "revId": "6231d1f04be747fbe806f23428252dbe3df8c038",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
