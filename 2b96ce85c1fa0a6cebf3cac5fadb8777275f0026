@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99dde07b_60b7a4ce",
+        "filename": "onap-dcae-cbs-docker-client/tox.ini",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2021-05-14T19:39:33Z",
+      "side": 1,
+      "message": "why was py38 removed?\nwe should be targeting py38 and py39",
+      "revId": "2b96ce85c1fa0a6cebf3cac5fadb8777275f0026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9668c69_1de4a6e5",
+        "filename": "onap-dcae-cbs-docker-client/tox.ini",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2021-05-14T19:39:33Z",
+      "side": 1,
+      "message": "we should be targeting py38 and py39",
+      "revId": "2b96ce85c1fa0a6cebf3cac5fadb8777275f0026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
