@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "900156e7_f86f2e68",
+        "filename": "onap-dcae-cbs-docker-client/tox.ini",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 6482
+      },
+      "writtenOn": "2021-05-17T08:15:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "524fc69a_82c94ffb",
+      "revId": "2b96ce85c1fa0a6cebf3cac5fadb8777275f0026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c9668c69_1de4a6e5",
         "filename": "onap-dcae-cbs-docker-client/tox.ini",
         "patchSetId": 3
@@ -51,6 +69,24 @@
       "revId": "2b96ce85c1fa0a6cebf3cac5fadb8777275f0026",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89a0df18_a1c441c5",
+        "filename": "onap-dcae-cbs-docker-client/tox.ini",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 6482
+      },
+      "writtenOn": "2021-05-17T08:15:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9668c69_1de4a6e5",
+      "revId": "2b96ce85c1fa0a6cebf3cac5fadb8777275f0026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
