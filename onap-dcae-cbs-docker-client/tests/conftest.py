@@ -1,5 +1,5 @@
 # ================================================================================
-# Copyright (c) 2019 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2019-2021 AT&T Intellectual Property. All rights reserved.
 # Copyright (C) 2021 Nokia. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ============LICENSE_END=========================================================
-#
-# ECOMP is a trademark and service mark of AT&T Intellectual Property.
+
+""" helper functions/classes for unit tests for Config Binding Server """
+
 import pytest
 from requests.exceptions import HTTPError, ConnectionError
 
