@@ -231,12 +231,13 @@ run_tox_test()
     DIR=$(echo "$TOXINI" | rev | cut -f2- -d'/' | rev)
     cd "${CURDIR}/${DIR}"
     rm -rf ./venv-tox ./.tox
-    virtualenv ./venv-tox
+    python3 -m venv ./venv-tox
     source ./venv-tox/bin/activate
-    pip install pip==9.0.3
-    pip install --upgrade argparse
-    pip install tox==2.9.1
-    pip freeze
+
+    pip3 install pip==9.0.3
+    pip3 install --upgrade argparse
+    pip3 install tox==2.9.1
+    pip3 freeze
     tox
     deactivate
     rm -rf ./venv-tox ./.tox
@@ -248,11 +249,12 @@ build_wagons()
   rm -rf ./*.wgn venv-pkg
   SETUPFILES=$(find . -name "setup.py")
   
-  virtualenv ./venv-pkg
+  python3 -m venv ./venv-pkg
   source ./venv-pkg/bin/activate
-  pip install --upgrade pip 
-  pip install wagon
-  
+
+  pip3 install --upgrade pip
+  pip3 install wagon
+
   CURDIR=$(pwd)
   for SETUPFILE in $SETUPFILES; do
     PLUGIN_DIR=$(dirname "$SETUPFILE")
