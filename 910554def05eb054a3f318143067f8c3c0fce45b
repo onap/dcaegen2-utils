@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "49a3f243_2db48417",
+        "filename": "scripts/mvn-phase-lib.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-07-01T16:30:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a04a1ff6_e94bc156",
+      "range": {
+        "startLine": 237,
+        "startChar": 0,
+        "endLine": 240,
+        "endChar": 19
+      },
+      "revId": "910554def05eb054a3f318143067f8c3c0fce45b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f8ada6d2_9c5301c8",
         "filename": "scripts/mvn-phase-lib.sh",
         "patchSetId": 6
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "4e475984_d4e622cf",
+        "filename": "scripts/mvn-phase-lib.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-07-01T16:30:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f8ada6d2_9c5301c8",
+      "range": {
+        "startLine": 260,
+        "startChar": 0,
+        "endLine": 261,
+        "endChar": 24
+      },
+      "revId": "910554def05eb054a3f318143067f8c3c0fce45b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "344f6310_4ad4774b",
         "filename": "scripts/mvn-phase-lib.sh",
         "patchSetId": 6
@@ -59,6 +107,30 @@
       "writtenOn": "2021-07-01T15:08:34Z",
       "side": 1,
       "message": "wagon update not required here as plugin repo has its own mvn-phase-lib.sh (and already includes py3 support)",
+      "range": {
+        "startLine": 256,
+        "startChar": 1,
+        "endLine": 264,
+        "endChar": 20
+      },
+      "revId": "910554def05eb054a3f318143067f8c3c0fce45b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "727211aa_5cb28ddb",
+        "filename": "scripts/mvn-phase-lib.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-07-01T16:30:56Z",
+      "side": 1,
+      "message": "sorry, I was not clear on my earlier comment - was referring to updates to function build_wagons() itself.\n\nAs you are making updates for py3/pip3  here - this line \"pip3 install wagon\" needs to be included. Alternatively you can also rever back changes made on this function.",
+      "parentUuid": "344f6310_4ad4774b",
       "range": {
         "startLine": 256,
         "startChar": 1,
