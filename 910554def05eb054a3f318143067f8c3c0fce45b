@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a04a1ff6_e94bc156",
+        "filename": "scripts/mvn-phase-lib.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-07-01T15:08:34Z",
+      "side": 1,
+      "message": "commented lines could be removed",
+      "range": {
+        "startLine": 237,
+        "startChar": 0,
+        "endLine": 240,
+        "endChar": 19
+      },
+      "revId": "910554def05eb054a3f318143067f8c3c0fce45b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8ada6d2_9c5301c8",
+        "filename": "scripts/mvn-phase-lib.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-07-01T15:08:34Z",
+      "side": 1,
+      "message": "same as above; commented lines can be removed",
+      "range": {
+        "startLine": 260,
+        "startChar": 0,
+        "endLine": 261,
+        "endChar": 24
+      },
+      "revId": "910554def05eb054a3f318143067f8c3c0fce45b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "344f6310_4ad4774b",
+        "filename": "scripts/mvn-phase-lib.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-07-01T15:08:34Z",
+      "side": 1,
+      "message": "wagon update not required here as plugin repo has its own mvn-phase-lib.sh (and already includes py3 support)",
+      "range": {
+        "startLine": 256,
+        "startChar": 1,
+        "endLine": 264,
+        "endChar": 20
+      },
+      "revId": "910554def05eb054a3f318143067f8c3c0fce45b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
