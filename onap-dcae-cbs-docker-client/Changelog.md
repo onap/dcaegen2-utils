@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.1] 2021/07/20
+* DCAEGEN2-2733/DCAEGEN2-2753 - onap-dcae-cbs-docker-client remove "config" level for get_config()
+
 ## [2.2.0] 2021/06/22
 * DCAEGEN2-2733/DCAEGEN2-2753 - onap-dcae-cbs-docker-client support local config and policy files
 	Support $CBS_CLIENT_CONFIG_PATH and $CBS_CLIENT_POLICY_PATH,

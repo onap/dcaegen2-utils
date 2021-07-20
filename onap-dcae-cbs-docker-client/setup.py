@@ -20,10 +20,10 @@ from setuptools import setup, find_packages
 setup(
     name="onap_dcae_cbs_docker_client",
     description="very lightweight client for a DCAE dockerized component to get it's config from the CBS",
-    version="2.2.0",
+    version="2.2.1",
     packages=find_packages(),
-    author="Tommy Carpenter",
-    author_email="tommy@research.att.com",
+    author="Tony Hansen",
+    author_email="tony@att.com",
     license="Apache 2",
     url="https://gerrit.onap.org/r/#/admin/projects/dcaegen2/utils",
     install_requires=["requests>= 2.0.0, < 3.0.0"],

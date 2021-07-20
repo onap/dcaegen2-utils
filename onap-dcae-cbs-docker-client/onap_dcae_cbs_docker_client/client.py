@@ -219,7 +219,7 @@ def get_config():
             config = yaml.safe_load(fp)
 
         logger.debug(f"Returning config read from {config_path}")
-        return _recurse({"config": config})
+        return _recurse(config)
 
     except yaml.scanner.ScannerError as e:
         logger.error(f"The configuration file '{config_path}' has invalid YAML: {e}")

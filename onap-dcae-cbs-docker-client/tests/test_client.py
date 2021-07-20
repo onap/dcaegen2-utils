@@ -247,7 +247,7 @@ def test_config_file_both_exist(monkeypatch, monkeyed_requests_get):
         else:
             monkeypatch.delenv("CBS_CLIENT_CONFIG_PATH")
 
-        expected_get_config = {"config": expected_config}
+        expected_get_config = expected_config
 
         for (policy_path, expected_policy, set_policy) in [
                 ("policy/path", json.loads(found_policy_path)['policies'], True),
@@ -292,7 +292,7 @@ def test_config_file_config_exists_policy_does_not(monkeypatch, monkeyed_request
         else:
             monkeypatch.delenv("CBS_CLIENT_CONFIG_PATH")
 
-        expected_get_config = {"config": expected_config}
+        expected_get_config = expected_config
         expected_get_all = {"config": expected_config}
 
         for (policy_path, expected_policy, set_policy) in [
@@ -381,7 +381,7 @@ def test_config_file_various_exceptions(monkeypatch, monkeyed_requests_get):
         else:
             monkeypatch.delenv("CBS_CLIENT_CONFIG_PATH")
 
-        expected_get_config = {"config": expected_config}
+        expected_get_config = expected_config
         expected_get_all = {"config": expected_config}
 
         for policy_path in ["bad/policy", "bad/policy2",
