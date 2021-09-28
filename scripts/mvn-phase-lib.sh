@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ================================================================================
-# Copyright (c) 2017-2019 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2021 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ fi
 
 export SETTINGS_FILE=${SETTINGS_FILE:-$HOME/.m2/settings.xml}
 
-RELEASE_TAG=${MVN_RELEASE_TAG:-R9}
+RELEASE_TAG=${MVN_RELEASE_TAG:-R10}
 if [ "$RELEASE_TAG" == "R1" ]; then
   unset RELEASE_TAG
 fi
