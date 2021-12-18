@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- indent-tabs-mode: nil -*- # vi: set expandtab:
 
 # ================================================================================
 # Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.

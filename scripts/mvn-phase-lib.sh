@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- indent-tabs-mode: nil -*- # vi: set expandtab:
 
 # ================================================================================
 # Copyright (c) 2017-2021 AT&T Intellectual Property. All rights reserved.
@@ -205,11 +206,11 @@ test_templates()
     done  | awk '{print $2}' | sed -e 's/"//g' | sort -u |
     while read url
     do
-	curl -L -w '%{http_code}' -s -o /dev/null "$url" > "$TMP"
-	case $(< "$TMP") in
-	    2* ) ;;
-	    * ) echo ">>>>>>>>>>>>>>>> $url not found <<<<<<<<<<<<<<<<" ;;
-	esac
+        curl -L -w '%{http_code}' -s -o /dev/null "$url" > "$TMP"
+        case $(< "$TMP") in
+            2* ) ;;
+            * ) echo ">>>>>>>>>>>>>>>> $url not found <<<<<<<<<<<<<<<<" ;;
+        esac
     done
 
     echo Verify that the inputs are correct
@@ -217,7 +218,7 @@ test_templates()
     find . -name '*-template' | sed -e 's/-template$//' |
     while read blueprint
     do
-	check-blueprint-vs-input -b "$blueprint" -i check-blueprint-vs-input/lib/sample-inputs.yaml || true
+        check-blueprint-vs-input -b "$blueprint" -i check-blueprint-vs-input/lib/sample-inputs.yaml || true
     done
 }
 
@@ -228,7 +229,7 @@ run_tox_test()
   CURDIR=$(pwd)
   TOXINIS=$(find . -name "tox.ini")
   for TOXINI in "${TOXINIS[@]}"; do
-    DIR=$(echo "$TOXINI" | rev | cut -f2- -d'/' | rev)
+    DIR=$(dirname "$TOXINI")
     cd "${CURDIR}/${DIR}"
     rm -rf ./venv-tox ./.tox
     python3 -m venv ./venv-tox
@@ -237,6 +238,11 @@ run_tox_test()
     pip3 install pip==9.0.3
     pip3 install --upgrade argparse
     pip3 install tox==2.9.1
+    if [ "$RUN_BLACK" = yes ]
+    then
+        pip3 install black
+        python3 -m black --line-length 120 --check .
+    fi
     pip3 freeze
     tox
     deactivate
