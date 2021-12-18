@@ -228,7 +228,7 @@ run_tox_test()
   CURDIR=$(pwd)
   TOXINIS=$(find . -name "tox.ini")
   for TOXINI in "${TOXINIS[@]}"; do
-    DIR=$(echo "$TOXINI" | rev | cut -f2- -d'/' | rev)
+    DIR=$(dirname "$TOXINI")
     cd "${CURDIR}/${DIR}"
     rm -rf ./venv-tox ./.tox
     python3 -m venv ./venv-tox
@@ -237,6 +237,11 @@ run_tox_test()
     pip3 install pip==9.0.3
     pip3 install --upgrade argparse
     pip3 install tox==2.9.1
+    if [ "$RUN_BLACK" = yes ]
+    then
+	pip3 install black
+	python3 -m black --line-length 120 --check .
+    fi
     pip3 freeze
     tox
     deactivate
