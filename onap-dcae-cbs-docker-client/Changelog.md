@@ -28,27 +28,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Add more tests, move fixtures to conftest
 * Move exceptions to own module
 
-## [1.0.4]
+## [1.0.4] 2019/04/23
 * Allow the CBS to be registered in Consul under a different name than "config_binding_service"; instead read from the already-set ENV variable CONFIG_BINDING_SERVICE
 
-## [1.0.3]
+## [1.0.3] 2018/10/25
 * Fix an issue caused by flake8 upgrading
 
-## [1.0.2]
+## [1.0.2] 2018/03/12
 * Refactor some code, PEP8 compliance
 * Add flake8 to tox
 
-## [1.0.1]
-* [Sadly, Missing]
+## [1.0.1] 2018/02/23
+* Make this compatible with CBS1 and CBS2
 
-## [1.0.0]
+## [1.0.0] 2018/02/22
 * Depend on the CBS 2.0.0 API
 * Add new endpoint for getting all
 
-## [0.0.5]
+## [0.0.5] 2018/02/19
 * Dont pin requests version
 
-## [0.0.3]
+## [0.0.3] 2017/09/25
 * Changelog started
 * Unit test suite created
 * Current test coverage = 82%
