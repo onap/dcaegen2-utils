@@ -2,7 +2,7 @@
 # -*- indent-tabs-mode: nil -*- # vi: set expandtab:
 
 # ================================================================================
-# Copyright (c) 2017-2022 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2023 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ fi
 
 export SETTINGS_FILE=${SETTINGS_FILE:-$HOME/.m2/settings.xml}
 
-RELEASE_TAG=${MVN_RELEASE_TAG:-R11}
+RELEASE_TAG=${MVN_RELEASE_TAG:-R12}
 if [ "$RELEASE_TAG" == "R1" ]; then
   unset RELEASE_TAG
 fi
@@ -553,3 +553,4 @@ build_and_push_docker()
     done
   fi
 }
+
